@@ -39,299 +39,174 @@ public class Money
 	/// </summary>
 	public int Kopeks { get; }
 
+
+    public static int FullAmountKopecks(int rubles, int kopeks) => rubles * 100 + kopeks;
+    
     /// <summary>
     /// Переопределение операторов
     /// </summary>
     public static Money operator +(Money money1, Money money2)
     {
-        int rublesSum = 0;
-        int kopeksSum = 0;
-        if (money1.IsNegative && money2.IsNegative || !money1.IsNegative && !money2.IsNegative)
+        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
+        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
+
+        if (!money1.IsNegative && !money2.IsNegative)
+            return new Money((fullAmountMoney1 + fullAmountMoney2) / 100, (fullAmountMoney1 + fullAmountMoney2) % 100);
+        if (money1.IsNegative && !money2.IsNegative)
         {
-            rublesSum = money1.Rubles + money2.Rubles;
-            kopeksSum = money1.Kopeks + money2.Kopeks;
-            if (kopeksSum > 99)
+            var rubles = ((fullAmountMoney1 * (-1)) + fullAmountMoney2) / 100;
+            var kopeks = 0;
+            if (rubles < 0)
             {
-                kopeksSum -= 100;
-                rublesSum++;
+                kopeks = (fullAmountMoney1 * (-1) + fullAmountMoney2) * (-1) % 100;
+
+                return new Money(true, rubles * (-1), kopeks);
             }
-            if (money1.IsNegative && money2.IsNegative)
-                return new Money(true, rublesSum, kopeksSum);
-            else
-                return new Money(false, rublesSum, kopeksSum);
+
+            kopeks = (fullAmountMoney1 + fullAmountMoney2) % 100;
+
+            return new Money(false, rubles, kopeks);
+        }
+        if (!money1.IsNegative && money2.IsNegative)
+        {
+            var rubles = (fullAmountMoney1 + fullAmountMoney2 * (-1)) / 100;
+            var kopeks = (fullAmountMoney1 + fullAmountMoney2) % 100;
+
+            return rubles < 0 ? new Money(true, rubles, kopeks) : new Money(false, rubles, kopeks);
         }
         else
-        {
-            if (money1.IsNegative)
-            {
-                if (money1 > money2)
-                {
-                    rublesSum = money1.Rubles - money2.Rubles;
-                    kopeksSum = money1.Kopeks - money2.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
-
-                    return new Money(true, rublesSum, kopeksSum);
-                }
-                else
-                {
-                    rublesSum = money2.Rubles - money1.Rubles;
-                    kopeksSum = money2.Kopeks - money1.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
-
-                    return new Money(false, rublesSum, kopeksSum);
-                }
-            }
-            else
-            {
-                if (money1 > money2)
-                {
-                    rublesSum = money1.Rubles - money2.Rubles;
-                    kopeksSum = money1.Kopeks - money2.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
-
-                    return new Money(false, rublesSum, kopeksSum);
-                }
-                else
-                {
-                    rublesSum = money2.Rubles - money1.Rubles;
-                    kopeksSum = money2.Kopeks - money1.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
-
-                    return new Money(true, rublesSum, kopeksSum);
-                }
-            }
-        }
+            return new Money(true, (fullAmountMoney1 + fullAmountMoney2) / 100, (fullAmountMoney1 + fullAmountMoney2) % 100);
     }
 
-	public static Money operator -(Money money1, Money money2)
+    public static Money operator -(Money money1, Money money2)
 	{
-        int rublesSum = 0;
-        int kopeksSum = 0;
-        if (money1.IsNegative && money2.IsNegative || !money1.IsNegative && !money2.IsNegative)
+        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
+        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
+
+        if (!money1.IsNegative && !money2.IsNegative)
         {
-            if(money1.IsNegative && money2.IsNegative)
+            var rubles = (fullAmountMoney1 - fullAmountMoney2) / 100;
+            var kopeks = 0;
+            if (rubles < 0)
             {
-                if (money1 < money2)
-                {
-                    rublesSum = money1.Rubles - money2.Rubles;
-                    kopeksSum = money1.Kopeks - money2.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
+                kopeks = (fullAmountMoney1 - fullAmountMoney2) * (-1) % 100;
 
-                    return new Money(false, rublesSum, kopeksSum);
-                }
-                else
-                {
-                    rublesSum = money2.Rubles - money1.Rubles;
-                    kopeksSum = money2.Kopeks - money1.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
-
-                    return new Money(true, rublesSum, kopeksSum);
-                }
+                return new Money(true, rubles * (-1), kopeks);
             }
-            else
-            {
-                if (money1 > money2)
-                {
-                    rublesSum = money1.Rubles - money2.Rubles;
-                    kopeksSum = money1.Kopeks - money2.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
 
-                    return new Money(false, rublesSum, kopeksSum);
-                }
-                else
-                {
-                    rublesSum = money2.Rubles - money1.Rubles;
-                    kopeksSum = money2.Kopeks - money1.Kopeks;
-                    if (kopeksSum < 0)
-                    {
-                        kopeksSum += 100;
-                        rublesSum--;
-                    }
-                    if(rublesSum==0||kopeksSum==0)
-                        return new Money(false, rublesSum, kopeksSum);
+            kopeks = (fullAmountMoney1 - fullAmountMoney2) % 100;
 
-                    return new Money(true, rublesSum, kopeksSum);
-                }
-            }
+            return new Money(false, rubles, kopeks);
+        }
+        if (money1.IsNegative && !money2.IsNegative)
+        {
+            var rubles = ((fullAmountMoney1 * (-1)) - fullAmountMoney2) / 100;
+            var kopeks = (fullAmountMoney1 * (-1) - fullAmountMoney2) * (-1) % 100;
+
+            return new Money(true, rubles * (-1), kopeks);
+        }
+        if (!money1.IsNegative && money2.IsNegative)
+        {
+            var rubles = (fullAmountMoney1 + fullAmountMoney2) / 100;
+            var kopeks = (fullAmountMoney1 + fullAmountMoney2) % 100;
+
+            return new Money(false, rubles, kopeks);
         }
         else
         {
-            rublesSum = money1.Rubles + money2.Rubles;
-            kopeksSum = money1.Kopeks + money2.Kopeks;
-            if (kopeksSum > 99)
+            var rubles = fullAmountMoney1 * (-1) - fullAmountMoney2 * (-1);
+            var kopeks = 0;
+            if (rubles < 0)
             {
-                kopeksSum -= 100;
-                rublesSum++;
+                kopeks = (fullAmountMoney1 * (-1) - fullAmountMoney2 * (-1)) * (-1) % 100;
+
+                return new Money(true, rubles * (-1) / 100, kopeks);
             }
-            if (money1.IsNegative)
-                return new Money(true, rublesSum, kopeksSum);
-            else
-                return new Money(false, rublesSum, kopeksSum);
+
+            kopeks = (fullAmountMoney1 * (-1) - fullAmountMoney2 * (-1)) % 100;
+
+            return new Money(false, rubles / 100, kopeks);
         }
     }
 
     public static bool operator >(Money money1, Money money2)
 	{
-        if (money1.IsNegative)
-        {
-            if(money2.IsNegative)
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
+        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
 
-                return sum1 < sum2;
-            }
-            else
-                return false;
-        }
+        if (money1.IsNegative && money2.IsNegative)
+            return fullAmountMoney1 * (-1) > fullAmountMoney2 * (-1);
         else
         {
+            if(money1.IsNegative)
+                return fullAmountMoney1 * (-1) > fullAmountMoney2;
             if (money2.IsNegative)
-                return true;
-            else
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+                return fullAmountMoney1 > fullAmountMoney2 * (-1);
 
-                return sum1 > sum2;
-            }
+            return fullAmountMoney1 > fullAmountMoney2;
         }
-	}
+    }
 
     public static bool operator <(Money money1, Money money2)
 	{
-        if (money1.IsNegative)
-        {
-            if (money2.IsNegative)
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
+        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
 
-                return sum1 > sum2;
-            }
-            else
-                return true;
-        }
+        if (money1.IsNegative && money2.IsNegative)
+            return fullAmountMoney1 * (-1) < fullAmountMoney2 * (-1);
         else
         {
+            if (money1.IsNegative)
+                return fullAmountMoney1 * (-1) < fullAmountMoney2;
             if (money2.IsNegative)
-                return false;
-            else
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+                return fullAmountMoney1 < fullAmountMoney2 * (-1);
 
-                return sum1 < sum2;
-            }
+            return fullAmountMoney1 < fullAmountMoney2;
         }
     }
 
     public static bool operator >=(Money money1, Money money2)
     {
-        if (money1.IsNegative)
-        {
-            if (money2.IsNegative)
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
+        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
 
-                return sum1 <= sum2;
-            }
-            else
-                return false;
-        }
+        if (money1.IsNegative && money2.IsNegative)
+            return fullAmountMoney1 * (-1) >= fullAmountMoney2 * (-1);
         else
         {
+            if (money1.IsNegative)
+                return fullAmountMoney1 * (-1) >= fullAmountMoney2;
             if (money2.IsNegative)
-                return true;
-            else
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+                return fullAmountMoney1 >= fullAmountMoney2 * (-1);
 
-                return sum1 >= sum2;
-            }
+            return fullAmountMoney1 >= fullAmountMoney2;
         }
     }
 
     public static bool operator <=(Money money1, Money money2)
     {
-        if (money1.IsNegative)
-        {
-            if (money2.IsNegative)
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
+        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
 
-                return sum1 >= sum2;
-            }
-            else
-                return true;
-        }
+        if (money1.IsNegative && money2.IsNegative)
+            return fullAmountMoney1 * (-1) <= fullAmountMoney2 * (-1);
         else
         {
+            if (money1.IsNegative)
+                return fullAmountMoney1 * (-1) <= fullAmountMoney2;
             if (money2.IsNegative)
-                return false;
-            else
-            {
-                int sum1 = money1.Rubles * 100;
-                sum1 += money1.Kopeks;
-                int sum2 = money2.Rubles * 100;
-                sum2 += money2.Kopeks;
+                return fullAmountMoney1 <= fullAmountMoney2 * (-1);
 
-                return sum1 <= sum2;
-            }
+            return fullAmountMoney1 <= fullAmountMoney2;
         }
     }
 
     /// <summary>
     /// Переопределение методов класса Object
     /// </summary>
-    public override string ToString() => $"{Rubles}руб. {Kopeks}коп.";
+    public override string ToString() => IsNegative ? $"-{Rubles}руб. {Kopeks}коп." : $"{Rubles}руб. {Kopeks}коп.";
 
-    public override bool Equals(object? obj) => obj is Money money && this.Rubles == money.Rubles && this.Kopeks == money.Kopeks;
+    public override bool Equals(object? obj) => obj is Money money && this.Rubles == money.Rubles && this.Kopeks == money.Kopeks && this.IsNegative == money.IsNegative;
 
-    public override int GetHashCode() => (Rubles, Kopeks).GetHashCode();
+    public override int GetHashCode() => HashCode.Combine(Rubles, Kopeks, IsNegative);
 }
