@@ -40,166 +40,65 @@ public class Money
 	public int Kopeks { get; }
 
 
-    public static int FullAmountKopecks(int rubles, int kopeks) => rubles * 100 + kopeks;
-    
+    //public static int FullAmountKopecks(int rubles, int kopeks) => rubles * 100 + kopeks;
+    private int FullAmountKopecks()
+    {
+        if (IsNegative)
+            return (Rubles * 100 + Kopeks) * (-1);
+        else
+            return Rubles * 100 + Kopeks;
+    }
+
+
     /// <summary>
     /// Переопределение операторов
     /// </summary>
     public static Money operator +(Money money1, Money money2)
     {
-        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
-        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
-
-        if (!money1.IsNegative && !money2.IsNegative)
-            return new Money((fullAmountMoney1 + fullAmountMoney2) / 100, (fullAmountMoney1 + fullAmountMoney2) % 100);
-        if (money1.IsNegative && !money2.IsNegative)
+        int fullAmountMoney1 = money1.FullAmountKopecks();
+        int fullAmountMoney2 = money2.FullAmountKopecks();
+        var rubles = fullAmountMoney1 + fullAmountMoney2;
+        var kopeks = 0;
+        if (rubles < 0)
         {
-            var rubles = ((fullAmountMoney1 * (-1)) + fullAmountMoney2) / 100;
-            var kopeks = 0;
-            if (rubles < 0)
-            {
-                kopeks = (fullAmountMoney1 * (-1) + fullAmountMoney2) * (-1) % 100;
+            kopeks = (fullAmountMoney1 + fullAmountMoney2) * (-1) % 100;
 
-                return new Money(true, rubles * (-1), kopeks);
-            }
-
-            kopeks = (fullAmountMoney1 + fullAmountMoney2) % 100;
-
-            return new Money(false, rubles, kopeks);
+            return new Money(true, rubles * (-1) / 100, kopeks);
         }
-        if (!money1.IsNegative && money2.IsNegative)
-        {
-            var rubles = (fullAmountMoney1 + fullAmountMoney2 * (-1)) / 100;
-            var kopeks = (fullAmountMoney1 + fullAmountMoney2) % 100;
 
-            return rubles < 0 ? new Money(true, rubles, kopeks) : new Money(false, rubles, kopeks);
-        }
-        else
-            return new Money(true, (fullAmountMoney1 + fullAmountMoney2) / 100, (fullAmountMoney1 + fullAmountMoney2) % 100);
+        kopeks = (fullAmountMoney1 + fullAmountMoney2) % 100;
+
+        return new Money(false, rubles / 100, kopeks);
     }
 
     public static Money operator -(Money money1, Money money2)
 	{
-        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
-        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
-
-        if (!money1.IsNegative && !money2.IsNegative)
+        int fullAmountMoney1 = money1.FullAmountKopecks();
+        int fullAmountMoney2 = money2.FullAmountKopecks();
+        var rubles = fullAmountMoney1 - fullAmountMoney2;
+        var kopeks = 0;
+        if (rubles < 0)
         {
-            var rubles = (fullAmountMoney1 - fullAmountMoney2) / 100;
-            var kopeks = 0;
-            if (rubles < 0)
-            {
-                kopeks = (fullAmountMoney1 - fullAmountMoney2) * (-1) % 100;
+            kopeks = (fullAmountMoney1 - fullAmountMoney2) * (-1) % 100;
 
-                return new Money(true, rubles * (-1), kopeks);
-            }
-
-            kopeks = (fullAmountMoney1 - fullAmountMoney2) % 100;
-
-            return new Money(false, rubles, kopeks);
+            return new Money(true, rubles * (-1) / 100, kopeks);
         }
-        if (money1.IsNegative && !money2.IsNegative)
-        {
-            var rubles = ((fullAmountMoney1 * (-1)) - fullAmountMoney2) / 100;
-            var kopeks = (fullAmountMoney1 * (-1) - fullAmountMoney2) * (-1) % 100;
 
-            return new Money(true, rubles * (-1), kopeks);
-        }
-        if (!money1.IsNegative && money2.IsNegative)
-        {
-            var rubles = (fullAmountMoney1 + fullAmountMoney2) / 100;
-            var kopeks = (fullAmountMoney1 + fullAmountMoney2) % 100;
+        kopeks = (fullAmountMoney1 - fullAmountMoney2) % 100;
 
-            return new Money(false, rubles, kopeks);
-        }
-        else
-        {
-            var rubles = fullAmountMoney1 * (-1) - fullAmountMoney2 * (-1);
-            var kopeks = 0;
-            if (rubles < 0)
-            {
-                kopeks = (fullAmountMoney1 * (-1) - fullAmountMoney2 * (-1)) * (-1) % 100;
-
-                return new Money(true, rubles * (-1) / 100, kopeks);
-            }
-
-            kopeks = (fullAmountMoney1 * (-1) - fullAmountMoney2 * (-1)) % 100;
-
-            return new Money(false, rubles / 100, kopeks);
-        }
+        return new Money(false, rubles / 100, kopeks);
     }
 
-    public static bool operator >(Money money1, Money money2)
-	{
-        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
-        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
+    public static bool operator >(Money money1, Money money2) => money1.FullAmountKopecks() > money2.FullAmountKopecks();
 
-        if (money1.IsNegative && money2.IsNegative)
-            return fullAmountMoney1 * (-1) > fullAmountMoney2 * (-1);
-        else
-        {
-            if(money1.IsNegative)
-                return fullAmountMoney1 * (-1) > fullAmountMoney2;
-            if (money2.IsNegative)
-                return fullAmountMoney1 > fullAmountMoney2 * (-1);
+    public static bool operator <(Money money1, Money money2) => money1.FullAmountKopecks() < money2.FullAmountKopecks();
 
-            return fullAmountMoney1 > fullAmountMoney2;
-        }
-    }
 
-    public static bool operator <(Money money1, Money money2)
-	{
-        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
-        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
+    public static bool operator >=(Money money1, Money money2) => money1.FullAmountKopecks() >= money2.FullAmountKopecks();
 
-        if (money1.IsNegative && money2.IsNegative)
-            return fullAmountMoney1 * (-1) < fullAmountMoney2 * (-1);
-        else
-        {
-            if (money1.IsNegative)
-                return fullAmountMoney1 * (-1) < fullAmountMoney2;
-            if (money2.IsNegative)
-                return fullAmountMoney1 < fullAmountMoney2 * (-1);
 
-            return fullAmountMoney1 < fullAmountMoney2;
-        }
-    }
+    public static bool operator <=(Money money1, Money money2) => money1.FullAmountKopecks() <= money2.FullAmountKopecks();
 
-    public static bool operator >=(Money money1, Money money2)
-    {
-        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
-        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
-
-        if (money1.IsNegative && money2.IsNegative)
-            return fullAmountMoney1 * (-1) >= fullAmountMoney2 * (-1);
-        else
-        {
-            if (money1.IsNegative)
-                return fullAmountMoney1 * (-1) >= fullAmountMoney2;
-            if (money2.IsNegative)
-                return fullAmountMoney1 >= fullAmountMoney2 * (-1);
-
-            return fullAmountMoney1 >= fullAmountMoney2;
-        }
-    }
-
-    public static bool operator <=(Money money1, Money money2)
-    {
-        int fullAmountMoney1 = FullAmountKopecks(money1.Rubles, money1.Kopeks);
-        int fullAmountMoney2 = FullAmountKopecks(money2.Rubles, money2.Kopeks);
-
-        if (money1.IsNegative && money2.IsNegative)
-            return fullAmountMoney1 * (-1) <= fullAmountMoney2 * (-1);
-        else
-        {
-            if (money1.IsNegative)
-                return fullAmountMoney1 * (-1) <= fullAmountMoney2;
-            if (money2.IsNegative)
-                return fullAmountMoney1 <= fullAmountMoney2 * (-1);
-
-            return fullAmountMoney1 <= fullAmountMoney2;
-        }
-    }
 
     /// <summary>
     /// Переопределение методов класса Object

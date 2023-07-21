@@ -7,9 +7,6 @@ public class AccountProcessor
 	{
 		var bankAccountLastOperation = bankAccount.LastOperation;
 		var bankAccountPreviousOperation = bankAccount.PreviousOperation;
-		ITotalAmount IBankAccountLastOperation = bankAccountLastOperation;
-        ITotalAmount IBankAccountPreviousOperation = bankAccountPreviousOperation;
-		ITotalAmount IBankAccount = bankAccount;
 
         return CalculateOperationPerformed(ref bankAccountLastOperation) +
                CalculateOperationPerformed(ref bankAccountPreviousOperation) +
@@ -17,9 +14,9 @@ public class AccountProcessor
                CalculateOperation1Performed(ref bankAccountPreviousOperation) +
                CalculateOperation2Performed(ref bankAccountLastOperation) +
                CalculateOperation2Performed(ref bankAccountPreviousOperation) +
-               CalculateOperation3Performed(ref IBankAccountLastOperation) +
-               CalculateOperation3Performed(ref IBankAccountPreviousOperation) +
-               CalculateOperation3Performed(ref IBankAccount)
+               CalculateOperation3Performed(ref bankAccountLastOperation) +
+               CalculateOperation3Performed(ref bankAccountPreviousOperation) +
+               CalculateOperation3BankAccountPerformed(ref bankAccount)
                +
                CalculateOperationPerformed(ref bankAccountLastOperation) +
                CalculateOperationPerformed(ref bankAccountLastOperation) +
@@ -27,9 +24,9 @@ public class AccountProcessor
                CalculateOperation1Performed(ref bankAccountPreviousOperation) +
                CalculateOperation2Performed(ref bankAccountLastOperation) +
                CalculateOperation2Performed(ref bankAccountPreviousOperation) +
-               CalculateOperation3Performed(ref IBankAccountLastOperation) +
-               CalculateOperation3Performed(ref IBankAccountPreviousOperation) +
-               CalculateOperation3Performed(ref IBankAccount)
+               CalculateOperation3Performed(ref bankAccountLastOperation) +
+               CalculateOperation3Performed(ref bankAccountPreviousOperation) +
+               CalculateOperation3BankAccountPerformed(ref bankAccount)
                +
                CalculateOperationPerformed(ref bankAccountLastOperation) +
                CalculateOperationPerformed(ref bankAccountPreviousOperation) +
@@ -37,9 +34,9 @@ public class AccountProcessor
                CalculateOperation1Performed(ref bankAccountPreviousOperation) +
                CalculateOperation2Performed(ref bankAccountLastOperation) +
                CalculateOperation2Performed(ref bankAccountPreviousOperation) +
-               CalculateOperation3Performed(ref IBankAccountLastOperation) +
-               CalculateOperation3Performed(ref IBankAccountPreviousOperation) +
-               CalculateOperation3Performed(ref IBankAccount);
+               CalculateOperation3Performed(ref bankAccountLastOperation) +
+               CalculateOperation3Performed(ref bankAccountPreviousOperation) +
+               CalculateOperation3BankAccountPerformed(ref bankAccount);
     }
 
     private decimal CalculateOperationPerformed(ref BankOperation bankOperation)
@@ -60,7 +57,13 @@ public class AccountProcessor
         return bankOperation.OperationInfo2;
     }
 
-    private decimal CalculateOperation3Performed(ref ITotalAmount bankOperation)
+    private decimal CalculateOperation3Performed(ref BankOperation bankOperation)
+    {
+        // Some calculation code
+        return bankOperation.TotalAmount;
+    }
+
+    private decimal CalculateOperation3BankAccountPerformed(ref BankAccount bankOperation)
     {
         // Some calculation code
         return bankOperation.TotalAmount;
