@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
+using System.Security.AccessControl;
 
 namespace Fuse8_ByteMinds.SummerSchool.Domain;
 
@@ -19,8 +21,31 @@ public static class AssemblyHelpers
 			!.DefinedTypes
 			.Where(p => p.IsClass);
 
-		// TODO Добавить реализацию
-		throw new NotImplementedException();
+		var dictionary = new Dictionary<string, int>();
+		foreach (var assembly in assemblyClassTypes)
+		{
+			if (!assembly.IsAbstract)
+			{
+                var type = GetBaseType(assembly.AsType());
+                if (type != null && type.Namespace == "Fuse8_ByteMinds.SummerSchool.Domain")
+                {
+                    if (dictionary.ContainsKey(type.Name))
+                        dictionary[type.Name]++;
+                    else
+                        dictionary.Add(type.Name, 1);
+                }
+            }
+        }
+
+		var tuplesList = new (string BaseTypeName, int InheritorCount)[dictionary.Count];
+		int index = 0;
+        foreach (var item in dictionary)
+        {
+			tuplesList[index] = (item.Key, item.Value);
+			index++;
+        }
+
+        return tuplesList;
 	}
 
 	/// <summary>

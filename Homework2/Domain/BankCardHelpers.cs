@@ -9,9 +9,12 @@ public static class BankCardHelpers
 	/// </summary>
 	/// <param name="card">Банковская карта</param>
 	/// <returns>Номер карты без маски</returns>
-	public static string GetUnmaskedCardNumber(BankCard card)
+	public static string? GetUnmaskedCardNumber(BankCard card)
 	{
-		// TODO С помощью рефлексии получить номер карты без маски
-		return card.MaskedCardNumber;
-	}
+		var privateField = card.GetType().GetField("_number", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (privateField != null && card != null)
+			return (string?) privateField.GetValue(card);
+		else
+			return string.Empty;
+    }
 }
