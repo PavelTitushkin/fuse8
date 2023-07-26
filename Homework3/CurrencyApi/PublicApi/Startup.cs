@@ -1,4 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
+using Serilog;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 
@@ -25,17 +28,30 @@ public class Startup
 					options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 				});
 		;
+
+		
 		services.AddEndpointsApiExplorer();
-		services.AddSwaggerGen();
+		services.AddSwaggerGen(options =>
+		{
+			var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+			options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
+		});
 	}
 
-	public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+	public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WebApplicationBuilder builder)
 	{
 		if (env.IsDevelopment())
 		{
+			builder.Host.UseSerilog((context, loggerConfiguration) =>
+			{
+				loggerConfiguration.WriteTo.Console();
+			});
 			app.UseSwagger();
 			app.UseSwaggerUI();
 		}
+
+        //Добавление логирования
+        app.UseMiddleware<LoggingMiddleware>();
 
 		app.UseRouting()
 			.UseEndpoints(endpoints => endpoints.MapControllers());
