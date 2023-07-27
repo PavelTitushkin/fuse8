@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PublicApi</name>
+    </assembly>
+    <members>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.ExchangeRateController">
+            <summary>
+            Методы получения курсов валют
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.ExchangeRateController.Currency">
+             <summary>
+             Метод получения курса валюты по умолчанию.
+             </summary>
+             <returns>
+             Возвращает JSON вида
+                    {
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }
+             </returns>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckController">
+            <summary>
+            Методы для проверки работоспособности PublicApi
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckController.Check(System.Nullable{System.Boolean})">
+            <summary>
+            Проверить что API работает
+            </summary>
+            <param name="checkExternalApi">Необходимо проверить работоспособность внешнего API. Если FALSE или NULL - проверяется работоспособность только текущего API</param>
+            <response code="200">
+            Возвращает если удалось получить доступ к API
+            </response>
+            <response code="400">
+            Возвращает если удалось не удалось получить доступ к API
+            </response>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult">
+            <summary>
+            Результат проверки работоспособности API
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckedOn">
+            <summary>
+            Дата проверки
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.Status">
+            <summary>
+            Статус работоспособности API
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckStatus">
+            <summary>
+            Статус API
+            </summary>
+        </member>
+        <member name="F:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckStatus.Ok">
+            <summary>
+            API работает
+            </summary>
+        </member>
+        <member name="F:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckStatus.Failed">
+            <summary>
+            Ошибка в работе API
+            </summary>
+        </member>
+    </members>
+</doc>
