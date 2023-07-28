@@ -1,41 +1,34 @@
-﻿using System.Net;
-using System.Web.Http.Filters;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
+﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.ExceptionFilter
 {
     public class ApiExceptionFilter : Attribute, IExceptionFilter
     {
-        //private readonly ILogger<ApiExceptionFilter> _logger;
+        private readonly ILogger<ApiExceptionFilter> _logger;
 
-        //public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger)
-        //{
-        //    _logger = logger;
-        //}
-
-        public bool AllowMultiple
+        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger)
         {
-            get { return true; }
+            _logger = logger;
         }
 
-        public Task ExecuteExceptionFilterAsync(HttpActionExecutedContext context, CancellationToken cancellationToken)
+        public void OnException(ExceptionContext context)
         {
             if (context.Exception != null && context.Exception is ApiRequestLimitException)
             {
-                context.Response = context.Request.CreateErrorResponse(HttpStatusCode.TooManyRequests, "Превышен лимит запросов API");
-                //_logger.LogError("Превышен лимит запросов API");
+                _logger.LogError("Превышен лимит запросов API");
+                context.Result = new StatusCodeResult(429);
             }
-            if(context.Exception != null && context.Exception is CurrencyNotFoundException)
+            if (context.Exception != null && context.Exception is CurrencyNotFoundException)
             {
-                context.Response = context.Request.CreateResponse(HttpStatusCode.NotFound, context.Exception.Message);
+                context.Result = new StatusCodeResult(404);
             }
-            if (context.Exception != null && context.Exception is not CurrencyNotFoundException || context.Exception != null && context.Exception is not ApiRequestLimitException)
+            else
             {
-                //_logger.LogError(context.Exception.Message);
-                context.Response = context.Request.CreateResponse(HttpStatusCode.InternalServerError, context.Exception.Message);
+                _logger.LogError(context.Exception.Message);
+                context.Result = new StatusCodeResult(500);
             }
-
-            return Task.FromResult<object>(null);
         }
     }
 }

@@ -1,9 +1,14 @@
-﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
+﻿using Audit.Core;
+using Audit.Http;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.ExceptionFilter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
+using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text.Json.Serialization;
+
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 
@@ -19,15 +24,25 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         //Добавление сервисов
-        services.AddScoped<ILimitCheck, LimitCheck>();
-        services.AddScoped<ISendMessage, SendMessage>();
+        services.AddScoped<ILimitCheckService, LimitCheckService>();
+        services.AddHttpClient<ICurrencyRateService, CurrencyRateService>();
 
-        //Ещё ругается на логер при запуске, пока ещё не выяснил почему
-        services.AddControllers()
-        //    (options =>
-        //{
-        //    options.Filters.Add(typeof(ApiExceptionFilter));
-        //})
+        //Добавление аудита с использованием Serilog
+        services.AddHttpClient("currencyApi")
+            .AddAuditHandler(audit => audit
+                .IncludeRequestBody()
+                .IncludeRequestHeaders()
+                .IncludeResponseBody()
+                .IncludeResponseHeaders()
+                .IncludeContentHeaders());
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+        Configuration.Setup().UseSerilog();
+
+        //Добавление фильтра исключения
+        services.AddControllers(options =>
+        {
+            options.Filters.Add(typeof(ApiExceptionFilter));
+        })
 
             // Добавляем глобальные настройки для преобразования Json
             .AddJsonOptions(
@@ -43,6 +58,7 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
+            //Настройка Swagegr
             c.SwaggerDoc(
                 "v1",
                 new OpenApiInfo()
@@ -51,6 +67,7 @@ public class Startup
                     Version = "v1",
                     Description = "API для получения курса валют"
                 });
+            //Добавление коментарии
             c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"), true);
         });
     }

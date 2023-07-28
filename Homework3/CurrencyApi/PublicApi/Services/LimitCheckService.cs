@@ -1,15 +1,25 @@
 ﻿using currencyapi;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 {
-    public class LimitCheck : ILimitCheck
+    /// <summary>
+    /// Сервис для работы с currencyApi
+    /// </summary>
+    public class LimitCheckService : ILimitCheckService
     {
+        private readonly IConfiguration _configuration;
+
+        public LimitCheckService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public bool CheckLimit()
         {
-            var fx = new Currencyapi("[YOUR_API_KEY]");
+            var apiKey = _configuration["Settings:APIKey"];
+            var fx = new Currencyapi(apiKey);
             var status = fx.Status();
             var dataStatus = JObject.Parse(status);
             int.TryParse(Convert.ToString(dataStatus["quotas"]["month"]["used"]), out int requestLimit);

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-
-namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions
+﻿namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions
 {
     public class CurrencyNotFoundException : Exception
     {
