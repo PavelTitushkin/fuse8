@@ -123,5 +123,115 @@
             Ошибка в работе API
             </summary>
         </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency">
+            <summary>
+            Класс курса валют 
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency.Value">
+            <summary>
+            Значение валюты
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyRateResponse">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta.Last_updated_at">
+            <summary>
+            Дата курса валют
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue.Value">
+            <summary>
+            значение валюты
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencySettings">
+            <summary>
+            Класс для работы с ответом currencyApi, содержащий текущие настройки приложения
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate">
+            <summary>
+            Класс курса валют 
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Date">
+            <summary>
+            Дата курса валют
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Value">
+            <summary>
+            Значение валюты
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse">
+            <summary>
+            Класс для работы с ответом currencyApi 
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse.Account_id">
+            <summary>
+            Аккаунт id
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Quotas">
+            <summary>
+            Лимит запросов
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month">
+            <summary>
+            Лимит запрос в месяц
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Total">
+            <summary>
+            Общее количество запросов
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Used">
+            <summary>
+            Использованное количество запросов
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Remaining">
+            <summary>
+            Оставшейся количество запросов
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateService">
+            <summary>
+            Сервис для работы с currencyApi
+            </summary>
+        </member>
     </members>
 </doc>

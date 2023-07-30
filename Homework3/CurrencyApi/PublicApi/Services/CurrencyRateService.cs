@@ -1,7 +1,8 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Models;
-using Newtonsoft.Json.Linq;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
+using System.Text;
 using System.Text.Json;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
@@ -11,146 +12,116 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
     /// </summary>
     public class CurrencyRateService : ICurrencyRateService
     {
-        private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
+        private readonly AppSettings _appSettings;
 
-        public CurrencyRateService(IConfiguration configuration, HttpClient httpClient)
+        public CurrencyRateService(HttpClient httpClient, AppSettings appSettings)
         {
-            _configuration = configuration;
             _httpClient = httpClient;
+            _appSettings = appSettings;
         }
 
-        public async Task<Currency> GetCurrencyAsync()
+        public async Task<HttpResponseMessage> GetCurrencyAsync()
         {
-            var apiKey = _configuration["Settings:APIKey"];
-            var defaultCurrencyCode = _configuration["Currency:Default"];
-            var baseCurrencyCode = _configuration["Currency:Base"];
-            int.TryParse(_configuration["Currency:Round"], out int round);
-            var path = $"https://api.currencyapi.com/v3/latest?currencies={defaultCurrencyCode}&base_currency={baseCurrencyCode}";
-
-            _httpClient.DefaultRequestHeaders.Clear();
-
-            var message = new HttpRequestMessage();
-            message.Headers.Add("apikey", apiKey);
-            message.RequestUri = new Uri(path);
-            message.Method = HttpMethod.Get;
-
-            HttpResponseMessage apiResponse = apiResponse = await _httpClient.SendAsync(message);
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
-
-            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
-            var currency = new Currency();
-            if (dataApiContent.data.ContainsKey(defaultCurrencyCode))
+            if (GetCurrencyLimitAsync().Result)
             {
-                var data = dataApiContent.data[defaultCurrencyCode];
-                currency.Code = data.code;
-                currency.Value = Math.Round(data.value, round);
+                var apiKey = _appSettings.APIKey;
+                var defaultCurrencyCode = _appSettings.Default;
+                var baseCurrencyCode = _appSettings.Base;
+                var path = new StringBuilder(_appSettings.BasePath);
+                var fullPath = path.Append("/latest?currencies=").Append(defaultCurrencyCode).Append("&base_currency=").Append(baseCurrencyCode).ToString();
 
-                return currency;
+                if (_httpClient.DefaultRequestHeaders.Contains("apikey") is false)
+                    _httpClient.DefaultRequestHeaders.Add("apikey", apiKey);
+
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(fullPath);
+
+                return apiResponse.EnsureSuccessStatusCode();
             }
             else
-                throw new Exception();
+                throw new ApiRequestLimitException("Превышено количество запросов.");
         }
 
-        public async Task<Currency> GetCurrencyAsync(string currencyCode)
+        public async Task<HttpResponseMessage> GetCurrencyAsync(string currencyCode)
         {
-            var apiKey = _configuration["Settings:APIKey"];
-            var baseCurrencyCode = _configuration["Currency:Base"];
-            int.TryParse(_configuration["Currency:Round"], out int round);
-            var path = $"https://api.currencyapi.com/v3/latest?currencies={currencyCode}&base_currency={baseCurrencyCode}";
-
-            _httpClient.DefaultRequestHeaders.Clear();
-            var message = new HttpRequestMessage();
-
-            message.Headers.Add("apikey", apiKey);
-            message.RequestUri = new Uri(path);
-            message.Method = HttpMethod.Get;
-
-            HttpResponseMessage apiResponse = await _httpClient.SendAsync(message);
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
-            var currency = new Currency();
-            if (dataApiContent.data != null && dataApiContent.data.ContainsKey(currencyCode))
+            if (GetCurrencyLimitAsync().Result)
             {
-                var data = dataApiContent.data[currencyCode];
-                currency.Code = data.code;
-                currency.Value = Math.Round(data.value, round);
+                var apiKey = _appSettings.APIKey;
+                var baseCurrencyCode = _appSettings.Base;
+                var path = new StringBuilder(_appSettings.BasePath);
+                var fullPath = path.Append("/latest?currencies=").Append(currencyCode).Append("&base_currency=").Append(baseCurrencyCode).ToString();
 
-                return currency;
+                if (_httpClient.DefaultRequestHeaders.Contains("apikey") is false)
+                    _httpClient.DefaultRequestHeaders.Add("apikey", apiKey);
+
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(fullPath);
+
+                if ((int)apiResponse.StatusCode == StatusCodes.Status422UnprocessableEntity)
+                    throw new CurrencyNotFoundException("Запрос к несуществующей валюте.");
+
+                return apiResponse.EnsureSuccessStatusCode();
             }
-            if (apiResponse.StatusCode.ToString() == "UnprocessableEntity")
-                throw new CurrencyNotFoundException("Нет запрошенной валюты!");
             else
-                throw new Exception();
+                throw new ApiRequestLimitException("Превышено количество запросов.");
         }
 
-        public async Task<CurrencyWithDate> GetCurrencyAsync(string currencyCode, DateTime date)
+        public async Task<HttpResponseMessage> GetCurrencyAsync(string currencyCode, DateTime date)
         {
-            var dateString = date.ToString("yyyy-MM-dd");
-
-            var apiKey = _configuration["Settings:APIKey"];
-            var baseCurrencyCode = _configuration["Currency:Base"];
-            int.TryParse(_configuration["Currency:Round"], out int round);
-            var path = $"https://api.currencyapi.com/v3/historical?currencies={currencyCode}&date={dateString}&base_currency={baseCurrencyCode}";
-
-            _httpClient.DefaultRequestHeaders.Clear();
-            var message = new HttpRequestMessage();
-
-            message.Headers.Add("apikey", apiKey);
-            message.RequestUri = new Uri(path);
-            message.Method = HttpMethod.Get;
-
-            HttpResponseMessage apiResponse = apiResponse = await _httpClient.SendAsync(message);
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
-            var currencyWithDate = new CurrencyWithDate();
-            if (dataApiContent.data != null && dataApiContent.data.ContainsKey(currencyCode))
+            if (GetCurrencyLimitAsync().Result)
             {
-                var data = dataApiContent.data[currencyCode];
-                currencyWithDate.Date = dataApiContent.meta.last_updated_at.ToString("yyyy-MM-dd");
-                currencyWithDate.Code = data.code;
-                currencyWithDate.Value = Math.Round(data.value, round);
+                var dateString = date.ToString("yyyy-MM-dd");
+                var apiKey = _appSettings.APIKey;
+                var baseCurrencyCode = _appSettings.Base;
+                var path = new StringBuilder(_appSettings.BasePath);
+                var fullPath = path.Append("/historical?currencies=").Append(currencyCode).Append("&date=").Append(dateString).Append("&base_currency=").Append(baseCurrencyCode).ToString();
 
-                return currencyWithDate;
+                if (_httpClient.DefaultRequestHeaders.Contains("apikey") is false)
+                    _httpClient.DefaultRequestHeaders.Add("apikey", apiKey);
+
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(fullPath);
+
+                if (apiResponse.StatusCode.ToString() == "UnprocessableEntity")
+                    throw new CurrencyNotFoundException("Запрос к несуществующей валюте.");
+
+                return apiResponse.EnsureSuccessStatusCode();
             }
-            if (apiResponse.StatusCode.ToString() == "UnprocessableEntity")
-                throw new CurrencyNotFoundException("Нет запрошенной валюты!");
             else
-                throw new Exception();
+                throw new ApiRequestLimitException("Превышено количество запросов.");
         }
 
-        public async Task<CurrencySettings> GetCurrencySettingsAsync()
+        public async Task<HttpResponseMessage> GetCurrencySettingsAsync()
         {
-            var apiKey = _configuration["Settings:APIKey"];
-            var defaultCurrencyCode = _configuration["Currency:Default"];
-            var baseCurrencyCode = _configuration["Currency:Base"];
-            int.TryParse(_configuration["Currency:Round"], out int round);
-            var path = $"https://api.currencyapi.com/v3/status";
+            var apiKey = _appSettings.APIKey;
+            var path = new StringBuilder(_appSettings.BasePath);
+            var fullPath = path.Append("/status").ToString();
 
-            _httpClient.DefaultRequestHeaders.Clear();
-            var message = new HttpRequestMessage();
-            message.Headers.Add("apikey", apiKey);
-            message.RequestUri = new Uri(path);
-            message.Method = HttpMethod.Get;
+            if (_httpClient.DefaultRequestHeaders.Contains("apikey") is false)
+                _httpClient.DefaultRequestHeaders.Add("apikey", apiKey);
 
-            HttpResponseMessage apiResponse = apiResponse = await _httpClient.SendAsync(message);
+            HttpResponseMessage apiResponse = await _httpClient.GetAsync(fullPath);
+
+            return apiResponse.EnsureSuccessStatusCode();
+        }
+
+        private async Task<bool> GetCurrencyLimitAsync()
+        {
+            var apiKey = _appSettings.APIKey;
+            var path = new StringBuilder(_appSettings.BasePath);
+            var fullPath = path.Append("/status").ToString();
+
+            if (_httpClient.DefaultRequestHeaders.Contains("apikey") is false)
+                _httpClient.DefaultRequestHeaders.Add("apikey", apiKey);
+
+            HttpResponseMessage apiResponse = await _httpClient.GetAsync(fullPath);
+            apiResponse.EnsureSuccessStatusCode();
+
             var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var dataApiContent = JObject.Parse(apiContent);
-            var currencySettings = new CurrencySettings();
-            if (dataApiContent != null)
-            {
-                currencySettings.defaultCurrency = defaultCurrencyCode;
-                currencySettings.baseCurrency = baseCurrencyCode;
-                int.TryParse(Convert.ToString(dataApiContent["quotas"]["month"]["total"]), out int limit);
-                int.TryParse(Convert.ToString(dataApiContent["quotas"]["month"]["used"]), out int used);
-                currencySettings.requestLimit = limit;
-                currencySettings.requestCount = used;
-                currencySettings.currencyRoundCount = round;
+            var dataApiContent = JsonSerializer.Deserialize<SettingsResponse>(apiContent);
 
-                return currencySettings;
-            }
+            if (dataApiContent.Quotas.Month.Total > 0)
+                return true;
             else
-                throw new Exception();
+                return false;
         }
     }
 }

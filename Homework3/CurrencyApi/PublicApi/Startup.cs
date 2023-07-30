@@ -1,12 +1,14 @@
 ﻿using Audit.Core;
 using Audit.Http;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.ExceptionFilter;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
-using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.AspNetCore;
 using System.Text.Json.Serialization;
 
 
@@ -15,6 +17,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 public class Startup
 {
     private readonly IConfiguration _configuration;
+    public IServiceCollection Services { get; set; }
 
     public Startup(IConfiguration configuration)
     {
@@ -23,20 +26,46 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        //Добавление сервисов
-        services.AddScoped<ILimitCheckService, LimitCheckService>();
-        services.AddHttpClient<ICurrencyRateService, CurrencyRateService>();
+        Services = services;
 
-        //Добавление аудита с использованием Serilog
-        services.AddHttpClient("currencyApi")
-            .AddAuditHandler(audit => audit
+        //Считаем секцию AppSettings из конфигурации
+        var appSettings = _configuration.GetSection("Currency").Get<AppSettings>();
+        appSettings.APIKey = _configuration.GetSection("Settings:APIKey").Value;
+        appSettings.ClientConfigBuild();
+
+        //Создадим Singleton конфигурации, и добавим его в коллекцию сервисов
+        SingletonAppSettings singletonAppSettings = SingletonAppSettings.Instance;
+        singletonAppSettings.appSettings = appSettings;
+        services.AddSingleton(singletonAppSettings);
+        services.AddScoped(sp => sp.GetService<SingletonAppSettings>().appSettings);
+
+        //Добавление сервисов
+        services.AddScoped<ICurrencyRateService, CurrencyRateService>();
+        services.AddHttpClient<ICurrencyRateService, CurrencyRateService>()
+            .AddAuditHandler(
+            audit =>audit
                 .IncludeRequestBody()
                 .IncludeRequestHeaders()
                 .IncludeResponseBody()
                 .IncludeResponseHeaders()
                 .IncludeContentHeaders());
+
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-        Configuration.Setup().UseSerilog();
+        Configuration.Setup()
+            .UseSerilog(
+            config=>config.Message(
+                auditEvent =>
+                {
+                    if(auditEvent is AuditEventHttpClient httpClientEvent)
+                    {
+                        var contentBody = httpClientEvent.Action?.Response?.Content?.Body;
+                        if(contentBody is string { Length: > 1000} stringBody)
+                        {
+                            httpClientEvent.Action.Response.Content.Body = stringBody[..1000] + "<...>";
+                        }
+                    }
+                    return auditEvent.ToJson();
+                }));
 
         //Добавление фильтра исключения
         services.AddControllers(options =>
@@ -79,11 +108,20 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        ChangeToken.OnChange(() => _configuration.GetReloadToken(), onChange);
 
         //Добавление логирования
         app.UseMiddleware<LoggingMiddleware>();
 
         app.UseRouting()
             .UseEndpoints(endpoints => endpoints.MapControllers());
+    }
+
+    private void onChange()
+    {
+        var newAppSettings = _configuration.GetSection("AppSettings").Get<AppSettings>();
+        newAppSettings.ClientConfigBuild();
+        var serviceAppSettings = Services.BuildServiceProvider().GetService<SingletonAppSettings>();
+        serviceAppSettings.appSettings = newAppSettings;
     }
 }

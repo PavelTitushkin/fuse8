@@ -1,12 +1,17 @@
-﻿namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse
 {
     /// <summary>
     /// Класс для работы с ответом currencyApi
     /// </summary>
     public class CurrencyRateResponse
     {
-        public Meta meta { get; set; }
-        public Dictionary<string, CodeValue> data { get; set; }
+        [JsonPropertyName("meta")]
+        public Meta Meta { get; set; }
+
+        [JsonPropertyName("data")]
+        public Dictionary<string, CodeValue> Data { get; set; }
     }
 
     /// <summary>
@@ -17,7 +22,8 @@
         /// <summary>
         /// Дата курса валют
         /// </summary>
-        public DateTime last_updated_at { get; set; }
+        [JsonPropertyName("last_updated_at")]
+        public DateTime Last_updated_at { get; set; }
     }
 
     /// <summary>
@@ -28,10 +34,12 @@
         /// <summary>
         /// Код валюты
         /// </summary>
-        public string code { get; set; }
+        [JsonPropertyName("code")]
+        public string Code { get; set; }
         /// <summary>
         /// значение валюты
         /// </summary>
-        public decimal value { get; set; }
+        [JsonPropertyName("value")]
+        public decimal Value { get; set; }
     }
 }

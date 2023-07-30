@@ -1,7 +1,9 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Models;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
 {
@@ -12,12 +14,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
     [ApiController]
     public class ExchangeRateController : ControllerBase
     {
-        private readonly ILimitCheckService _limitCheck;
+        private readonly AppSettings _appSettings;
         private readonly ICurrencyRateService _currencyRateService;
-        public ExchangeRateController(ILimitCheckService limitCheck, ICurrencyRateService currencyRateService)
+        public ExchangeRateController(ICurrencyRateService currencyRateService, AppSettings appSettings)
         {
-            _limitCheck = limitCheck;
             _currencyRateService = currencyRateService;
+            _appSettings = appSettings;
         }
 
         /// <summary>
@@ -34,10 +36,18 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         [Route("Currency")]
         public async Task<Currency> Currency()
         {
-            if (_limitCheck.CheckLimit())
-                throw new ApiRequestLimitException("Превышен лимит запросов.");
-            else
-                return await _currencyRateService.GetCurrencyAsync();
+            var apiResponse = await _currencyRateService.GetCurrencyAsync();
+            var defaultCurrencyCode = _appSettings.Default;
+            var round = _appSettings.Round;
+
+            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
+            var currency = new Currency();
+            var data = dataApiContent.Data[defaultCurrencyCode];
+            currency.Code = data.Code;
+            currency.Value = Math.Round(data.Value, round);
+
+            return currency;
         }
 
         /// <summary>
@@ -60,10 +70,17 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         [Route("Currency/{currencyCode}")]
         public async Task<Currency> Currency(string currencyCode)
         {
-            if (_limitCheck.CheckLimit())
-                throw new ApiRequestLimitException("Превышен лимит запросов.");
-            else
-                return await _currencyRateService.GetCurrencyAsync(currencyCode);
+            var apiResponse = await _currencyRateService.GetCurrencyAsync(currencyCode);
+            var round = _appSettings.Round;
+
+            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
+            var currency = new Currency();
+            var data = dataApiContent.Data[currencyCode];
+            currency.Code = data.Code;
+            currency.Value = Math.Round(data.Value, round);
+
+            return currency;
         }
 
         /// <summary>
@@ -90,10 +107,18 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         [Route("Currency/{currencyCode}/{date}")]
         public async Task<CurrencyWithDate> Currency(string currencyCode, DateTime date)
         {
-            if (_limitCheck.CheckLimit())
-                throw new ApiRequestLimitException("Превышен лимит запросов.");
-            else
-                return await _currencyRateService.GetCurrencyAsync(currencyCode, date);
+            var apiResponse = await _currencyRateService.GetCurrencyAsync(currencyCode, date);
+            var round = _appSettings.Round;
+
+            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
+            var currencyWithDate = new CurrencyWithDate();
+            var data = dataApiContent.Data[currencyCode];
+            currencyWithDate.Date = dataApiContent.Meta.Last_updated_at.ToString("yyyy-MM-dd");
+            currencyWithDate.Code = data.Code;
+            currencyWithDate.Value = Math.Round(data.Value, round);
+
+            return currencyWithDate;
         }
 
         /// <summary>
@@ -113,8 +138,22 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         [Route("Settings")]
         public async Task<CurrencySettings> Settings()
         {
-            return await _currencyRateService.GetCurrencySettingsAsync();
+            var apiResponse = await _currencyRateService.GetCurrencySettingsAsync();
+            var defaultCurrencyCode = _appSettings.Default;
+            var baseCurrencyCode = _appSettings.Base;
+            var round = _appSettings.Round;
+
+            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+            var dataApiContent = JsonSerializer.Deserialize<SettingsResponse>(apiContent);
+            var currencySettings = new CurrencySettings();
+            currencySettings.defaultCurrency = defaultCurrencyCode;
+            currencySettings.baseCurrency = baseCurrencyCode;
+            currencySettings.requestLimit = dataApiContent.Quotas.Month.Total;
+            currencySettings.requestCount = dataApiContent.Quotas.Month.Used;
+            currencySettings.currencyRoundCount = round;
+
+            return currencySettings;
         }
-    } 
+    }
 }
 
