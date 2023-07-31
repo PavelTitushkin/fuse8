@@ -1,12 +1,13 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Models;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions
 {
     public interface ICurrencyRateService
     {
-        Task<HttpResponseMessage> GetCurrencyAsync();
-        Task<HttpResponseMessage> GetCurrencyAsync(string currencyCode);
-        Task<HttpResponseMessage> GetCurrencyAsync(string currencyCode, DateTime date);
-        Task<HttpResponseMessage> GetCurrencySettingsAsync();
+        Task<Currency> GetCurrencyAsync();
+        Task<Currency> GetCurrencyAsync(string currencyCode);
+        Task<CurrencyWithDate> GetCurrencyAsync(string currencyCode, DateTime date);
+        Task<CurrencySettings> GetCurrencySettingsAsync();
     }
 }

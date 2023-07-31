@@ -11,7 +11,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse
         /// Аккаунт id
         /// </summary>
         [JsonPropertyName("account_id")]
-        public long Account_id { get; set; }
+        public long AccountId { get; set; }
 
         [JsonPropertyName("quotas")]
         public Quotas Quotas { get; set; }

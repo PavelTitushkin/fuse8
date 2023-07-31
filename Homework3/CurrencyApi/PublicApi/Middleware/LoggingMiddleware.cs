@@ -13,7 +13,7 @@
 
         public async Task Invoke(HttpContext context)
         {
-            _logger.LogInformation($"Поступил запрос: {context.Request.Method} {context.Request.Path}");
+            _logger.LogInformation("Поступил запрос {Method}, {Path}", context.Request.Method, context.Request.Path);
             await _next(context);
         }
     }

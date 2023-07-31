@@ -1,25 +1,20 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
 {
     /// <summary>
     /// Методы получения курсов валют
     /// </summary>
-    [Route("CurrencyRate")]
+    //[Route("api")]
     [ApiController]
-    public class ExchangeRateController : ControllerBase
+    public class CurrencyController : ControllerBase
     {
-        private readonly AppSettings _appSettings;
         private readonly ICurrencyRateService _currencyRateService;
-        public ExchangeRateController(ICurrencyRateService currencyRateService, AppSettings appSettings)
+        public CurrencyController(ICurrencyRateService currencyRateService)
         {
             _currencyRateService = currencyRateService;
-            _appSettings = appSettings;
         }
 
         /// <summary>
@@ -33,21 +28,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         ///}
         /// </returns>
         [HttpGet]
-        [Route("Currency")]
-        public async Task<Currency> Currency()
+        [Route("currency")]
+        public async Task<IActionResult> Currency()
         {
             var apiResponse = await _currencyRateService.GetCurrencyAsync();
-            var defaultCurrencyCode = _appSettings.Default;
-            var round = _appSettings.Round;
 
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
-            var currency = new Currency();
-            var data = dataApiContent.Data[defaultCurrencyCode];
-            currency.Code = data.Code;
-            currency.Value = Math.Round(data.Value, round);
-
-            return currency;
+            return Ok(apiResponse);
         }
 
         /// <summary>
@@ -67,20 +53,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         /// Выбрасывается исключение если все доступные запросы исчерпаны.
         /// </exception>
         [HttpGet]
-        [Route("Currency/{currencyCode}")]
-        public async Task<Currency> Currency(string currencyCode)
+        [Route("currency/{currencyCode}")]
+        public async Task<IActionResult> Currency(string currencyCode)
         {
             var apiResponse = await _currencyRateService.GetCurrencyAsync(currencyCode);
-            var round = _appSettings.Round;
 
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
-            var currency = new Currency();
-            var data = dataApiContent.Data[currencyCode];
-            currency.Code = data.Code;
-            currency.Value = Math.Round(data.Value, round);
-
-            return currency;
+            return Ok(apiResponse);
         }
 
         /// <summary>
@@ -104,21 +82,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         /// Выбрасывается исключение если все доступные запросы исчерпаны.
         /// </exception>
         [HttpGet]
-        [Route("Currency/{currencyCode}/{date}")]
-        public async Task<CurrencyWithDate> Currency(string currencyCode, DateTime date)
+        [Route("currency/{currencyCode}/{date}")]
+        public async Task<IActionResult> Currency(string currencyCode, DateTime date)
         {
             var apiResponse = await _currencyRateService.GetCurrencyAsync(currencyCode, date);
-            var round = _appSettings.Round;
 
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
-            var currencyWithDate = new CurrencyWithDate();
-            var data = dataApiContent.Data[currencyCode];
-            currencyWithDate.Date = dataApiContent.Meta.Last_updated_at.ToString("yyyy-MM-dd");
-            currencyWithDate.Code = data.Code;
-            currencyWithDate.Value = Math.Round(data.Value, round);
-
-            return currencyWithDate;
+            return Ok(apiResponse);
         }
 
         /// <summary>
@@ -135,24 +104,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         ///}
         /// </returns>
         [HttpGet]
-        [Route("Settings")]
-        public async Task<CurrencySettings> Settings()
+        [Route("settings")]
+        public async Task<IActionResult> Settings()
         {
             var apiResponse = await _currencyRateService.GetCurrencySettingsAsync();
-            var defaultCurrencyCode = _appSettings.Default;
-            var baseCurrencyCode = _appSettings.Base;
-            var round = _appSettings.Round;
 
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
-            var dataApiContent = JsonSerializer.Deserialize<SettingsResponse>(apiContent);
-            var currencySettings = new CurrencySettings();
-            currencySettings.defaultCurrency = defaultCurrencyCode;
-            currencySettings.baseCurrency = baseCurrencyCode;
-            currencySettings.requestLimit = dataApiContent.Quotas.Month.Total;
-            currencySettings.requestCount = dataApiContent.Quotas.Month.Used;
-            currencySettings.currencyRoundCount = round;
-
-            return currencySettings;
+            return Ok(apiResponse);
         }
     }
 }

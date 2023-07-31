@@ -4,12 +4,12 @@
         <name>PublicApi</name>
     </assembly>
     <members>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.ExchangeRateController">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController">
             <summary>
             Методы получения курсов валют
             </summary>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.ExchangeRateController.Currency">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency">
              <summary>
              Метод получения курса валюты по умолчанию.
              </summary>
@@ -21,7 +21,7 @@
             }
              </returns>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.ExchangeRateController.Currency(System.String)">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency(System.String)">
              <summary>
              Метод получения текущего курс валюты, переданного в качестве параметра
              </summary>
@@ -39,7 +39,7 @@
              Выбрасывается исключение если все доступные запросы исчерпаны.
              </exception>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.ExchangeRateController.Currency(System.String,System.DateTime)">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency(System.String,System.DateTime)">
              <summary>
              Метод получения курса валюты, переданного в качестве параметра, на определенную дата.
              </summary>
@@ -61,7 +61,7 @@
              Выбрасывается исключение если все доступные запросы исчерпаны.
              </exception>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.ExchangeRateController.Settings">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Settings">
              <summary>
              Метод возвращает текущие настройки приложения.
              </summary>
@@ -198,7 +198,7 @@
             Класс для работы с ответом currencyApi 
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse.Account_id">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse.AccountId">
             <summary>
             Аккаунт id
             </summary>

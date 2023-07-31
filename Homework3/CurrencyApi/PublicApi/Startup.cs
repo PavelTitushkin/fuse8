@@ -31,13 +31,14 @@ public class Startup
         //Считаем секцию AppSettings из конфигурации
         var appSettings = _configuration.GetSection("Currency").Get<AppSettings>();
         appSettings.APIKey = _configuration.GetSection("Settings:APIKey").Value;
-        appSettings.ClientConfigBuild();
+        services.AddSingleton(appSettings);
 
+        //appSettings.ClientConfigBuild();
         //Создадим Singleton конфигурации, и добавим его в коллекцию сервисов
-        SingletonAppSettings singletonAppSettings = SingletonAppSettings.Instance;
-        singletonAppSettings.appSettings = appSettings;
-        services.AddSingleton(singletonAppSettings);
-        services.AddScoped(sp => sp.GetService<SingletonAppSettings>().appSettings);
+        //SingletonAppSettings singletonAppSettings = SingletonAppSettings.Instance;
+        //singletonAppSettings.appSettings = appSettings;
+        //services.AddSingleton(singletonAppSettings);
+        //services.AddScoped(sp => sp.GetService<SingletonAppSettings>().appSettings);
 
         //Добавление сервисов
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
@@ -108,7 +109,7 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        ChangeToken.OnChange(() => _configuration.GetReloadToken(), onChange);
+        //ChangeToken.OnChange(() => _configuration.GetReloadToken(), onChange);
 
         //Добавление логирования
         app.UseMiddleware<LoggingMiddleware>();
@@ -117,11 +118,11 @@ public class Startup
             .UseEndpoints(endpoints => endpoints.MapControllers());
     }
 
-    private void onChange()
-    {
-        var newAppSettings = _configuration.GetSection("AppSettings").Get<AppSettings>();
-        newAppSettings.ClientConfigBuild();
-        var serviceAppSettings = Services.BuildServiceProvider().GetService<SingletonAppSettings>();
-        serviceAppSettings.appSettings = newAppSettings;
-    }
+    //private void onChange()
+    //{
+    //    var newAppSettings = _configuration.GetSection("AppSettings").Get<AppSettings>();
+    //    newAppSettings.ClientConfigBuild();
+    //    var serviceAppSettings = Services.BuildServiceProvider().GetService<SingletonAppSettings>();
+    //    serviceAppSettings.appSettings = newAppSettings;
+    //}
 }
