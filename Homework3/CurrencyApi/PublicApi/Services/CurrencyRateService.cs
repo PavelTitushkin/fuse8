@@ -105,7 +105,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
                     var dataApiContent = JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
                     var currencyWithDate = new CurrencyWithDate();
                     var data = dataApiContent.Data[currencyCode];
-                    currencyWithDate.Date = dataApiContent.Meta.Last_updated_at.ToString("yyyy-MM-dd");
+                    currencyWithDate.Date = dataApiContent.Meta.LastUpdatedAt.ToString("yyyy-MM-dd");
                     currencyWithDate.Code = data.Code;
                     currencyWithDate.Value = Math.Round(data.Value, round);
 
@@ -138,11 +138,11 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
                 var dataApiContent = JsonSerializer.Deserialize<SettingsResponse>(apiContent);
                 var currencySettings = new CurrencySettings();
-                currencySettings.defaultCurrency = defaultCurrencyCode;
-                currencySettings.baseCurrency = baseCurrencyCode;
-                currencySettings.requestLimit = dataApiContent.Quotas.Month.Total;
-                currencySettings.requestCount = dataApiContent.Quotas.Month.Used;
-                currencySettings.currencyRoundCount = round;
+                currencySettings.DefaultCurrency = defaultCurrencyCode;
+                currencySettings.BaseCurrency = baseCurrencyCode;
+                currencySettings.RequestLimit = dataApiContent.Quotas.Month.Total;
+                currencySettings.RequestCount = dataApiContent.Quotas.Month.Used;
+                currencySettings.CurrencyRoundCount = round;
 
                 return currencySettings;
             }
@@ -156,7 +156,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         {
             var apiSettings = new CurrencySettings();
             apiSettings = await GetCurrencySettingsAsync();
-            var remainingRequests = apiSettings.requestLimit - apiSettings.requestCount;
+            var remainingRequests = apiSettings.RequestLimit - apiSettings.RequestCount;
             if (remainingRequests > 0)
                 return true;
             else

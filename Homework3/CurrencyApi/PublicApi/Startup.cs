@@ -5,10 +5,8 @@ using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
-using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.AspNetCore;
 using System.Text.Json.Serialization;
 
 
@@ -33,6 +31,10 @@ public class Startup
         appSettings.APIKey = _configuration.GetSection("Settings:APIKey").Value;
         services.AddSingleton(appSettings);
 
+        //var section = _configuration.GetRequiredSection("Currency");
+        //services.Configure<AppSettings>(section);
+        //var sectionApiKey = _configuration.GetRequiredSection("Settings");
+        //services.Configure<AppSettingsApiKey>(sectionApiKey);
         //appSettings.ClientConfigBuild();
         //Создадим Singleton конфигурации, и добавим его в коллекцию сервисов
         //SingletonAppSettings singletonAppSettings = SingletonAppSettings.Instance;
@@ -44,7 +46,7 @@ public class Startup
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
         services.AddHttpClient<ICurrencyRateService, CurrencyRateService>()
             .AddAuditHandler(
-            audit =>audit
+            audit => audit
                 .IncludeRequestBody()
                 .IncludeRequestHeaders()
                 .IncludeResponseBody()
@@ -54,13 +56,13 @@ public class Startup
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
         Configuration.Setup()
             .UseSerilog(
-            config=>config.Message(
+            config => config.Message(
                 auditEvent =>
                 {
-                    if(auditEvent is AuditEventHttpClient httpClientEvent)
+                    if (auditEvent is AuditEventHttpClient httpClientEvent)
                     {
                         var contentBody = httpClientEvent.Action?.Response?.Content?.Body;
-                        if(contentBody is string { Length: > 1000} stringBody)
+                        if (contentBody is string { Length: > 1000 } stringBody)
                         {
                             httpClientEvent.Action.Response.Content.Body = stringBody[..1000] + "<...>";
                         }

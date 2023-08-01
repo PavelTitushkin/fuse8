@@ -1,5 +1,4 @@
-﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Models;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
+﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions
 {

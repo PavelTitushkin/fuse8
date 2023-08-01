@@ -148,7 +148,7 @@
             Класс для работы с ответом currencyApi
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta.Last_updated_at">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta.LastUpdatedAt">
             <summary>
             Дата курса валют
             </summary>

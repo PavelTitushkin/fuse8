@@ -5,10 +5,10 @@
     /// </summary>
     public class CurrencySettings
     {
-        public string? defaultCurrency { get; set; }
-        public string? baseCurrency { get; set; }
-        public int requestLimit { get; set; }
-        public int requestCount { get; set; }
-        public int currencyRoundCount { get; set; }
+        public string? DefaultCurrency { get; set; }
+        public string? BaseCurrency { get; set; }
+        public int RequestLimit { get; set; }
+        public int RequestCount { get; set; }
+        public int CurrencyRoundCount { get; set; }
     }
 }

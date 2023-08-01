@@ -23,7 +23,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse
         /// Дата курса валют
         /// </summary>
         [JsonPropertyName("last_updated_at")]
-        public DateTime Last_updated_at { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
     }
 
     /// <summary>
