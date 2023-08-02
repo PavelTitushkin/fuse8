@@ -98,7 +98,6 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        //ChangeToken.OnChange(() => _configuration.GetReloadToken(), onChange);
 
         //Добавление логирования
         app.UseMiddleware<LoggingMiddleware>();
