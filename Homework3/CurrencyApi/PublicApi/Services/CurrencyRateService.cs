@@ -2,6 +2,7 @@
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
@@ -12,13 +13,13 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
     public class CurrencyRateService : ICurrencyRateService
     {
         private readonly HttpClient _httpClient;
-        private readonly AppSettings _appSettings;
+        public AppSettings AppSettings { get; }
 
-        public CurrencyRateService(HttpClient httpClient, AppSettings appSettings)
+        public CurrencyRateService(HttpClient httpClient, IOptions<AppSettings> options)
         {
             _httpClient = httpClient;
-            _appSettings = appSettings;
-            _httpClient.BaseAddress = new Uri(appSettings.BasePath);
+            AppSettings = options.Value;
+            _httpClient.BaseAddress = new Uri(AppSettings.BasePath);
         }
 
         public async Task<Currency> GetCurrencyAsync()
@@ -27,10 +28,10 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
             {
                 try
                 {
-                    var apiKey = _appSettings.APIKey;
-                    var defaultCurrencyCode = _appSettings.Default;
-                    var baseCurrencyCode = _appSettings.Base;
-                    var round = _appSettings.Round;
+                    var apiKey = AppSettings.APIKey;
+                    var defaultCurrencyCode = AppSettings.Default;
+                    var baseCurrencyCode = AppSettings.Base;
+                    var round = AppSettings.Round;
                     var path = new Uri(_httpClient.BaseAddress + "/latest?currencies=" + defaultCurrencyCode + "&base_currency=" + baseCurrencyCode);
                     AddDefaultRequestHeaders(_httpClient, apiKey);
                     HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
@@ -59,9 +60,9 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
             {
                 try
                 {
-                    var apiKey = _appSettings.APIKey;
-                    var baseCurrencyCode = _appSettings.Base;
-                    var round = _appSettings.Round;
+                    var apiKey = AppSettings.APIKey;
+                    var baseCurrencyCode = AppSettings.Base;
+                    var round = AppSettings.Round;
                     var path = new Uri(_httpClient.BaseAddress + "/latest?currencies=" + currencyCode + "&base_currency=" + baseCurrencyCode);
                     AddDefaultRequestHeaders(_httpClient, apiKey);
                     HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
@@ -94,9 +95,9 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
                 try
                 {
                     var dateString = date.ToString("yyyy-MM-dd");
-                    var apiKey = _appSettings.APIKey;
-                    var baseCurrencyCode = _appSettings.Base;
-                    var round = _appSettings.Round;
+                    var apiKey = AppSettings.APIKey;
+                    var baseCurrencyCode = AppSettings.Base;
+                    var round = AppSettings.Round;
                     var path = new Uri(_httpClient.BaseAddress + "/historical?currencies=" + currencyCode + "&date=" + dateString + "&base_currency=" + baseCurrencyCode);
                     AddDefaultRequestHeaders(_httpClient, apiKey);
                     HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
@@ -127,10 +128,10 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         {
             try
             {
-                var apiKey = _appSettings.APIKey;
-                var defaultCurrencyCode = _appSettings.Default;
-                var baseCurrencyCode = _appSettings.Base;
-                var round = _appSettings.Round;
+                var apiKey = AppSettings.APIKey;
+                var defaultCurrencyCode = AppSettings.Default;
+                var baseCurrencyCode = AppSettings.Base;
+                var round = AppSettings.Round;
                 var path = new Uri(_httpClient.BaseAddress + "/status");
                 AddDefaultRequestHeaders(_httpClient, apiKey);
                 HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
@@ -156,8 +157,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         {
             var apiSettings = new CurrencySettings();
             apiSettings = await GetCurrencySettingsAsync();
-            var remainingRequests = apiSettings.RequestLimit - apiSettings.RequestCount;
-            if (remainingRequests > 0)
+            if (apiSettings.RequestLimit > apiSettings.RequestCount)
                 return true;
             else
                 return false;

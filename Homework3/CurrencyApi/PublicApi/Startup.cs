@@ -15,7 +15,6 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 public class Startup
 {
     private readonly IConfiguration _configuration;
-    public IServiceCollection Services { get; set; }
 
     public Startup(IConfiguration configuration)
     {
@@ -24,23 +23,11 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        Services = services;
-
-        //Считаем секцию AppSettings из конфигурации
-        var appSettings = _configuration.GetSection("Currency").Get<AppSettings>();
-        appSettings.APIKey = _configuration.GetSection("Settings:APIKey").Value;
-        services.AddSingleton(appSettings);
-
-        //var section = _configuration.GetRequiredSection("Currency");
-        //services.Configure<AppSettings>(section);
-        //var sectionApiKey = _configuration.GetRequiredSection("Settings");
-        //services.Configure<AppSettingsApiKey>(sectionApiKey);
-        //appSettings.ClientConfigBuild();
-        //Создадим Singleton конфигурации, и добавим его в коллекцию сервисов
-        //SingletonAppSettings singletonAppSettings = SingletonAppSettings.Instance;
-        //singletonAppSettings.appSettings = appSettings;
-        //services.AddSingleton(singletonAppSettings);
-        //services.AddScoped(sp => sp.GetService<SingletonAppSettings>().appSettings);
+        services.Configure<AppSettings>(_configuration.GetSection("Currency"));
+        services.Configure<AppSettings>(opt =>
+        {
+            opt.APIKey = _configuration.GetSection("Settings:APIKey").Value;
+        });
 
         //Добавление сервисов
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
@@ -119,12 +106,4 @@ public class Startup
         app.UseRouting()
             .UseEndpoints(endpoints => endpoints.MapControllers());
     }
-
-    //private void onChange()
-    //{
-    //    var newAppSettings = _configuration.GetSection("AppSettings").Get<AppSettings>();
-    //    newAppSettings.ClientConfigBuild();
-    //    var serviceAppSettings = Services.BuildServiceProvider().GetService<SingletonAppSettings>();
-    //    serviceAppSettings.appSettings = newAppSettings;
-    //}
 }
