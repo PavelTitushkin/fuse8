@@ -5,7 +5,9 @@ using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
+using InternalApi.Data;
 using Microsoft.OpenApi.Models;
+using PublicApi.Contracts;
 using Serilog;
 using System.Text.Json.Serialization;
 
@@ -31,7 +33,8 @@ public class Startup
 
         //Добавление сервисов
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
-        services.AddHttpClient<ICurrencyRateService, CurrencyRateService>()
+        services.AddHttpClient<IHttpCurrencyRepository, HttpCurrencyRepository>()
+        //services.AddHttpClient<ICurrencyRateService, CurrencyRateService>()
             .AddAuditHandler(
             audit => audit
                 .IncludeRequestBody()
