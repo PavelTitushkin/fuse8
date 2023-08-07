@@ -358,3 +358,4 @@ MigrationBackup/
 
 # Assets
 dist/
+/Homework3/CurrencyApi/PublicApi/appsettings.Development.json

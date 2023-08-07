@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PublicApi</name>
+    </assembly>
+    <members>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController">
+            <summary>
+            Методы получения курсов валют
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency">
+             <summary>
+             Метод получения курса валюты по умолчанию.
+             </summary>
+             <returns>
+             Метод возвращает JSON вида
+                    {
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }
+             </returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency(System.String)">
+             <summary>
+             Метод получения текущего курс валюты, переданного в качестве параметра
+             </summary>
+             <param name="currencyCode">
+             Код валюты относительно которого будет выведен курс.
+             </param>
+             <returns>
+             Метод возвращает JSON вида
+                    {
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }
+             </returns>
+             <exception cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.ApiRequestLimitException">
+             Выбрасывается исключение если все доступные запросы исчерпаны.
+             </exception>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency(System.String,System.DateTime)">
+             <summary>
+             Метод получения курса валюты, переданного в качестве параметра, на определенную дата.
+             </summary>
+             <param name="currencyCode">
+             Код валюты относительно которого будет выведен курс.
+             </param>
+             <param name="date">
+             Курс валюты на определённую дату.
+             </param>
+             <returns>       
+             Метод возвращает JSON вида
+            {
+              "date": "2020-12-25", // дата актуальности курса
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }        
+             </returns>
+             <exception cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.ApiRequestLimitException">
+             Выбрасывается исключение если все доступные запросы исчерпаны.
+             </exception>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Settings">
+             <summary>
+             Метод возвращает текущие настройки приложения.
+             </summary>
+             <returns>
+             Метод возвращает JSON вида
+             {
+              "defaultCurrency": "RUB", // текущий курс валют по умолчанию из конфигурации
+              "baseCurrency": "USD", // базовая валюта, относительно которой считается курс
+              "requestLimit": 300, // общее количество доступных запросов, полученное от внешнего API (quotas->month->total)
+              "requestCount": 0, //  количество использованных запросов, полученное от внешнего API (quotas->month->used)
+              "currencyRoundCount": 2 // Количество знаков после запятой, до которого следует округлять значение курса валют
+            }
+             </returns>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckController">
+            <summary>
+            Методы для проверки работоспособности PublicApi
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckController.Check(System.Nullable{System.Boolean})">
+            <summary>
+            Проверить что API работает
+            </summary>
+            <param name="checkExternalApi">Необходимо проверить работоспособность внешнего API. Если FALSE или NULL - проверяется работоспособность только текущего API</param>
+            <response code="200">
+            Возвращает если удалось получить доступ к API
+            </response>
+            <response code="400">
+            Возвращает если удалось не удалось получить доступ к API
+            </response>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult">
+            <summary>
+            Результат проверки работоспособности API
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckedOn">
+            <summary>
+            Дата проверки
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.Status">
+            <summary>
+            Статус работоспособности API
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckStatus">
+            <summary>
+            Статус API
+            </summary>
+        </member>
+        <member name="F:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckStatus.Ok">
+            <summary>
+            API работает
+            </summary>
+        </member>
+        <member name="F:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult.CheckStatus.Failed">
+            <summary>
+            Ошибка в работе API
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency">
+            <summary>
+            Класс курса валют 
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency.Value">
+            <summary>
+            Значение валюты
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyRateResponse">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta.LastUpdatedAt">
+            <summary>
+            Дата курса валют
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue.Value">
+            <summary>
+            значение валюты
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencySettings">
+            <summary>
+            Класс для работы с ответом currencyApi, содержащий текущие настройки приложения
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate">
+            <summary>
+            Класс курса валют 
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Date">
+            <summary>
+            Дата курса валют
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Value">
+            <summary>
+            Значение валюты
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse">
+            <summary>
+            Класс для работы с ответом currencyApi 
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse.AccountId">
+            <summary>
+            Аккаунт id
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Quotas">
+            <summary>
+            Лимит запросов
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month">
+            <summary>
+            Лимит запрос в месяц
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Total">
+            <summary>
+            Общее количество запросов
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Used">
+            <summary>
+            Использованное количество запросов
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Remaining">
+            <summary>
+            Оставшейся количество запросов
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateService">
+            <summary>
+            Сервис для работы с currencyApi
+            </summary>
+        </member>
+    </members>
+</doc>
