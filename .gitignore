@@ -359,3 +359,6 @@ MigrationBackup/
 # Assets
 dist/
 /Homework3/CurrencyApi/PublicApi/appsettings.Development.json
+/PetProject/PublicApi/appsettings.Development.json
+/PetProject/InternalApi/appsettings.Development.json
+/PetProject/PublicApi/appsettings.Development.json
