@@ -7,5 +7,7 @@
         public int Round { get; set; }
         public string APIKey { get; set; }
         public string BasePath { get; set; }
+        public string PathFile { get; set; }
+        public int CacheLifetime { get; set; }
     }
 }

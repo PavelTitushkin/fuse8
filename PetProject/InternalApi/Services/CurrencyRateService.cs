@@ -4,6 +4,7 @@ using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
 using Microsoft.Extensions.Options;
 using InternalApi.Contracts;
+using InternalApi.Models.ModelResponse;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 {
@@ -93,6 +94,58 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
             var apiSettings = await GetCurrencySettingsAsync();
 
             return apiSettings.RequestLimit < apiSettings.RequestCount;
+        }
+
+        public async Task<Currency[]> GetAllCurrentCurrenciesAsync(string baseCurrency, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                throw new OperationCanceledException(cancellationToken);
+            if (await IsCurrencyLimitExceededAsync())
+                throw new ApiRequestLimitException("Превышено количество запросов.");
+
+            var round = AppSettings.Round;
+            var currenciesRate = await _currencyRepository.GetCurrenciesRateAsync(baseCurrency, cancellationToken);
+            var currencies = new Currency[currenciesRate.Data.Count];
+            int index = 0;
+            foreach (var item in currenciesRate.Data)
+            {
+                currencies[index] = new Currency()
+                {
+                    Code = item.Value.Code,
+                    Value = Math.Round(item.Value.Value, round)
+                };
+                index++;
+            }
+
+            return currencies;
+        }
+
+        public async Task<CurrenciesOnDate> GetAllCurrenciesOnDateAsync(string baseCurrency, DateOnly date, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                throw new OperationCanceledException(cancellationToken);
+            if (await IsCurrencyLimitExceededAsync())
+                throw new ApiRequestLimitException("Превышено количество запросов.");
+
+            var currenciesRate = await _currencyRepository.GetCurrenciesOnDateRateAsync(baseCurrency, date, cancellationToken);
+            var currencies = new Currency[currenciesRate.Data.Count];
+            int index = 0;
+            var round = AppSettings.Round;
+            foreach (var item in currenciesRate.Data)
+            {
+                currencies[index] = new Currency()
+                {
+                    Code = item.Value.Code,
+                    Value = Math.Round(item.Value.Value, round)
+                };
+                index++;
+            }
+
+            return new CurrenciesOnDate()
+            {
+                Currencies = currencies,
+                LastUpdatedAt = currenciesRate.Meta.LastUpdatedAt
+            };
         }
     }
 }
