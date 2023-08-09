@@ -25,14 +25,17 @@ namespace InternalApi
             {
                 opt.APIKey = builder.Configuration.GetSection("Settings:APIKey").Value;
             });
-
-
             builder.Services.AddControllers();
 
-            builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
-            //builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyRepository>();
+            //Добавление gRPC-сервиса
+            builder.Services.AddGrpc();
 
-            builder.Services.AddHttpClient<IHttpCurrencyRepository, HttpCurrencyRepository>()
+            //Add Auto-mapper
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
+            builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyRepository>();
+            builder.Services.AddHttpClient<ICurrencyRepository, HttpCurrencyRepository>()
                 .AddAuditHandler(
                 audit => audit
                     .IncludeRequestBody()
@@ -99,6 +102,8 @@ namespace InternalApi
 
             //Добавление логирования
             app.UseMiddleware<LoggingMiddleware>();
+
+            //Настройка gRPC
 
             app.UseRouting()
                 .UseEndpoints(endpoints => endpoints.MapControllers());

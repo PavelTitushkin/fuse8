@@ -2,9 +2,9 @@
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Exceptions;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
-using Microsoft.Extensions.Options;
 using InternalApi.Contracts;
 using InternalApi.Models.ModelResponse;
+using Microsoft.Extensions.Options;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 {
@@ -13,10 +13,10 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
     /// </summary>
     public class CurrencyRateService : ICurrencyRateService
     {
-        private readonly IHttpCurrencyRepository _currencyRepository;
+        private readonly ICurrencyRepository _currencyRepository;
         public AppSettings AppSettings { get; }
 
-        public CurrencyRateService(IOptions<AppSettings> options, IHttpCurrencyRepository currencyRepository)
+        public CurrencyRateService(IOptions<AppSettings> options, ICurrencyRepository currencyRepository)
         {
             AppSettings = options.Value;
             _currencyRepository = currencyRepository;

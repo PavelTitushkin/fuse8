@@ -2,7 +2,7 @@
 
 namespace InternalApi.Contracts
 {
-    public interface IHttpCurrencyRepository
+    public interface ICurrencyRepository
     {
         Task<CurrencyRateResponse> GetCurrencyRateAsync();
         Task<CurrencyRateResponse> GetCurrencyRateAsync(string currencyCode);

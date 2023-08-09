@@ -1,13 +1,13 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Exceptions;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
-using Microsoft.Extensions.Options;
 using InternalApi.Contracts;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace InternalApi.Data
 {
-    public class HttpCurrencyRepository : IHttpCurrencyRepository
+    public class HttpCurrencyRepository : ICurrencyRepository
     {
         private readonly HttpClient _httpClient;
         public AppSettings AppSettings { get; }
@@ -54,7 +54,6 @@ namespace InternalApi.Data
                     throw ex;
             }
         }
-
         public async Task<CurrencyRateResponse> GetCurrencyOnDateRateAsync(string currencyCode, DateTime date)
         {
             try
@@ -78,7 +77,6 @@ namespace InternalApi.Data
                     throw ex;
             }
         }
-
         public async Task<SettingsResponse> GetCurrencySettingsAsync()
         {
             var apiKey = AppSettings.APIKey;
@@ -90,7 +88,6 @@ namespace InternalApi.Data
 
             return JsonSerializer.Deserialize<SettingsResponse>(apiContent);
         }
-
 
 
         public async Task<CurrencyRateResponse> GetCurrenciesRateAsync(string baseCurrency, CancellationToken cancellationToken)
