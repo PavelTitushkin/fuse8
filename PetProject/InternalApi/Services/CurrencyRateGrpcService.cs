@@ -1,39 +1,54 @@
 ﻿using AutoMapper;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
 using Grpc.Core;
 using InternalApi;
 using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
+using System;
 
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
 {
     public class CurrencyRateGrpcService : CurrrncyGrpsService.CurrrncyGrpsServiceBase
     {
         private readonly ICachedCurrencyAPI _cachedCurrencyAPI;
+        private readonly ICurrencyRateService  _currencyRateService;
         private readonly IMapper _mapper;
 
-        public CurrencyRateGrpcService(ICachedCurrencyAPI cachedCurrencyAPI, IMapper mapper)
+        public CurrencyRateGrpcService(ICachedCurrencyAPI cachedCurrencyAPI, IMapper mapper, ICurrencyRateService currencyRateService)
         {
             _cachedCurrencyAPI = cachedCurrencyAPI;
             _mapper = mapper;
+            _currencyRateService = currencyRateService;
         }
 
-        public override Task<CurrencyResponse> GetCurrency(CurrencyRequest currency, ServerCallContext context)
+        public override async Task<CurrencyResponse> GetCurrency(CurrencyRequest currency, ServerCallContext context)
         {
             Enum.TryParse(currency.CurrencyCode, out CurrencyType currencyType);
-            var currencies = _cachedCurrencyAPI.GetCurrentCurrencyAsync(currencyType, context.CancellationToken);
+            var currencies = await _cachedCurrencyAPI.GetCurrentCurrencyAsync(currencyType, context.CancellationToken);
             var currencyResponse = _mapper.Map<CurrencyResponse>(currencies);
 
-            return Task.FromResult(currencyResponse);
+            return currencyResponse;
         }
 
-        public override Task<CurrencyOnDateResponse> GetCurrencyOnDate(CurrencyOnDateRequest currencyOnDate, ServerCallContext context)
+        public override async Task<CurrencyResponse> GetCurrencyOnDate(CurrencyOnDateRequest currencyOnDate, ServerCallContext context)
         {
-            return Task.FromResult(new CurrencyOnDateResponse());
+            Enum.TryParse(currencyOnDate.CurrencyCode, out CurrencyType currencyType);
+            var date = DateOnly.FromDateTime(currencyOnDate.Date.ToDateTime());
+            var currencies = await _cachedCurrencyAPI.GetCurrencyOnDateAsync(currencyType, date, context.CancellationToken);
+            var currencyResponse = _mapper.Map<CurrencyResponse>(currencies);
+
+            return currencyResponse;
         }
 
-        public override Task<ApiSettingsResponse> GetSettingsApi(ApiSettingsRequest settings, ServerCallContext context)
+        public override async Task<ApiSettingsResponse> GetSettingsApi(ApiSettingsRequest settings, ServerCallContext context)
         {
-            return Task.FromResult(new ApiSettingsResponse());
+            var apiSettings = await _currencyRateService.GetCurrencySettingsAsync();
+
+            return new ApiSettingsResponse
+            {
+                BaseCode = apiSettings.BaseCurrency,
+                Limit = apiSettings.RequestLimit > apiSettings.RequestCount
+            };
         }
     }
 }

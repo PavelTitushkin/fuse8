@@ -76,12 +76,6 @@
         <member name="F:InternalApi.CurrencyResponse.ValueFieldNumber">
             <summary>Field number for the "value" field.</summary>
         </member>
-        <member name="F:InternalApi.CurrencyOnDateResponse.CodeFieldNumber">
-            <summary>Field number for the "code" field.</summary>
-        </member>
-        <member name="F:InternalApi.CurrencyOnDateResponse.ValueFieldNumber">
-            <summary>Field number for the "value" field.</summary>
-        </member>
         <member name="F:InternalApi.ApiSettingsResponse.BaseCodeFieldNumber">
             <summary>Field number for the "baseCode" field.</summary>
         </member>
