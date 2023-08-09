@@ -1,9 +1,11 @@
 using Audit.Core;
 using Audit.Http;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Services;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
 using InternalApi.Contracts;
 using InternalApi.Data;
@@ -34,7 +36,8 @@ namespace InternalApi
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
-            builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyRepository>();
+            builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyAPIService>();
+            builder.Services.AddScoped<ICachedCurrencyRepository, CachedCurrencyRepository>();
             builder.Services.AddHttpClient<ICurrencyRepository, HttpCurrencyRepository>()
                 .AddAuditHandler(
                 audit => audit
