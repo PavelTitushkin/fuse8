@@ -18,6 +18,6 @@ namespace InternalApi.Models.ModelDTO
 
     public enum CurrencyType
     {
-        Usd, Rub, Kzt
+        USD, RUB, KZT, BYN
     }
 }

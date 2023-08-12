@@ -2,7 +2,7 @@
 
 import "google/protobuf/timestamp.proto";
 
-option csharp_namespace = "InternalApi";
+option csharp_namespace = "PublicClientApi";
 
 package greet;
 
@@ -33,10 +33,10 @@ message CurrencyResponse {
   double value =2;
 }
 
-message CurrencyOnDateResponse {
-  string code = 1;
-  double value =2;
-}
+//message CurrencyOnDateResponse {
+//  string code = 1;
+//  double value =2;
+//}
 
 message ApiSettingsResponse {
   string baseCode = 1;

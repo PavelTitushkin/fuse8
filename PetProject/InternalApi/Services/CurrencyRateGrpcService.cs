@@ -22,7 +22,7 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
 
         public override async Task<CurrencyResponse> GetCurrency(CurrencyRequest currency, ServerCallContext context)
         {
-            Enum.TryParse(currency.CurrencyCode, out CurrencyType currencyType);
+            Enum.TryParse(currency.CurrencyCode.ToUpper(), out CurrencyType currencyType);
             var currencies = await _cachedCurrencyAPI.GetCurrentCurrencyAsync(currencyType, context.CancellationToken);
             var currencyResponse = _mapper.Map<CurrencyResponse>(currencies);
 
@@ -31,7 +31,7 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
 
         public override async Task<CurrencyResponse> GetCurrencyOnDate(CurrencyOnDateRequest currencyOnDate, ServerCallContext context)
         {
-            Enum.TryParse(currencyOnDate.CurrencyCode, out CurrencyType currencyType);
+            Enum.TryParse(currencyOnDate.CurrencyCode.ToUpper(), out CurrencyType currencyType);
             var date = DateOnly.FromDateTime(currencyOnDate.Date.ToDateTime());
             var currencies = await _cachedCurrencyAPI.GetCurrencyOnDateAsync(currencyType, date, context.CancellationToken);
             var currencyResponse = _mapper.Map<CurrencyResponse>(currencies);
