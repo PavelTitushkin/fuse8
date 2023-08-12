@@ -92,30 +92,59 @@ namespace InternalApi.Data
 
         public async Task<CurrencyRateResponse> GetCurrenciesRateAsync(string baseCurrency, CancellationToken cancellationToken)
         {
-            var apiKey = AppSettings.APIKey;
-            var path = new Uri(_httpClient.BaseAddress + $"/latest?base_currency={baseCurrency}");
-            AddDefaultRequestHeaders(_httpClient, apiKey);
+            try
+            {
+                var apiKey = AppSettings.APIKey;
+                var path = new Uri(_httpClient.BaseAddress + $"/latest?base_currency={baseCurrency}");
+                AddDefaultRequestHeaders(_httpClient, apiKey);
 
-            HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
-            apiResponse.EnsureSuccessStatusCode();
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
+                apiResponse.EnsureSuccessStatusCode();
 
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                var apiContent = await apiResponse.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
+                return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
+
+            }
+            catch (HttpRequestException ex)
+            {
+                if ((int)ex.StatusCode == StatusCodes.Status422UnprocessableEntity)
+                {
+                    throw new CurrencyNotFoundException("Запрос к несуществующей валюте.");
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
         }
 
         public async Task<CurrencyRateResponse> GetCurrenciesOnDateRateAsync(string baseCurrency, DateOnly date, CancellationToken cancellationToken)
         {
-            var apiKey = AppSettings.APIKey;
-            var dateString = date.ToString("yyyy-MM-dd");
-            var path = new Uri(_httpClient.BaseAddress + $"/historical?date={dateString}&base_currency={baseCurrency}");
-            AddDefaultRequestHeaders(_httpClient, apiKey);
+            try
+            {
+                var apiKey = AppSettings.APIKey;
+                var dateString = date.ToString("yyyy-MM-dd");
+                var path = new Uri(_httpClient.BaseAddress + $"/historical?date={dateString}&base_currency={baseCurrency}");
+                AddDefaultRequestHeaders(_httpClient, apiKey);
 
-            HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
-            apiResponse.EnsureSuccessStatusCode();
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
+                apiResponse.EnsureSuccessStatusCode();
+                var apiContent = await apiResponse.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
+                return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
+            }
+            catch (HttpRequestException ex)
+            {
+                if ((int)ex.StatusCode == StatusCodes.Status422UnprocessableEntity)
+                {
+                    throw new CurrencyNotFoundException("Запрос к несуществующей валюте.");
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
         }
 
         private void AddDefaultRequestHeaders(HttpClient httpClient, string apiKey)

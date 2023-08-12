@@ -6,7 +6,7 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.MappingProfiles
 {
     public class CurrencyProfile : Profile
     {
-        protected CurrencyProfile()
+        public CurrencyProfile()
         {
             CreateMap<CurrencyDTO, CurrencyResponse>()
                 .ForMember(opt => opt.Code, dto => dto.MapFrom(dto => dto.CurrencyType.ToString()))

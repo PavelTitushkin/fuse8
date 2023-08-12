@@ -4,14 +4,13 @@ using Grpc.Core;
 using InternalApi;
 using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
-using System;
 
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
 {
     public class CurrencyRateGrpcService : CurrrncyGrpsService.CurrrncyGrpsServiceBase
     {
         private readonly ICachedCurrencyAPI _cachedCurrencyAPI;
-        private readonly ICurrencyRateService  _currencyRateService;
+        private readonly ICurrencyRateService _currencyRateService;
         private readonly IMapper _mapper;
 
         public CurrencyRateGrpcService(ICachedCurrencyAPI cachedCurrencyAPI, IMapper mapper, ICurrencyRateService currencyRateService)

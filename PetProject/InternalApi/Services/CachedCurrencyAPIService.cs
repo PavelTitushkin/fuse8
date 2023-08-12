@@ -1,7 +1,9 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
 using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
+using Microsoft.Extensions.Options;
 
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
 {
@@ -9,11 +11,13 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
     {
         private readonly ICachedCurrencyRepository _cachedCurrencyRepository;
         private readonly ICurrencyRateService _currencyRateService;
+        public AppSettings AppSettings { get; }
 
-        public CachedCurrencyAPIService(ICachedCurrencyRepository cachedCurrencyRepository, ICurrencyRateService currencyRateService)
+        public CachedCurrencyAPIService(ICachedCurrencyRepository cachedCurrencyRepository, ICurrencyRateService currencyRateService, IOptions<AppSettings> options)
         {
             _cachedCurrencyRepository = cachedCurrencyRepository;
             _currencyRateService = currencyRateService;
+            AppSettings = options.Value;
         }
 
         public async Task<CurrencyDTO> GetCurrentCurrencyAsync(CurrencyType currencyType, CancellationToken cancellationToken)
@@ -26,7 +30,8 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
             var cacheFile = _cachedCurrencyRepository.FindCacheFile();
             if (cacheFile == null)
             {
-                var currencies = await _currencyRateService.GetAllCurrentCurrenciesAsync(currencyType.ToString(), cancellationToken);
+                var currency = AppSettings.Base;
+                var currencies = await _currencyRateService.GetAllCurrentCurrenciesAsync(currency, cancellationToken);
                 await _cachedCurrencyRepository.WriteCurrenciesToCacheFileAsync(currencies, cancellationToken);
 
                 var currencyDto = new CurrencyDTO();
@@ -58,7 +63,8 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
             var cacheFile = _cachedCurrencyRepository.FindCacheFileOnDate(date);
             if (cacheFile == null)
             {
-                var currenciesOnDate = await _currencyRateService.GetAllCurrenciesOnDateAsync(currencyType.ToString(), date, cancellationToken);
+                var currency = AppSettings.Base;
+                var currenciesOnDate = await _currencyRateService.GetAllCurrenciesOnDateAsync(currency, date, cancellationToken);
                 var currencies = currenciesOnDate.Currencies;
                 await _cachedCurrencyRepository.WriteCurrenciesOnDateToCacheFileAsync(currencies, date, cancellationToken);
 

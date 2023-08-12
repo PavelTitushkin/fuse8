@@ -111,6 +111,41 @@
             <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
             <param name="serviceImpl">An object implementing the server-side handling logic.</param>
         </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.CurrencyController">
+            <summary>
+            Методы получения курсов валют
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.CurrencyController.GetCurrency(InternalApi.Models.ModelDTO.CurrencyType,System.Threading.CancellationToken)">
+             <summary>
+             Метод получения курса валюты по умолчанию.
+             </summary>
+             <returns>
+             Метод возвращает JSON вида
+                    {
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }
+             </returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.CurrencyController.GetCurrencyOnDate(InternalApi.Models.ModelDTO.CurrencyType,System.DateOnly,System.Threading.CancellationToken)">
+             <summary>
+             Метод получения текущего курс валюты, переданного в качестве параметра
+             </summary>
+             <param name="currencyCode">
+             Код валюты относительно которого будет выведен курс.
+             </param>
+             <returns>
+             Метод возвращает JSON вида
+                    {
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }
+             </returns>
+             <exception cref="!:ApiRequestLimitException">
+             Выбрасывается исключение если все доступные запросы исчерпаны.
+             </exception>
+        </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Currency">
             <summary>
             Класс курса валют 

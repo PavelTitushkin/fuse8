@@ -9,9 +9,9 @@ using Fuse8_ByteMinds.SummerSchool.InternalApi.Services;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
 using InternalApi.Contracts;
 using InternalApi.Data;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Text.Json.Serialization;
 
 namespace InternalApi
 {
@@ -20,17 +20,27 @@ namespace InternalApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.WebHost.UseKestrel(
+                (builderContext, options) =>
+                {
+                    var grpcPort = builder.Configuration.GetValue<int>("gRPCPort");
+                    options.ConfigureEndpointDefaults(
+                        p =>
+                        {
+                            p.Protocols = p.IPEndPoint!.Port == grpcPort ? HttpProtocols.Http2 : HttpProtocols.Http1;
+                        });
+                });
 
-            // Add services to the container.
+            //Добавление gRPC-сервиса
+            builder.Services.AddGrpc();
+
             builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("Currency"));
             builder.Services.Configure<AppSettings>(opt =>
             {
                 opt.APIKey = builder.Configuration.GetSection("Settings:APIKey").Value;
             });
-            builder.Services.AddControllers();
 
-            //Добавление gRPC-сервиса
-            builder.Services.AddGrpc();
+            builder.Services.AddControllers();
 
             //Add Auto-mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -68,17 +78,17 @@ namespace InternalApi
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ApiExceptionFilter));
-            })
-            // Добавляем глобальные настройки для преобразования Json
-            .AddJsonOptions(
-                options =>
-                {
-                    // Добавляем конвертер для енама
-                    // По умолчанию енам преобразуется в цифровое значение
-                    // Этим конвертером задаем перевод в строковое занчение
-                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                });
-            ;
+            });
+            //// Добавляем глобальные настройки для преобразования Json
+            //.AddJsonOptions(
+            //    options =>
+            //    {
+            //        // Добавляем конвертер для енама
+            //        // По умолчанию енам преобразуется в цифровое значение
+            //        // Этим конвертером задаем перевод в строковое занчение
+            //        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            //    });
+            //;
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -103,15 +113,25 @@ namespace InternalApi
                 app.UseSwaggerUI();
             }
 
+            //Настройка gRPC
+            app.UseWhen(
+                predicate: context => context.Connection.LocalPort == builder.Configuration.GetValue<int>("gRPCPort"),
+                configuration: grpcBuilder =>
+                {
+                    grpcBuilder.UseRouting();
+                    grpcBuilder.UseEndpoints(endpoints => endpoints.MapGrpcService<CurrencyRateGrpcService>());
+                });
+
+
+            app.UseRouting()
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
+
             //Добавление логирования
             app.UseMiddleware<LoggingMiddleware>();
 
-            //Настройка gRPC
-
-            app.UseRouting()
-                .UseEndpoints(endpoints => endpoints.MapControllers());
-
-            app.MapControllers();
             app.Run();
         }
     }
