@@ -233,5 +233,107 @@
             Сервис для работы с currencyApi
             </summary>
         </member>
+        <member name="T:PublicClientApi.CurrencyServiceReflection">
+            <summary>Holder for reflection information generated from Protos/CurrencyService.proto</summary>
+        </member>
+        <member name="P:PublicClientApi.CurrencyServiceReflection.Descriptor">
+            <summary>File descriptor for Protos/CurrencyService.proto</summary>
+        </member>
+        <member name="T:PublicClientApi.CurrencyRequest">
+            <summary>
+            The request message containing the user's name.
+            </summary>
+        </member>
+        <member name="F:PublicClientApi.CurrencyRequest.CurrencyCodeFieldNumber">
+            <summary>Field number for the "currencyCode" field.</summary>
+        </member>
+        <member name="F:PublicClientApi.CurrencyOnDateRequest.CurrencyCodeFieldNumber">
+            <summary>Field number for the "currencyCode" field.</summary>
+        </member>
+        <member name="F:PublicClientApi.CurrencyOnDateRequest.DateFieldNumber">
+            <summary>Field number for the "date" field.</summary>
+        </member>
+        <member name="T:PublicClientApi.CurrencyResponse">
+            <summary>
+            The response message containing the greetings.
+            </summary>
+        </member>
+        <member name="F:PublicClientApi.CurrencyResponse.CodeFieldNumber">
+            <summary>Field number for the "code" field.</summary>
+        </member>
+        <member name="F:PublicClientApi.CurrencyResponse.ValueFieldNumber">
+            <summary>Field number for the "value" field.</summary>
+        </member>
+        <member name="F:PublicClientApi.ApiSettingsResponse.BaseCodeFieldNumber">
+            <summary>Field number for the "baseCode" field.</summary>
+        </member>
+        <member name="F:PublicClientApi.ApiSettingsResponse.LimitFieldNumber">
+            <summary>Field number for the "limit" field.</summary>
+        </member>
+        <member name="T:PublicClientApi.CurrrncyGrpsService">
+            <summary>
+            The greeting service definition.
+            </summary>
+        </member>
+        <member name="P:PublicClientApi.CurrrncyGrpsService.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient">
+            <summary>Client for CurrrncyGrpsService</summary>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for CurrrncyGrpsService</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for CurrrncyGrpsService that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.GetCurrency(PublicClientApi.CurrencyRequest,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Sends a greeting
+            </summary>
+            <param name="request">The request to send to the server.</param>
+            <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+            <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+            <param name="cancellationToken">An optional token for canceling the call.</param>
+            <returns>The response received from the server.</returns>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.GetCurrency(PublicClientApi.CurrencyRequest,Grpc.Core.CallOptions)">
+            <summary>
+            Sends a greeting
+            </summary>
+            <param name="request">The request to send to the server.</param>
+            <param name="options">The options for the call.</param>
+            <returns>The response received from the server.</returns>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.GetCurrencyAsync(PublicClientApi.CurrencyRequest,Grpc.Core.Metadata,System.Nullable{System.DateTime},System.Threading.CancellationToken)">
+            <summary>
+            Sends a greeting
+            </summary>
+            <param name="request">The request to send to the server.</param>
+            <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+            <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+            <param name="cancellationToken">An optional token for canceling the call.</param>
+            <returns>The call object.</returns>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.GetCurrencyAsync(PublicClientApi.CurrencyRequest,Grpc.Core.CallOptions)">
+            <summary>
+            Sends a greeting
+            </summary>
+            <param name="request">The request to send to the server.</param>
+            <param name="options">The options for the call.</param>
+            <returns>The call object.</returns>
+        </member>
+        <member name="M:PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
     </members>
 </doc>

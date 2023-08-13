@@ -8,9 +8,9 @@ using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
 using InternalApi.Data;
 using Microsoft.OpenApi.Models;
 using PublicApi.Contracts;
+using PublicClientApi;
 using Serilog;
 using System.Text.Json.Serialization;
-
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 
@@ -32,9 +32,21 @@ public class Startup
         });
 
         //Добавление сервисов
+        services.AddScoped<CurrencyRateGrpcClientService>();
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
         services.AddHttpClient<IHttpCurrencyRepository, HttpCurrencyRepository>()
-        //services.AddHttpClient<ICurrencyRateService, CurrencyRateService>()
+            .AddAuditHandler(
+            audit => audit
+                .IncludeRequestBody()
+                .IncludeRequestHeaders()
+                .IncludeResponseBody()
+                .IncludeResponseHeaders()
+                .IncludeContentHeaders());
+
+        services.AddGrpcClient<CurrrncyGrpsService.CurrrncyGrpsServiceClient>(o =>
+        {
+            o.Address = new Uri(_configuration.GetValue<string>("gRPCServive"));
+        })
             .AddAuditHandler(
             audit => audit
                 .IncludeRequestBody()

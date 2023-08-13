@@ -1,5 +1,6 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
@@ -12,9 +13,11 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
     public class CurrencyController : ControllerBase
     {
         private readonly ICurrencyRateService _currencyRateService;
-        public CurrencyController(ICurrencyRateService currencyRateService)
+        private readonly CurrencyRateGrpcClientService _currencyRateGrpcClientService;
+        public CurrencyController(ICurrencyRateService currencyRateService, CurrencyRateGrpcClientService currencyRateGrpsClientService)
         {
             _currencyRateService = currencyRateService;
+            _currencyRateGrpcClientService = currencyRateGrpsClientService;
         }
 
         /// <summary>
@@ -32,7 +35,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         public async Task<IActionResult> Currency()
         {
             var apiResponse = await _currencyRateService.GetCurrencyAsync();
-
+            
             return Ok(apiResponse);
         }
 
@@ -56,7 +59,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         [Route("currency/{currencyCode}")]
         public async Task<IActionResult> Currency(string currencyCode)
         {
-            var apiResponse = await _currencyRateService.GetCurrencyAsync(currencyCode);
+            var apiResponse = await _currencyRateGrpcClientService.GetCurrency(currencyCode);
 
             return Ok(apiResponse);
         }
@@ -85,7 +88,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         [Route("currency/{currencyCode}/{date}")]
         public async Task<IActionResult> Currency(string currencyCode, DateTime date)
         {
-            var apiResponse = await _currencyRateService.GetCurrencyAsync(currencyCode, date);
+            var apiResponse = await _currencyRateGrpcClientService.GetCurrencyOnDate(currencyCode, date);
 
             return Ok(apiResponse);
         }
@@ -107,7 +110,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         [Route("settings")]
         public async Task<IActionResult> Settings()
         {
-            var apiResponse = await _currencyRateService.GetCurrencySettingsAsync();
+            var apiResponse = await _currencyRateGrpcClientService.GetApiSettings();
 
             return Ok(apiResponse);
         }

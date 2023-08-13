@@ -11,11 +11,22 @@
         <NoWarm>$(NoWarm);1591</NoWarm>
     </PropertyGroup>
 
-    <ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="Protos\CurrencyService.proto" GrpcServices="Client" />
+	</ItemGroup>
+
+	<ItemGroup>
         <PackageReference Include="Audit.HttpClient" Version="21.0.3" />
         <PackageReference Include="Audit.NET.Serilog" Version="21.0.3" />
+        <PackageReference Include="Google.Protobuf" Version="3.24.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.55.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.55.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.57.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Serilog" Version="3.0.1" />
         <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
