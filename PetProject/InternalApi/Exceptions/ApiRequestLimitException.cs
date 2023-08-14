@@ -1,4 +1,4 @@
-﻿namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Exceptions
+﻿namespace InternalApi.Exceptions
 {
     public class ApiRequestLimitException : Exception
     {

@@ -1,8 +1,8 @@
-﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Exceptions;
+﻿using InternalApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Filter
+namespace InternalApi.Filter
 {
     public class ApiExceptionFilter : Attribute, IExceptionFilter
     {

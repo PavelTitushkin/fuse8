@@ -1,12 +1,10 @@
-﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Exceptions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
+﻿using InternalApi.Exceptions;
 using InternalApi.Contracts;
 using InternalApi.Models.ModelResponse;
 using Microsoft.Extensions.Options;
+using InternalApi.Models.ModelsConfig;
 
-namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
+namespace InternalApi.Services
 {
     /// <summary>
     /// Сервис для работы с currencyApi
@@ -22,18 +20,19 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
             _currencyRepository = currencyRepository;
         }
 
+        //Убрать else
         public async Task<Currency> GetCurrencyAsync()
         {
             if (await IsCurrencyLimitExceededAsync())
                 throw new ApiRequestLimitException("Превышено количество запросов.");
 
-            var round = AppSettings.Round;
-            var defaultCurrencyCode = AppSettings.Default;
             var dataApiContent = await _currencyRepository.GetCurrencyRateAsync();
-            var currency = new Currency();
-            var data = dataApiContent.Data[defaultCurrencyCode];
-            currency.Code = data.Code;
-            currency.Value = Math.Round(data.Value, round);
+            var data = dataApiContent.Data[AppSettings.Default];
+            var currency = new Currency
+            {
+                Code = data.Code,
+                Value = Math.Round(data.Value, AppSettings.Round)
+            };
 
             return currency;
         }
@@ -41,18 +40,18 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         public async Task<Currency> GetCurrencyAsync(string currencyCode)
         {
             if (await IsCurrencyLimitExceededAsync())
-                throw new ApiRequestLimitException("Превышено количество запросов.");
-            else
             {
-                var dataApiContent = await _currencyRepository.GetCurrencyRateAsync(currencyCode);
-                var currency = new Currency();
-                var round = AppSettings.Round;
-                var data = dataApiContent.Data[currencyCode];
-                currency.Code = data.Code;
-                currency.Value = Math.Round(data.Value, round);
-
-                return currency;
+                throw new ApiRequestLimitException("Превышено количество запросов.");
             }
+
+            var dataApiContent = await _currencyRepository.GetCurrencyRateAsync(currencyCode);
+            var currency = new Currency();
+            var round = AppSettings.Round;
+            var data = dataApiContent.Data[currencyCode];
+            currency.Code = data.Code;
+            currency.Value = Math.Round(data.Value, round);
+
+            return currency;
         }
 
         public async Task<CurrencyWithDate> GetCurrencyAsync(string currencyCode, DateTime date)
@@ -74,17 +73,17 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         public async Task<CurrencySettings> GetCurrencySettingsAsync()
         {
             var dataApiContent = await _currencyRepository.GetCurrencySettingsAsync();
-
-            var currencySettings = new CurrencySettings();
             var defaultCurrencyCode = AppSettings.Default;
             var baseCurrencyCode = AppSettings.Base;
             var round = AppSettings.Round;
-
-            currencySettings.DefaultCurrency = defaultCurrencyCode;
-            currencySettings.BaseCurrency = baseCurrencyCode;
-            currencySettings.RequestLimit = dataApiContent.Quotas.Month.Total;
-            currencySettings.RequestCount = dataApiContent.Quotas.Month.Used;
-            currencySettings.CurrencyRoundCount = round;
+            var currencySettings = new CurrencySettings
+            {
+                DefaultCurrency = defaultCurrencyCode,
+                BaseCurrency = baseCurrencyCode,
+                RequestLimit = dataApiContent.Quotas.Month.Total,
+                RequestCount = dataApiContent.Quotas.Month.Used,
+                CurrencyRoundCount = round
+            };
 
             return currencySettings;
         }
@@ -98,6 +97,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 
         public async Task<Currency[]> GetAllCurrentCurrenciesAsync(string baseCurrency, CancellationToken cancellationToken)
         {
+            ///TODO вынести в метод
             if (cancellationToken.IsCancellationRequested)
                 throw new OperationCanceledException(cancellationToken);
             if (await IsCurrencyLimitExceededAsync())

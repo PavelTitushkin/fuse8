@@ -1,4 +1,4 @@
-﻿namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse
+﻿namespace InternalApi.Models.ModelResponse
 {
     public class InternalApiSettings
     {

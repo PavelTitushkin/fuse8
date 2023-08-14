@@ -1,6 +1,7 @@
-﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
+﻿using InternalApi.Contracts;
+using InternalApi.Models.ModelDTO;
+using InternalApi.Models.ModelResponse;
+using InternalApi.Models.ModelsConfig;
 using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Text.Json;
@@ -9,15 +10,61 @@ namespace InternalApi.Data
 {
     public class CachedCurrencyRepository : ICachedCurrencyRepository
     {
+        private readonly ICurrencyAPI _currencyAPI;
+
         public AppSettings AppSettings { get; }
 
-        public CachedCurrencyRepository(IOptions<AppSettings> options)
+
+        public CachedCurrencyRepository(IOptions<AppSettings> options, ICurrencyAPI currencyAPI)
         {
             AppSettings = options.Value;
+            _currencyAPI = currencyAPI;
         }
 
+        public async Task<Currency[]> GetCurrentCurrenciesAsync(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+
+            var cachedCurrencies = await GetCachedCurrencies(cancellationToken);
+            if (cachedCurrencies == null)
+            {
+                var currency = AppSettings.Base;
+                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(currency, cancellationToken);
+                await WriteCurrenciesToCacheFileAsync(currencies, cancellationToken);
+
+                return currencies;
+            }
+
+            return cachedCurrencies;
+        }
+
+        public async Task<Currency[]> GetCurrenciesOnDateAsync(DateOnly date, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+
+            var cachedCurrencies = await GetCachedCurrenciesOnDate(date, cancellationToken);
+            if (cachedCurrencies == null)
+            {
+                var currency = AppSettings.Base;
+                var currenciesOnDate = await _currencyAPI.GetAllCurrenciesOnDateAsync(currency, date, cancellationToken);
+                var currencies = currenciesOnDate.Currencies;
+                await WriteCurrenciesOnDateToCacheFileAsync(currencies, date, cancellationToken);
+
+                return currencies;
+            }
+
+            return cachedCurrencies;
+        }
+
+
         //Запись Currency[] в кэш-файл
-        public async Task WriteCurrenciesToCacheFileAsync(Currency[] currencies, CancellationToken cancellationToken)
+        private async Task WriteCurrenciesToCacheFileAsync(Currency[] currencies, CancellationToken cancellationToken)
         {
             var path = Path.Combine(AppSettings.PathFile, DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm") + ".json");
             await using FileStream createStream = File.Create(path);
@@ -30,7 +77,7 @@ namespace InternalApi.Data
         }
 
         //Запись Currency[] в кэш-файл
-        public async Task WriteCurrenciesOnDateToCacheFileAsync(Currency[] currencies, DateOnly date, CancellationToken cancellationToken)
+        private async Task WriteCurrenciesOnDateToCacheFileAsync(Currency[] currencies, DateOnly date, CancellationToken cancellationToken)
         {
             var path = Path.Combine(AppSettings.PathFile, date.ToString("yyyy-MM-dd-HH-mm") + ".json");
             await using FileStream createStream = File.Create(path);
@@ -42,19 +89,19 @@ namespace InternalApi.Data
             await createStream.DisposeAsync();
         }
 
-        //Получени Currency из кэш-файла
-        public async Task<Currency[]> GetCurrencyFromCacheFile(string cacheFile, CancellationToken cancellationToken)
+        //Получение Currency из кэш-файла
+        private async Task<Currency[]> GetCurrencyFromCacheFile(string cacheFile, CancellationToken cancellationToken)
         {
             var pathFile = AppSettings.PathFile;
             var filePathJson = Path.Combine(pathFile, $"{cacheFile}.json");
             var currensiesText = await File.ReadAllTextAsync(filePathJson, cancellationToken);
-            var currensies = JsonSerializer.Deserialize<Currency[]>(currensiesText);
+            var currencies = JsonSerializer.Deserialize<Currency[]>(currensiesText);
 
-            return currensies;
+            return currencies;
         }
 
         //Поиск кэш-файла
-        public string FindCacheFile()
+        private async Task<Currency[]> GetCachedCurrencies(CancellationToken cancellationToken)
         {
             var pathFile = AppSettings.PathFile;
             var dateNow = DateTime.UtcNow;
@@ -69,15 +116,17 @@ namespace InternalApi.Data
                 cacheDictionary[fileName] = (dateNow - fileNameToDate).TotalHours;
             }
 
-            return cacheDictionary.OrderBy(x => x.Value).FirstOrDefault(x => x.Value < cacheLifetime).Key;
+            var targetFile = cacheDictionary.OrderBy(x => x.Value).FirstOrDefault(x => x.Value < cacheLifetime).Key;
+
+            return targetFile != null ?  await GetCurrencyFromCacheFile(targetFile, cancellationToken) : null;
         }
 
         //поиск кэш-файла по дате
-        public string FindCacheFileOnDate(DateOnly date)
+        private async Task<Currency[]> GetCachedCurrenciesOnDate(DateOnly date, CancellationToken cancellationToken)
         {
             var pathFile = AppSettings.PathFile;
             var search = ".json";
-            string cacheFile = null;
+            string cacheFile;
             var file = Directory.EnumerateFiles(pathFile, "*.json");
             foreach (var item in file)
             {
@@ -85,117 +134,11 @@ namespace InternalApi.Data
                 var cacheFileToDate = DateTime.ParseExact(cacheFile, "yyyy-MM-dd-HH-mm", CultureInfo.InvariantCulture);
                 if (cacheFileToDate.ToShortDateString() == date.ToShortDateString())
                 {
-                    return cacheFile;
+                    return await GetCurrencyFromCacheFile(cacheFile, cancellationToken);
                 }
             }
 
-            return cacheFile;
+            return null;
         }
-        #region
-        //private readonly ICurrencyRepository _currencyRepository;
-        //public AppSettings AppSettings { get; }
-
-        //public CachedCurrencyRepository(IOptions<AppSettings> options, ICurrencyRepository currencyRepository)
-        //{
-        //    AppSettings = options.Value;
-        //    _currencyRepository = currencyRepository;
-        //}
-
-        //public async Task<CurrencyRateResponse> GetCurrencyOnDateAsync(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
-        //{
-        //    if (cancellationToken.IsCancellationRequested)
-        //    {
-        //        throw new OperationCanceledException(cancellationToken);
-        //    }
-
-        //    var pathFile = AppSettings.PathFile;
-        //    var cacheFile = FindCacheFileOnDate(pathFile, date);
-
-        //    return cacheFile != null ? await GetCurrencyFromCacheFile(currencyType, pathFile, cacheFile, cancellationToken) :
-        //        await WriteCurrenciesInCacheFileAndGetCurrencyFromApiAsync(currencyType, cancellationToken);
-        //}
-
-        //public async Task<CurrencyRateResponse> GetCurrentCurrencyAsync(CurrencyType currencyType, CancellationToken cancellationToken)
-        //{
-        //    if (cancellationToken.IsCancellationRequested)
-        //        throw new OperationCanceledException(cancellationToken);
-
-        //    var pathFile = AppSettings.PathFile;
-        //    var cacheFile = FindCacheFile(pathFile);
-        //    if (cacheFile != null)
-        //        return await GetCurrencyFromCacheFile(currencyType, pathFile, cacheFile, cancellationToken);
-        //    else
-        //        return await WriteCurrenciesInCacheFileAndGetCurrencyFromApiAsync(currencyType, cancellationToken);
-        //}
-
-        ////Запись Currency[] в кэш-файл
-        //private async Task<CurrencyRateResponse> WriteCurrenciesInCacheFileAndGetCurrencyFromApiAsync(CurrencyType currencyType, CancellationToken cancellationToken)
-        //{
-        //    var baseValue = AppSettings.Base;
-
-        //    var currencyResponse = await _currencyRepository.GetCurrenciesRateAsync(baseValue, cancellationToken);
-
-        //    //var currencies = await _currencyRepository.GetAllCurrentCurrenciesAsync(baseValue, cancellationToken);
-        //    var path = Path.Combine(AppSettings.PathFile, DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm") + ".json");
-        //    await using FileStream createStream = File.Create(path);
-        //    await JsonSerializer.SerializeAsync(createStream, currencyResponse);
-        //    await createStream.DisposeAsync();
-
-        //    //
-
-        //    return currencyResponse;
-        //}
-
-        ////получени Currency из кэш-файла
-        //private async Task<CurrencyRateResponse> GetCurrencyFromCacheFile(CurrencyType currencyType, string pathFile, string cacheFile, CancellationToken cancellationToken)
-        //{
-        //    var filePathJson = Path.Combine(pathFile, $"{cacheFile}.json");
-        //    var currensiesText = await File.ReadAllTextAsync(filePathJson, cancellationToken);
-        //    var currensies = JsonSerializer.Deserialize<CurrencyRateResponse>(currensiesText);
-        //    //var currency = currensies.FirstOrDefault(x => x.Code == currencyType.ToString().ToUpper());
-
-        //    //var dto = new CurrencyDTO()
-        //    //{
-        //    //    CurrencyType = currencyType,
-        //    //    Value = currency.Value
-        //    //};
-        //    return currensies;
-        //}
-
-        ////поиск кэш-файла
-        //private string FindCacheFile(string pathFile)
-        //{
-        //    var dateNow = DateTime.UtcNow;
-        //    var search = ".json";
-        //    var cacheLifetime = AppSettings.CacheLifetime;
-        //    var file = Directory.EnumerateFiles(pathFile, "*.json");
-        //    var cacheDictionary = new Dictionary<string, double>();
-        //    foreach (var item in file)
-        //    {
-        //        var fileName = item.Substring(pathFile.Length + 1, item.Length - pathFile.Length - 1 - search.Length);
-        //        var fileNameToDate = DateTime.ParseExact(fileName, "yyyy-MM-dd-HH-mm", CultureInfo.InvariantCulture);
-        //        cacheDictionary[fileName] = (dateNow - fileNameToDate).TotalHours;
-        //    }
-
-        //    return cacheDictionary.OrderBy(x => x.Value).FirstOrDefault(x => x.Value < cacheLifetime).Key;
-        //}
-
-        ////поиск кэш-файла по дате
-        //private string FindCacheFileOnDate(string pathFile, DateOnly date)
-        //{
-        //    var search = ".json";
-        //    string fileName = null;
-        //    var file = Directory.EnumerateFiles(pathFile, "*.json");
-        //    foreach (var item in file)
-        //    {
-        //        fileName = item.Substring(pathFile.Length + 1, item.Length - pathFile.Length - 1 - search.Length);
-        //        var fileNameToDate = DateTime.ParseExact(fileName, "yyyy-MM-dd-HH-mm", CultureInfo.InvariantCulture);
-        //        if (fileNameToDate.ToShortDateString() == date.ToShortDateString())
-        //            return fileName;
-        //    }
-
-        //    return fileName;
-        //}
-        #endregion
     }
 }

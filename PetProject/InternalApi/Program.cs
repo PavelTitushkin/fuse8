@@ -1,14 +1,11 @@
 using Audit.Core;
 using Audit.Http;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Filter;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Middleware;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Services;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
 using InternalApi.Contracts;
 using InternalApi.Data;
+using InternalApi.Filter;
+using InternalApi.Middleware;
+using InternalApi.Models.ModelsConfig;
+using InternalApi.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -45,9 +42,14 @@ namespace InternalApi
             //Add Auto-mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            //ICurrencyAPI
+            //builder.Services.???
+
+            builder.Services.AddScoped<ICurrencyAPI, CurrencyRateService>();
             builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
-            builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyAPIService>();
             builder.Services.AddScoped<ICachedCurrencyRepository, CachedCurrencyRepository>();
+            builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyAPI>();
+
             builder.Services.AddHttpClient<ICurrencyRepository, HttpCurrencyRepository>()
                 .AddAuditHandler(
                 audit => audit

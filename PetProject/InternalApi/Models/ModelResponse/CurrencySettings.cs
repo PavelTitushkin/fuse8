@@ -1,4 +1,4 @@
-﻿namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse
+﻿namespace InternalApi.Models.ModelResponse
 {
     /// <summary>
     /// Класс для работы с ответом currencyApi, содержащий текущие настройки приложения

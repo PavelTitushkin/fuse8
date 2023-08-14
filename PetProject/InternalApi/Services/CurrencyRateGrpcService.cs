@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
 using Grpc.Core;
-using InternalApi;
 using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
 
-namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
+namespace InternalApi.Services
 {
     public class CurrencyRateGrpcService : CurrrncyGrpsService.CurrrncyGrpsServiceBase
     {
@@ -24,9 +22,8 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
         {
             Enum.TryParse(currency.CurrencyCode.ToUpper(), out CurrencyType currencyType);
             var currencies = await _cachedCurrencyAPI.GetCurrentCurrencyAsync(currencyType, context.CancellationToken);
-            var currencyResponse = _mapper.Map<CurrencyResponse>(currencies);
 
-            return currencyResponse;
+            return _mapper.Map<CurrencyResponse>(currencies);
         }
 
         public override async Task<CurrencyResponse> GetCurrencyOnDate(CurrencyOnDateRequest currencyOnDate, ServerCallContext context)

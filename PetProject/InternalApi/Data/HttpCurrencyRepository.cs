@@ -1,7 +1,7 @@
-﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Exceptions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
-using InternalApi.Contracts;
+﻿using InternalApi.Contracts;
+using InternalApi.Exceptions;
+using InternalApi.Models.ModelResponse;
+using InternalApi.Models.ModelsConfig;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 

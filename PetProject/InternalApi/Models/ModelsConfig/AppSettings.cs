@@ -1,4 +1,4 @@
-﻿namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig
+﻿namespace InternalApi.Models.ModelsConfig
 {
     public class AppSettings
     {

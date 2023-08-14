@@ -2,6 +2,9 @@
 
 namespace InternalApi.Contracts
 {
+    /// <summary>
+    /// Интерфейс для работы с CachedCurrencyAPI
+    /// </summary>
     public interface ICachedCurrencyAPI
     {
         /// <summary>

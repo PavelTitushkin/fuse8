@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using InternalApi;
 using InternalApi.Models.ModelDTO;
 
-namespace Fuse8_ByteMinds.SummerSchool.InternalApi.MappingProfiles
+namespace InternalApi.MappingProfiles
 {
     public class CurrencyProfile : Profile
     {

@@ -21,7 +21,7 @@
             <param name="cancellationToken">Токен отмены</param>
             <returns>Курс на дату</returns>
         </member>
-        <member name="M:InternalApi.Abstractions.ICurrencyAPI.GetAllCurrentCurrenciesAsync(System.String,System.Threading.CancellationToken)">
+        <member name="M:InternalApi.Contracts.ICurrencyAPI.GetAllCurrentCurrenciesAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             Получает текущий курс для всех валют
             </summary>
@@ -29,7 +29,7 @@
             <param name="cancellationToken">Токен отмены</param>
             <returns>Список курсов валют</returns>
         </member>
-        <member name="M:InternalApi.Abstractions.ICurrencyAPI.GetAllCurrenciesOnDateAsync(System.String,System.DateOnly,System.Threading.CancellationToken)">
+        <member name="M:InternalApi.Contracts.ICurrencyAPI.GetAllCurrenciesOnDateAsync(System.String,System.DateOnly,System.Threading.CancellationToken)">
             <summary>
             Получает курс для всех валют, актуальный на <paramref name="date"/>
             </summary>
@@ -38,12 +38,157 @@
             <param name="cancellationToken">Токен отмены</param>
             <returns>Список курсов валют на дату</returns>
         </member>
+        <member name="T:InternalApi.Controllers.CurrencyController">
+            <summary>
+            Методы получения курсов валют
+            </summary>
+        </member>
+        <member name="M:InternalApi.Controllers.CurrencyController.GetCurrency(InternalApi.Models.ModelDTO.CurrencyType,System.Threading.CancellationToken)">
+             <summary>
+             Метод получения курса валюты по умолчанию.
+             </summary>
+             <returns>
+             Метод возвращает JSON вида
+                    {
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }
+             </returns>
+        </member>
+        <member name="M:InternalApi.Controllers.CurrencyController.GetCurrencyOnDate(InternalApi.Models.ModelDTO.CurrencyType,System.DateOnly,System.Threading.CancellationToken)">
+             <summary>
+             Метод получения текущего курс валюты, переданного в качестве параметра
+             </summary>
+             <param name="currencyCode">
+             Код валюты относительно которого будет выведен курс.
+             </param>
+             <returns>
+             Метод возвращает JSON вида
+                    {
+              "code": "RUB", // код валюты
+              "value": 90.50 // текущий курс относительно доллара
+            }
+             </returns>
+             <exception cref="!:ApiRequestLimitException">
+             Выбрасывается исключение если все доступные запросы исчерпаны.
+             </exception>
+        </member>
         <member name="T:InternalApi.Models.ModelDTO.CurrencyDTO">
             <summary>
             Курс валюты
             </summary>
             <param name="CurrencyType">Валюта</param>
             <param name="Value">Значение курса</param>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.Currency">
+            <summary>
+            Класс курса валют 
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.Currency.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.Currency.Value">
+            <summary>
+            Значение валюты
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.CurrencyRateResponse">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.Meta">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.Meta.LastUpdatedAt">
+            <summary>
+            Дата курса валют
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.CodeValue">
+            <summary>
+            Класс для работы с ответом currencyApi
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.CodeValue.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.CodeValue.Value">
+            <summary>
+            значение валюты
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.CurrencySettings">
+            <summary>
+            Класс для работы с ответом currencyApi, содержащий текущие настройки приложения
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.CurrencyWithDate">
+            <summary>
+            Класс курса валют 
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.CurrencyWithDate.Date">
+            <summary>
+            Дата курса валют
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.CurrencyWithDate.Code">
+            <summary>
+            Код валюты
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.CurrencyWithDate.Value">
+            <summary>
+            Значение валюты
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.SettingsResponse">
+            <summary>
+            Класс для работы с ответом currencyApi 
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.SettingsResponse.AccountId">
+            <summary>
+            Аккаунт id
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.Quotas">
+            <summary>
+            Лимит запросов
+            </summary>
+        </member>
+        <member name="T:InternalApi.Models.ModelResponse.Month">
+            <summary>
+            Лимит запрос в месяц
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.Month.Total">
+            <summary>
+            Общее количество запросов
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.Month.Used">
+            <summary>
+            Использованное количество запросов
+            </summary>
+        </member>
+        <member name="P:InternalApi.Models.ModelResponse.Month.Remaining">
+            <summary>
+            Оставшейся количество запросов
+            </summary>
+        </member>
+        <member name="T:InternalApi.Services.CurrencyRateService">
+            <summary>
+            Сервис для работы с currencyApi
+            </summary>
         </member>
         <member name="T:InternalApi.CurrencyServiceReflection">
             <summary>Holder for reflection information generated from Protos/CurrencyService.proto</summary>
@@ -110,151 +255,6 @@
             Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
             <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
             <param name="serviceImpl">An object implementing the server-side handling logic.</param>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.CurrencyController">
-            <summary>
-            Методы получения курсов валют
-            </summary>
-        </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.CurrencyController.GetCurrency(InternalApi.Models.ModelDTO.CurrencyType,System.Threading.CancellationToken)">
-             <summary>
-             Метод получения курса валюты по умолчанию.
-             </summary>
-             <returns>
-             Метод возвращает JSON вида
-                    {
-              "code": "RUB", // код валюты
-              "value": 90.50 // текущий курс относительно доллара
-            }
-             </returns>
-        </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.CurrencyController.GetCurrencyOnDate(InternalApi.Models.ModelDTO.CurrencyType,System.DateOnly,System.Threading.CancellationToken)">
-             <summary>
-             Метод получения текущего курс валюты, переданного в качестве параметра
-             </summary>
-             <param name="currencyCode">
-             Код валюты относительно которого будет выведен курс.
-             </param>
-             <returns>
-             Метод возвращает JSON вида
-                    {
-              "code": "RUB", // код валюты
-              "value": 90.50 // текущий курс относительно доллара
-            }
-             </returns>
-             <exception cref="!:ApiRequestLimitException">
-             Выбрасывается исключение если все доступные запросы исчерпаны.
-             </exception>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Currency">
-            <summary>
-            Класс курса валют 
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Currency.Code">
-            <summary>
-            Код валюты
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Currency.Value">
-            <summary>
-            Значение валюты
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CurrencyRateResponse">
-            <summary>
-            Класс для работы с ответом currencyApi
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Meta">
-            <summary>
-            Класс для работы с ответом currencyApi
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Meta.LastUpdatedAt">
-            <summary>
-            Дата курса валют
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CodeValue">
-            <summary>
-            Класс для работы с ответом currencyApi
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CodeValue.Code">
-            <summary>
-            Код валюты
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CodeValue.Value">
-            <summary>
-            значение валюты
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CurrencySettings">
-            <summary>
-            Класс для работы с ответом currencyApi, содержащий текущие настройки приложения
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CurrencyWithDate">
-            <summary>
-            Класс курса валют 
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CurrencyWithDate.Date">
-            <summary>
-            Дата курса валют
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CurrencyWithDate.Code">
-            <summary>
-            Код валюты
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.CurrencyWithDate.Value">
-            <summary>
-            Значение валюты
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.SettingsResponse">
-            <summary>
-            Класс для работы с ответом currencyApi 
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.SettingsResponse.AccountId">
-            <summary>
-            Аккаунт id
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Quotas">
-            <summary>
-            Лимит запросов
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Month">
-            <summary>
-            Лимит запрос в месяц
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Month.Total">
-            <summary>
-            Общее количество запросов
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Month.Used">
-            <summary>
-            Использованное количество запросов
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse.Month.Remaining">
-            <summary>
-            Оставшейся количество запросов
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateService">
-            <summary>
-            Сервис для работы с currencyApi
-            </summary>
         </member>
     </members>
 </doc>

@@ -1,10 +1,9 @@
-﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
-using InternalApi.Contracts;
+﻿using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
+using InternalApi.Models.ModelResponse;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers
+namespace InternalApi.Controllers
 {
     /// <summary>
     /// Методы получения курсов валют
