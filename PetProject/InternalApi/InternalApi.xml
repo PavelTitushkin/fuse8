@@ -4,6 +4,11 @@
         <name>InternalApi</name>
     </assembly>
     <members>
+        <member name="T:InternalApi.Contracts.ICachedCurrencyAPI">
+            <summary>
+            Интерфейс для работы с CachedCurrencyAPI
+            </summary>
+        </member>
         <member name="M:InternalApi.Contracts.ICachedCurrencyAPI.GetCurrentCurrencyAsync(InternalApi.Models.ModelDTO.CurrencyType,System.Threading.CancellationToken)">
             <summary>
             Получает текущий курс
@@ -21,6 +26,31 @@
             <param name="cancellationToken">Токен отмены</param>
             <returns>Курс на дату</returns>
         </member>
+        <member name="T:InternalApi.Contracts.ICachedCurrencyRepository">
+            <summary>
+            Интерфейс для работы CachedCurrencyRepository
+            </summary>
+        </member>
+        <member name="M:InternalApi.Contracts.ICachedCurrencyRepository.GetCurrentCurrenciesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Получает список валют
+            </summary>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Список валют</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICachedCurrencyRepository.GetCurrenciesOnDateAsync(System.DateOnly,System.Threading.CancellationToken)">
+            <summary>
+            Получает список валют относительно <paramref name="date"/>
+            </summary>
+            <param name="date">Дата, на которую нужно получить курс валют</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Список валют</returns>
+        </member>
+        <member name="T:InternalApi.Contracts.ICurrencyAPI">
+            <summary>
+            Интерфейс расширяющий ICurrencyRateService 
+            </summary>
+        </member>
         <member name="M:InternalApi.Contracts.ICurrencyAPI.GetAllCurrentCurrenciesAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             Получает текущий курс для всех валют
@@ -37,6 +67,87 @@
             <param name="date">Дата, на которую нужно получить курс валют</param>
             <param name="cancellationToken">Токен отмены</param>
             <returns>Список курсов валют на дату</returns>
+        </member>
+        <member name="T:InternalApi.Contracts.ICurrencyRateService">
+            <summary>
+            Интерфейс для работы с CurrencyRateService
+            </summary>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync">
+            <summary>
+            Получает курс валюты по умолчанию относительно базовой
+            </summary>
+            <returns>Курс валюты.</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync(System.String)">
+            <summary>
+            Получает курс <paramref name="currencyCode"/> относительно базовой. 
+            </summary>
+            <param name="currencyCode">Код валюты</param>
+            <returns>Курс валюты</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync(System.String,System.DateTime)">
+            <summary>
+            Получает курс <paramref name="currencyCode"/> относительно базовой на определённую <paramref name="date"/> 
+            </summary>
+            <param name="currencyCode">Код валюты</param>
+            <param name="date">Дата, на которую нужно получить курс валют</param>
+            <returns>Курс валюты на определённую дату</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencySettingsAsync">
+            <summary>
+            Получает настройки API
+            </summary>
+            <returns>Настройки API</returns>
+        </member>
+        <member name="T:InternalApi.Contracts.ICurrencyRepository">
+            <summary>
+            Интерфейс для работы с репозиториями
+            </summary>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRepository.GetCurrencyRateAsync">
+            <summary>
+            Получает курсы валют по умолчанию относительно базовой
+            </summary>
+            <returns>Ответ внешнего Api</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRepository.GetCurrencyRateAsync(System.String)">
+            <summary>
+            Получает курсы валют <paramref name="currencyCode"/> относительно базовой. 
+            </summary>
+            <param name="currencyCode">Код валюты</param>
+            <returns>Ответ внешнего Api</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRepository.GetCurrencyOnDateRateAsync(System.String,System.DateTime)">
+            <summary>
+            Получает курс валют <paramref name="currencyCode"/> относительно базовой на определённую <paramref name="date"/> 
+            </summary>
+            <param name="currencyCode">Код валюты</param>
+            <param name="date">Дата, на которую нужно получить курс валют</param>
+            <returns>Ответ внешнего Api</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRepository.GetCurrencySettingsAsync">
+            <summary>
+            Получает настройки внешнего Api
+            </summary>
+            <returns>Ответ внешнего Api</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRepository.GetCurrenciesRateAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Получает текущий курс для всех валют
+            </summary>
+            <param name="baseCurrency">Базовая валюта, относительно которой необходимо получить курс</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Ответ внешнего Api</returns>
+        </member>
+        <member name="M:InternalApi.Contracts.ICurrencyRepository.GetCurrenciesOnDateRateAsync(System.String,System.DateOnly,System.Threading.CancellationToken)">
+            <summary>
+            Получает курс для всех валют, актуальный на <paramref name="date"/>
+            </summary>
+            <param name="baseCurrency">Базовая валюта, относительно которой необходимо получить курс</param>
+            <param name="date">Дата, на которую нужно получить курс валют</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Ответ внешнего Api</returns>
         </member>
         <member name="T:InternalApi.Controllers.CurrencyController">
             <summary>

@@ -1,3 +1,4 @@
+using API_DataBase;
 using Audit.Core;
 using Audit.Http;
 using InternalApi.Contracts;
@@ -7,6 +8,7 @@ using InternalApi.Middleware;
 using InternalApi.Models.ModelsConfig;
 using InternalApi.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -28,6 +30,18 @@ namespace InternalApi
                         });
                 });
 
+            //Подключение DbContext
+            builder.Services.AddDbContext<CurrencyRateContext>(
+                optionsBuilder =>
+                {
+                    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("CurrencyRateDb"),
+                        sqlOptionsBuilder =>
+                        {
+                            sqlOptionsBuilder.EnableRetryOnFailure();
+                        })
+                    .UseSnakeCaseNamingConvention();
+                });
+
             //Добавление gRPC-сервиса
             builder.Services.AddGrpc();
 
@@ -42,9 +56,7 @@ namespace InternalApi
             //Add Auto-mapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //ICurrencyAPI
-            //builder.Services.???
-
+            //Добавление сервисов
             builder.Services.AddScoped<ICurrencyAPI, CurrencyRateService>();
             builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
             builder.Services.AddScoped<ICachedCurrencyRepository, CachedCurrencyRepository>();
