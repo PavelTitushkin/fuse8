@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <Folder Include="CacheFiles\" />
-    <Folder Include="Data\DataBase\" />
   </ItemGroup>
 
   <ItemGroup>

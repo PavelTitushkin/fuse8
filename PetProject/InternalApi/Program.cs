@@ -1,6 +1,7 @@
 using API_DataBase;
 using Audit.Core;
 using Audit.Http;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
 using InternalApi.Contracts;
 using InternalApi.Data;
 using InternalApi.Filter;

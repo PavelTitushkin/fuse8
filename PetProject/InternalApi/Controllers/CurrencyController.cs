@@ -39,6 +39,16 @@ namespace InternalApi.Controllers
             return Ok(apiResponse);
         }
 
+        [HttpGet]
+        [Route("currencyFromDb/{currencyType}")]
+        public async Task<IActionResult> GetCurrencyFromDb(CurrencyType currencyType, CancellationToken cancellationToken)
+        {
+            var apiResponse = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyType, cancellationToken);
+
+            return Ok(apiResponse);
+        }
+
+
         /// <summary>
         /// Метод получения текущего курс валюты, переданного в качестве параметра
         /// </summary>

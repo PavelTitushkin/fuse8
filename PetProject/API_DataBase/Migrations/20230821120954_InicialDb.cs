@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_DataBase.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTables : Migration
+    public partial class InicialDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,7 +22,7 @@ namespace API_DataBase.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    date = table.Column<DateOnly>(type: "date", nullable: false)
+                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,7 +30,7 @@ namespace API_DataBase.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "currencies",
+                name: "currency_entity",
                 schema: "cur",
                 columns: table => new
                 {
@@ -42,9 +42,9 @@ namespace API_DataBase.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_currencies", x => x.id);
+                    table.PrimaryKey("pk_currency_entity", x => x.id);
                     table.ForeignKey(
-                        name: "fk_currencies_currencies_list_currencies_id",
+                        name: "fk_currency_entity_currencies_list_currencies_id",
                         column: x => x.currencies_id,
                         principalSchema: "cur",
                         principalTable: "currencies_list",
@@ -52,9 +52,9 @@ namespace API_DataBase.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_currencies_currencies_id",
+                name: "ix_currency_entity_currencies_id",
                 schema: "cur",
-                table: "currencies",
+                table: "currency_entity",
                 column: "currencies_id");
         }
 
@@ -62,7 +62,7 @@ namespace API_DataBase.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "currencies",
+                name: "currency_entity",
                 schema: "cur");
 
             migrationBuilder.DropTable(

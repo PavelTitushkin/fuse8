@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_DataBase.Migrations
 {
     [DbContext(typeof(CurrencyRateContext))]
-    [Migration("20230819084226_AddTables")]
-    partial class AddTables
+    [Migration("20230821120954_InicialDb")]
+    partial class InicialDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,8 +35,8 @@ namespace API_DataBase.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("date");
 
                     b.HasKey("Id")
@@ -45,7 +45,7 @@ namespace API_DataBase.Migrations
                     b.ToTable("currencies_list", "cur");
                 });
 
-            modelBuilder.Entity("API_DataBase.Entities.Currency", b =>
+            modelBuilder.Entity("API_DataBase.Entities.CurrencyEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,20 +68,20 @@ namespace API_DataBase.Migrations
                         .HasColumnName("value");
 
                     b.HasKey("Id")
-                        .HasName("pk_currencies");
+                        .HasName("pk_currency_entity");
 
                     b.HasIndex("CurrenciesId")
-                        .HasDatabaseName("ix_currencies_currencies_id");
+                        .HasDatabaseName("ix_currency_entity_currencies_id");
 
-                    b.ToTable("currencies", "cur");
+                    b.ToTable("currency_entity", "cur");
                 });
 
-            modelBuilder.Entity("API_DataBase.Entities.Currency", b =>
+            modelBuilder.Entity("API_DataBase.Entities.CurrencyEntity", b =>
                 {
                     b.HasOne("API_DataBase.Entities.Currencies", null)
                         .WithMany("CurrenciesList")
                         .HasForeignKey("CurrenciesId")
-                        .HasConstraintName("fk_currencies_currencies_list_currencies_id");
+                        .HasConstraintName("fk_currency_entity_currencies_list_currencies_id");
                 });
 
             modelBuilder.Entity("API_DataBase.Entities.Currencies", b =>

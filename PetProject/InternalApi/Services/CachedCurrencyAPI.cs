@@ -1,4 +1,5 @@
-﻿using InternalApi.Contracts;
+﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
+using InternalApi.Contracts;
 using InternalApi.Exceptions;
 using InternalApi.Models.ModelDTO;
 using InternalApi.Models.ModelsConfig;
@@ -58,6 +59,34 @@ namespace InternalApi.Services
                 CurrencyType = currencyType,
                 Value = targetCurrency.Value
             };
+        }
+
+
+        public async Task<CurrencyDTO> GetCurrentCurrencyFromDbAsync(CurrencyType currencyType, CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+
+            var currencies = await _cachedCurrencyRepository.GetCurrentCurrenciesFromDbAsync(cancellationToken);
+            var targetCurrency = currencies.CurrenciesList.FirstOrDefault(x => x.Code == currencyType.ToString().ToUpper());
+
+            if (targetCurrency == null)
+            {
+                throw new CurrencyNotFoundException("Валюта не найдена.");
+            }
+
+            return new CurrencyDTO
+            {
+                CurrencyType = currencyType,
+                Value = targetCurrency.Value
+            };
+        }
+
+        public Task<CurrencyDTO> GetCurrencyOnDateFromDbAsync(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

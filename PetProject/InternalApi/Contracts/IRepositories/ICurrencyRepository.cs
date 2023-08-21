@@ -1,6 +1,6 @@
 ﻿using InternalApi.Models.ModelResponse;
 
-namespace InternalApi.Contracts
+namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories
 {
     /// <summary>
     /// Интерфейс для работы с репозиториями

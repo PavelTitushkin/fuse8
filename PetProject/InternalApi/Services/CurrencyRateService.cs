@@ -3,6 +3,7 @@ using InternalApi.Contracts;
 using InternalApi.Models.ModelResponse;
 using Microsoft.Extensions.Options;
 using InternalApi.Models.ModelsConfig;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
 
 namespace InternalApi.Services
 {

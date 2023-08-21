@@ -1,4 +1,4 @@
-﻿using InternalApi.Contracts;
+﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
 using InternalApi.Exceptions;
 using InternalApi.Models.ModelResponse;
 using InternalApi.Models.ModelsConfig;

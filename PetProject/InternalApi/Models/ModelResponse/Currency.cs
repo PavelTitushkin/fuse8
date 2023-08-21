@@ -8,7 +8,7 @@
         /// <summary>
         /// Код валюты
         /// </summary>
-        public string? Code { get; set; }
+        public string Code { get; set; }
         /// <summary>
         /// Значение валюты
         /// </summary>

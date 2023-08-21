@@ -3,7 +3,7 @@
     public class Currencies
     {
         public int Id { get; set; }
-        public DateOnly Date { get; set; }
-        public List<Currency> CurrenciesList { get; set; }
+        public DateTime Date { get; set; }
+        public List<CurrencyEntity> CurrenciesList { get; set; }
     }
 }

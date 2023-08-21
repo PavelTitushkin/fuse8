@@ -1,7 +1,13 @@
-﻿using InternalApi.Contracts;
+﻿using API_DataBase;
+using API_DataBase.Entities;
+using AutoMapper;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
+using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
 using InternalApi.Models.ModelResponse;
 using InternalApi.Models.ModelsConfig;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Text.Json;
@@ -11,14 +17,19 @@ namespace InternalApi.Data
     public class CachedCurrencyRepository : ICachedCurrencyRepository
     {
         private readonly ICurrencyAPI _currencyAPI;
-
+        private readonly CurrencyRateContext _currencyRateContext;
+        private readonly IMapper _mapper;
         public AppSettings AppSettings { get; }
 
 
-        public CachedCurrencyRepository(IOptions<AppSettings> options, ICurrencyAPI currencyAPI)
+        public CachedCurrencyRepository(IOptions<AppSettings> options, ICurrencyAPI currencyAPI,
+            CurrencyRateContext currencyRateContext,
+            IMapper mapper)
         {
             AppSettings = options.Value;
             _currencyAPI = currencyAPI;
+            _currencyRateContext = currencyRateContext;
+            _mapper = mapper;
         }
 
         public async Task<Currency[]> GetCurrentCurrenciesAsync(CancellationToken cancellationToken)
@@ -60,6 +71,47 @@ namespace InternalApi.Data
             }
 
             return cachedCurrencies;
+        }
+
+        public async Task<CurrenciesDTO> GetCurrentCurrenciesFromDbAsync(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+
+            var dateNow = DateTime.UtcNow;
+            var cachedCurrencies = _currencyRateContext.CurrenciesList
+                .Include(c => c.CurrenciesList)
+                .Where(x => (dateNow - x.Date).TotalHours < AppSettings.CacheLifetime)
+                .Select(currencies => _mapper.Map<CurrenciesDTO>(currencies))
+                .FirstOrDefault();
+
+            if (cachedCurrencies == null)
+            {
+                var currency = AppSettings.Base;
+                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(currency, cancellationToken);
+                var currenciesDto = new CurrenciesDTO
+                {
+                    Id = 0,
+                    Date = DateTime.UtcNow,
+                    CurrenciesList = currencies.ToList()
+                };
+
+                var currenciesToDb = _mapper.Map<Currencies>(currenciesDto);
+
+                await _currencyRateContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
+                await _currencyRateContext.SaveChangesAsync(cancellationToken);
+
+                return currenciesDto;
+            }
+
+            return cachedCurrencies;
+        }
+
+        public Task<Currency[]> GetCurrenciesOnDateFromDbAsync(DateOnly date, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -118,7 +170,7 @@ namespace InternalApi.Data
 
             var targetFile = cacheDictionary.OrderBy(x => x.Value).FirstOrDefault(x => x.Value < cacheLifetime).Key;
 
-            return targetFile != null ?  await GetCurrencyFromCacheFile(targetFile, cancellationToken) : null;
+            return targetFile != null ? await GetCurrencyFromCacheFile(targetFile, cancellationToken) : null;
         }
 
         //поиск кэш-файла по дате
@@ -140,5 +192,6 @@ namespace InternalApi.Data
 
             return null;
         }
+
     }
 }

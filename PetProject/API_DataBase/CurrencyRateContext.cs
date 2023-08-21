@@ -13,7 +13,7 @@ namespace API_DataBase
             modelBuilder.HasDefaultSchema("cur");
         }
 
-        public DbSet<Currency> Currencies { get; set; }
+        public DbSet<CurrencyEntity> CurrencyEntity { get; set; }
         public DbSet<Currencies> CurrenciesList { get; set; }
     }
 }

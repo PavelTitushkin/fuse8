@@ -1,6 +1,6 @@
-﻿namespace API_DataBase.Entities
+﻿namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO
 {
-    public class Currency
+    public class CurrencyFromDbDTO
     {
         public int Id { get; set; }
         public string Code { get; set; }
