@@ -1,10 +1,9 @@
-﻿using API_DataBase;
-using API_DataBase.Entities;
+﻿using DataStore.InternalApiDb;
+using DataStore.InternalApiDb.Entities;
 using AutoMapper;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
 using InternalApi.Contracts;
-using InternalApi.Models.ModelDTO;
 using InternalApi.Models.ModelResponse;
 using InternalApi.Models.ModelsConfig;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +16,13 @@ namespace InternalApi.Data
     public class CachedCurrencyRepository : ICachedCurrencyRepository
     {
         private readonly ICurrencyAPI _currencyAPI;
-        private readonly CurrencyRateContext _currencyRateContext;
+        private readonly InternalApiContext _currencyRateContext;
         private readonly IMapper _mapper;
         public AppSettings AppSettings { get; }
 
 
         public CachedCurrencyRepository(IOptions<AppSettings> options, ICurrencyAPI currencyAPI,
-            CurrencyRateContext currencyRateContext,
+            InternalApiContext currencyRateContext,
             IMapper mapper)
         {
             AppSettings = options.Value;
@@ -121,7 +120,7 @@ namespace InternalApi.Data
                 .Where(c => c.Date == dateTime)
                 .Select(currencies => _mapper.Map<CurrenciesDTO>(currencies))
                 .FirstOrDefaultAsync(cancellationToken);
-                
+
             if (cachedCurrencies == null)
             {
                 var currenciesOnDate = await _currencyAPI.GetAllCurrenciesOnDateAsync(AppSettings.Base, date, cancellationToken);

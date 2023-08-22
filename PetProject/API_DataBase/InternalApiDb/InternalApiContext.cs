@@ -1,11 +1,11 @@
-﻿using API_DataBase.Entities;
+﻿using DataStore.InternalApiDb.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_DataBase
+namespace DataStore.InternalApiDb
 {
-    public class CurrencyRateContext : DbContext
+    public class InternalApiContext : DbContext
     {
-        public CurrencyRateContext(DbContextOptions options) : base(options)
+        public InternalApiContext(DbContextOptions options) : base(options)
         {
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

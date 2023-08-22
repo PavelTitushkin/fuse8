@@ -1,4 +1,4 @@
-﻿namespace API_DataBase.Entities
+﻿namespace DataStore.InternalApiDb.Entities
 {
     public class Currencies
     {

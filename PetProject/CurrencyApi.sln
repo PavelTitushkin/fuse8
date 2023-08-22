@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InternalApi", "InternalApi\InternalApi.csproj", "{14857A9D-452B-493A-816D-9095F3F2A715}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API_DataBase", "API_DataBase\API_DataBase.csproj", "{4C5F286D-5E11-475A-A95E-719CF0EDF49E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStore", "API_DataBase\DataStore.csproj", "{4C5F286D-5E11-475A-A95E-719CF0EDF49E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

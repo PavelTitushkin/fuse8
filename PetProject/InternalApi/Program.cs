@@ -1,4 +1,4 @@
-using API_DataBase;
+using DataStore.InternalApiDb;
 using Audit.Core;
 using Audit.Http;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
@@ -10,6 +10,7 @@ using InternalApi.Models.ModelsConfig;
 using InternalApi.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -32,13 +33,14 @@ namespace InternalApi
                 });
 
             //Подключение DbContext
-            builder.Services.AddDbContext<CurrencyRateContext>(
+            builder.Services.AddDbContext<InternalApiContext>(
                 optionsBuilder =>
                 {
-                    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("CurrencyRateDb"),
+                    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("InternalApiDb"),
                         sqlOptionsBuilder =>
                         {
                             sqlOptionsBuilder.EnableRetryOnFailure();
+                            sqlOptionsBuilder.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "cur");
                         })
                     .UseSnakeCaseNamingConvention();
                 });

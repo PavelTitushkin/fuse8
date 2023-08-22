@@ -1,4 +1,4 @@
-﻿using API_DataBase.Entities;
+﻿using DataStore.InternalApiDb.Entities;
 using AutoMapper;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
 
