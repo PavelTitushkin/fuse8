@@ -74,6 +74,15 @@ namespace InternalApi.Controllers
             return Ok(apiResponse);
         }
 
+        [HttpGet]
+        [Route("currencyFromDb/{currencyType}/{date}")]
+        public async Task<IActionResult> GetCurrencyOnDateFromDb(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
+        {
+            var apiResponse = await _cachedCurrencyAPI.GetCurrencyOnDateFromDbAsync(currencyType, date, cancellationToken);
+
+            return Ok(apiResponse);
+        }
+
 
         ///// <summary>
         ///// Метод возвращает текущие настройки приложения.

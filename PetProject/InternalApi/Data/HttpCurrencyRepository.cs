@@ -128,7 +128,7 @@ namespace InternalApi.Data
                 var path = new Uri(_httpClient.BaseAddress + $"/historical?date={dateString}&base_currency={baseCurrency}");
                 AddDefaultRequestHeaders(_httpClient, apiKey);
 
-                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
                 apiResponse.EnsureSuccessStatusCode();
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
 
@@ -147,7 +147,7 @@ namespace InternalApi.Data
             }
         }
 
-        private void AddDefaultRequestHeaders(HttpClient httpClient, string apiKey)
+        private static void AddDefaultRequestHeaders(HttpClient httpClient, string apiKey)
         {
             if (httpClient.DefaultRequestHeaders.Contains("apikey") is false)
                 httpClient.DefaultRequestHeaders.Add("apikey", apiKey);

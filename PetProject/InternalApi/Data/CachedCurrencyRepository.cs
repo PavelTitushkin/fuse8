@@ -81,16 +81,15 @@ namespace InternalApi.Data
             }
 
             var dateNow = DateTime.UtcNow;
-            var cachedCurrencies = _currencyRateContext.CurrenciesList
+            var cachedCurrencies = await _currencyRateContext.CurrenciesList
                 .Include(c => c.CurrenciesList)
                 .Where(x => (dateNow - x.Date).TotalHours < AppSettings.CacheLifetime)
                 .Select(currencies => _mapper.Map<CurrenciesDTO>(currencies))
-                .FirstOrDefault();
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (cachedCurrencies == null)
             {
-                var currency = AppSettings.Base;
-                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(currency, cancellationToken);
+                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(AppSettings.Base, cancellationToken);
                 var currenciesDto = new CurrenciesDTO
                 {
                     Id = 0,
@@ -109,9 +108,41 @@ namespace InternalApi.Data
             return cachedCurrencies;
         }
 
-        public Task<Currency[]> GetCurrenciesOnDateFromDbAsync(DateOnly date, CancellationToken cancellationToken)
+        public async Task<CurrenciesDTO> GetCurrenciesOnDateFromDbAsync(DateOnly date, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+
+            var dateTime = date.ToDateTime(TimeOnly.MinValue).ToUniversalTime();
+            var cachedCurrencies = await _currencyRateContext.CurrenciesList
+                .Include(c => c.CurrenciesList)
+                .Where(c => c.Date == dateTime)
+                .Select(currencies => _mapper.Map<CurrenciesDTO>(currencies))
+                .FirstOrDefaultAsync(cancellationToken);
+                
+            if (cachedCurrencies == null)
+            {
+                var currenciesOnDate = await _currencyAPI.GetAllCurrenciesOnDateAsync(AppSettings.Base, date, cancellationToken);
+                var currencies = currenciesOnDate.Currencies;
+
+                var currenciesDto = new CurrenciesDTO
+                {
+                    Id = 0,
+                    Date = dateTime,
+                    CurrenciesList = currencies.ToList()
+                };
+
+                var currenciesToDb = _mapper.Map<Currencies>(currenciesDto);
+
+                await _currencyRateContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
+                await _currencyRateContext.SaveChangesAsync(cancellationToken);
+
+                return currenciesDto;
+            }
+
+            return cachedCurrencies;
         }
 
 

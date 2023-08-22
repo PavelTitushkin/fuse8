@@ -28,16 +28,13 @@ namespace InternalApi.Services
             var currencies = await _cachedCurrencyRepository.GetCurrentCurrenciesAsync(cancellationToken);
             var targetCurrency = currencies.FirstOrDefault(x => x.Code == currencyType.ToString().ToUpper());
 
-            if (targetCurrency == null)
-            {
-                throw new CurrencyNotFoundException("Валюта не найдена.");
-            }
-
-            return new CurrencyDTO
-            {
-                CurrencyType = currencyType,
-                Value = targetCurrency.Value
-            };
+            return targetCurrency == null
+                ? throw new CurrencyNotFoundException("Валюта не найдена.")
+                : new CurrencyDTO
+                {
+                    CurrencyType = currencyType,
+                    Value = targetCurrency.Value
+                };
         }
 
         public async Task<CurrencyDTO> GetCurrencyOnDateAsync(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
@@ -49,16 +46,14 @@ namespace InternalApi.Services
 
             var currencies = await _cachedCurrencyRepository.GetCurrenciesOnDateAsync(date, cancellationToken);
             var targetCurrency = currencies.FirstOrDefault(x => x.Code == currencyType.ToString().ToUpper());
-            if (targetCurrency == null)
-            {
-                throw new CurrencyNotFoundException("Валюта не найдена.");
-            }
 
-            return new CurrencyDTO
-            {
-                CurrencyType = currencyType,
-                Value = targetCurrency.Value
-            };
+            return targetCurrency == null
+                ? throw new CurrencyNotFoundException("Валюта не найдена.")
+                : new CurrencyDTO
+                {
+                    CurrencyType = currencyType,
+                    Value = targetCurrency.Value
+                };
         }
 
 
@@ -72,21 +67,32 @@ namespace InternalApi.Services
             var currencies = await _cachedCurrencyRepository.GetCurrentCurrenciesFromDbAsync(cancellationToken);
             var targetCurrency = currencies.CurrenciesList.FirstOrDefault(x => x.Code == currencyType.ToString().ToUpper());
 
-            if (targetCurrency == null)
-            {
-                throw new CurrencyNotFoundException("Валюта не найдена.");
-            }
-
-            return new CurrencyDTO
-            {
-                CurrencyType = currencyType,
-                Value = targetCurrency.Value
-            };
+            return targetCurrency == null
+                ? throw new CurrencyNotFoundException("Валюта не найдена.")
+                : new CurrencyDTO
+                {
+                    CurrencyType = currencyType,
+                    Value = targetCurrency.Value
+                };
         }
 
-        public Task<CurrencyDTO> GetCurrencyOnDateFromDbAsync(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
+        public async Task<CurrencyDTO> GetCurrencyOnDateFromDbAsync(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+
+            var currencies = await _cachedCurrencyRepository.GetCurrenciesOnDateFromDbAsync(date ,cancellationToken);
+            var targetCurrency = currencies.CurrenciesList.FirstOrDefault(x => x.Code == currencyType.ToString().ToUpper());
+
+            return targetCurrency == null
+                ? throw new CurrencyNotFoundException("Валюта не найдена.")
+                : new CurrencyDTO
+                {
+                    CurrencyType = currencyType,
+                    Value = targetCurrency.Value
+                };
         }
     }
 }
