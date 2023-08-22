@@ -36,7 +36,7 @@ namespace InternalApi
             builder.Services.AddDbContext<InternalApiContext>(
                 optionsBuilder =>
                 {
-                    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("InternalApiDb"),
+                    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("CurrencyRateDb"),
                         sqlOptionsBuilder =>
                         {
                             sqlOptionsBuilder.EnableRetryOnFailure();

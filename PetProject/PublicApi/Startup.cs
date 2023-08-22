@@ -1,11 +1,14 @@
 ﻿using Audit.Core;
 using Audit.Http;
+using DataStore.PublicApiDb;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
 using InternalApi.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
 using PublicApi.Contracts;
 using PublicClientApi;
@@ -42,6 +45,20 @@ public class Startup
                 .IncludeResponseBody()
                 .IncludeResponseHeaders()
                 .IncludeContentHeaders());
+
+        //Подключение DbContext
+        services.AddDbContext<PublicApiContext>(
+            optionsBuilder =>
+            {
+                optionsBuilder.UseNpgsql(_configuration.GetConnectionString("CurrencyRateDb"),
+                    sqlOptionsBuilder =>
+                    {
+                        sqlOptionsBuilder.EnableRetryOnFailure();
+                        sqlOptionsBuilder.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
+                    })
+                .UseSnakeCaseNamingConvention();
+            });
+
 
         services.AddGrpcClient<CurrrncyGrpsService.CurrrncyGrpsServiceClient>(o =>
         {

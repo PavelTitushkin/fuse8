@@ -16,7 +16,7 @@ namespace InternalApi.Data
     public class CachedCurrencyRepository : ICachedCurrencyRepository
     {
         private readonly ICurrencyAPI _currencyAPI;
-        private readonly InternalApiContext _currencyRateContext;
+        private readonly InternalApiContext _internalApiContext;
         private readonly IMapper _mapper;
         public AppSettings AppSettings { get; }
 
@@ -27,7 +27,7 @@ namespace InternalApi.Data
         {
             AppSettings = options.Value;
             _currencyAPI = currencyAPI;
-            _currencyRateContext = currencyRateContext;
+            _internalApiContext = currencyRateContext;
             _mapper = mapper;
         }
 
@@ -80,7 +80,7 @@ namespace InternalApi.Data
             }
 
             var dateNow = DateTime.UtcNow;
-            var cachedCurrencies = await _currencyRateContext.CurrenciesList
+            var cachedCurrencies = await _internalApiContext.CurrenciesList
                 .Include(c => c.CurrenciesList)
                 .Where(x => (dateNow - x.Date).TotalHours < AppSettings.CacheLifetime)
                 .Select(currencies => _mapper.Map<CurrenciesDTO>(currencies))
@@ -98,8 +98,8 @@ namespace InternalApi.Data
 
                 var currenciesToDb = _mapper.Map<Currencies>(currenciesDto);
 
-                await _currencyRateContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
-                await _currencyRateContext.SaveChangesAsync(cancellationToken);
+                await _internalApiContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
+                await _internalApiContext.SaveChangesAsync(cancellationToken);
 
                 return currenciesDto;
             }
@@ -115,7 +115,7 @@ namespace InternalApi.Data
             }
 
             var dateTime = date.ToDateTime(TimeOnly.MinValue).ToUniversalTime();
-            var cachedCurrencies = await _currencyRateContext.CurrenciesList
+            var cachedCurrencies = await _internalApiContext.CurrenciesList
                 .Include(c => c.CurrenciesList)
                 .Where(c => c.Date == dateTime)
                 .Select(currencies => _mapper.Map<CurrenciesDTO>(currencies))
@@ -135,8 +135,8 @@ namespace InternalApi.Data
 
                 var currenciesToDb = _mapper.Map<Currencies>(currenciesDto);
 
-                await _currencyRateContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
-                await _currencyRateContext.SaveChangesAsync(cancellationToken);
+                await _internalApiContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
+                await _internalApiContext.SaveChangesAsync(cancellationToken);
 
                 return currenciesDto;
             }

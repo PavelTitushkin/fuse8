@@ -5,7 +5,7 @@ namespace DataStore.InternalApiDb
 {
     public class InternalApiContext : DbContext
     {
-        public InternalApiContext(DbContextOptions options) : base(options)
+        public InternalApiContext(DbContextOptions<InternalApiContext> options) : base(options)
         {
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
