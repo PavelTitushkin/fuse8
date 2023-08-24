@@ -2,6 +2,7 @@
 using DataStore.PublicApiDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataStore.PublicApiDb.Migrations
 {
     [DbContext(typeof(PublicApiContext))]
-    partial class PublicApiContextModelSnapshot : ModelSnapshot
+    [Migration("20230824095050_AddConstraintToPublicApiSettings")]
+    partial class AddConstraintToPublicApiSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

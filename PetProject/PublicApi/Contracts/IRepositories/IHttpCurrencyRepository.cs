@@ -1,6 +1,6 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
 
-namespace PublicApi.Contracts
+namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories
 {
     public interface IHttpCurrencyRepository
     {

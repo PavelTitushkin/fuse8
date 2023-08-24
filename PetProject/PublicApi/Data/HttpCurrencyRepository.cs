@@ -1,8 +1,8 @@
-﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
+﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Microsoft.Extensions.Options;
-using PublicApi.Contracts;
 using System.Text.Json;
 
 namespace InternalApi.Data

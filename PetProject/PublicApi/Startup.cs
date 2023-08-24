@@ -2,6 +2,8 @@
 using Audit.Http;
 using DataStore.PublicApiDb;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Data;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
@@ -10,7 +12,6 @@ using InternalApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
-using PublicApi.Contracts;
 using PublicClientApi;
 using Serilog;
 using System.Text.Json.Serialization;
@@ -35,6 +36,7 @@ public class Startup
         });
 
         //Добавление сервисов
+        services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         services.AddScoped<CurrencyRateGrpcClientService>();
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
         services.AddHttpClient<IHttpCurrencyRepository, HttpCurrencyRepository>()

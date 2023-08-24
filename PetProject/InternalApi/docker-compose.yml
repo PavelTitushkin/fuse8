@@ -7,13 +7,11 @@ services:
     restart: unless-stopped
     environment:
         DATABASE_HOST: 127.0.0.1
-        POSTGRES_USER: User
+        POSTGRES_USER: Root
         POSTGRES_PASSWORD: 1234567890
         POSTGRES_DB: CurrencyRateDb
     ports:
         - "5432:5432"
-    volumes:
-        - /DockerData/postgres/data:/var/lib/postgresql/data  
 
   pgAdmin:
     container_name: pgadmin

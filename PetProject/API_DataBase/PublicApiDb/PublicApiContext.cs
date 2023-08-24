@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataStore.PublicApiDb.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataStore.PublicApiDb
 {
@@ -11,7 +12,9 @@ namespace DataStore.PublicApiDb
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("user");
+            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
 
+        public DbSet<PublicApiSettings> PublicApiSettings { get; set; }
     }
 }

@@ -114,6 +114,25 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
 
             return Ok(apiResponse);
         }
+
+        [HttpGet]
+        [Route("ChangeDefaultCurrency")]
+        public async Task<IActionResult> ChangeDefaultCurrency(string defaultCurrency, CancellationToken cancellationToken)
+        {
+            await _currencyRateService.ChangeDefaultCurrencyAsync(defaultCurrency, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("ChangeCurrencyRound")]
+        public async Task<IActionResult> ChangeCurrencyRound(int round, CancellationToken cancellationToken)
+        {
+            await _currencyRateService.ChangeCurrencyRoundAsync(round, cancellationToken);
+
+            return Ok();
+        }
+
     }
 }
 

@@ -8,5 +8,10 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions
         Task<Currency> GetCurrencyAsync(string currencyCode);
         Task<CurrencyWithDate> GetCurrencyAsync(string currencyCode, DateTime date);
         Task<CurrencySettings> GetCurrencySettingsAsync();
+
+        Task ChangeDefaultCurrencyAsync(string defaultCurrency, CancellationToken cancellationToken);
+        Task ChangeCurrencyRoundAsync(int round, CancellationToken cancellationToken);
+
+
     }
 }
