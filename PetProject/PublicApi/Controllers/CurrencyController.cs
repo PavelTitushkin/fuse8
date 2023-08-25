@@ -133,6 +133,50 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("GetFavoriteCurrency")]
+        public async Task<IActionResult> GetFavoriteCurrency(string currencyName, CancellationToken cancellationToken)
+        {
+            var apiResponse = await _currencyRateService.GetFavoriteCurrencyAsync(currencyName, cancellationToken);
+
+            return Ok(apiResponse);
+        }
+
+        [HttpGet]
+        [Route("GetAllFavoritesCurrencies")]
+        public async Task<IActionResult> GetAllFavoritesCurrencies(CancellationToken cancellationToken)
+        {
+            var apiResponse = await _currencyRateService.GetAllFavoritesCurrenciesAsync(cancellationToken);
+
+            return Ok(apiResponse);
+        }
+
+        [HttpPost]
+        [Route("AddNewFavoriteCurrency")]
+        public async Task<IActionResult> AddNewFavoriteCurrency(string currencyName, string currency, string currencyBase, CancellationToken cancellationToken)
+        {
+            await _currencyRateService.AddNewFavoriteCurrencyAsync(currencyName, currency, currencyBase, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("ChangeFavoriteCurrencyByName")]
+        public async Task<IActionResult> ChangeFavoriteCurrencyByName(string currencyName, string changedCurrencyName, string changedCurrency, string changedCurrencyBase, CancellationToken cancellationToken)
+        {
+            await _currencyRateService.ChangeFavoriteCurrencyByNameAsync(currencyName, changedCurrencyName, changedCurrency, changedCurrencyBase, cancellationToken);
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("DeleteFavoriteCurrencyByName")]
+        public async Task<IActionResult> DeleteFavoriteCurrencyByName(string currencyName, CancellationToken cancellationToken)
+        {
+            await _currencyRateService.DeleteFavoriteCurrencyByNameAsync(currencyName, cancellationToken);
+
+            return Ok();
+        }
     }
 }
 

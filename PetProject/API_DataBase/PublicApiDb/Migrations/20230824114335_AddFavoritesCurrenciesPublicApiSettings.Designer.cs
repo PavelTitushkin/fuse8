@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataStore.PublicApiDb.Migrations
 {
     [DbContext(typeof(PublicApiContext))]
-    [Migration("20230824105909_AddFavoritesCurrenciesPublicApiSettings")]
+    [Migration("20230824114335_AddFavoritesCurrenciesPublicApiSettings")]
     partial class AddFavoritesCurrenciesPublicApiSettings
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace DataStore.PublicApiDb.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DataStore.PublicApiDb.Entities.FavoritesCurrencies", b =>
+            modelBuilder.Entity("DataStore.PublicApiDb.Entities.FavoriteCurrency", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

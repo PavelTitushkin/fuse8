@@ -22,7 +22,7 @@ namespace DataStore.PublicApiDb.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DataStore.PublicApiDb.Entities.FavoritesCurrencies", b =>
+            modelBuilder.Entity("DataStore.PublicApiDb.Entities.FavoriteCurrency", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

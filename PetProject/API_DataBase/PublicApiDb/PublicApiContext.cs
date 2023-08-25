@@ -16,5 +16,6 @@ namespace DataStore.PublicApiDb
         }
 
         public DbSet<PublicApiSettings> PublicApiSettings { get; set; }
+        public DbSet<FavoriteCurrency> FavoritesCurrencies { get; set; }
     }
 }

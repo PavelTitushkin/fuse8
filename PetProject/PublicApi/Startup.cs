@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using PublicClientApi;
 using Serilog;
 using System.Text.Json.Serialization;
+using AutoMapper;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 
@@ -48,6 +49,9 @@ public class Startup
                 .IncludeResponseHeaders()
                 .IncludeContentHeaders());
 
+        //Add Auto-mapper
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
         //Подключение DbContext
         services.AddDbContext<PublicApiContext>(
             optionsBuilder =>
@@ -60,7 +64,6 @@ public class Startup
                     })
                 .UseSnakeCaseNamingConvention();
             });
-
 
         services.AddGrpcClient<CurrrncyGrpsService.CurrrncyGrpsServiceClient>(o =>
         {

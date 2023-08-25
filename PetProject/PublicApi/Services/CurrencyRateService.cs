@@ -1,6 +1,7 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Microsoft.Extensions.Options;
@@ -100,6 +101,49 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
             await _currencyRepository.ChangeCurrencyRoundAsync(round, cancellationToken);
         }
 
+        public async Task<FavoriteCurrencyDTO> GetFavoriteCurrencyAsync(string currencyName, CancellationToken cancellationToken)
+        {
+            var dto = await _currencyRepository.GetFavoriteCurrencyByNameAsync(currencyName, cancellationToken);
+
+            return dto != null ? dto : throw new ArgumentNullException(nameof(dto));
+        }
+
+        public async Task<List<FavoriteCurrencyDTO>> GetAllFavoritesCurrenciesAsync(CancellationToken cancellationToken)
+        {
+            var dto = await _currencyRepository.GetAllFavoritesCurrenciesAsync(cancellationToken);
+
+            return dto != null ? dto : throw new ArgumentNullException(nameof(dto));
+        }
+
+        public async Task AddNewFavoriteCurrencyAsync(string currencyName, string currency, string currencyBase, CancellationToken cancellationToken)
+        {
+            var dto = new FavoriteCurrencyDTO
+            {
+                Name = currencyName,
+                Currency = currency,
+                BaseCurrency = currencyBase
+            };
+
+            await _currencyRepository.AddNewFavoriteCurrencyAsync(dto, cancellationToken);
+        }
+
+        public async Task ChangeFavoriteCurrencyByNameAsync(string currencyName, string changedCurrencyName, string changedCurrency, string changedCurrencyBase, CancellationToken cancellationToken)
+        {
+            var entity = await _currencyRepository.GetFavoriteCurrencyByNameAsync(currencyName, cancellationToken);
+            if (entity != null)
+            {
+                entity.Name = changedCurrencyName;
+                entity.Currency = changedCurrency;
+                entity.BaseCurrency = changedCurrencyBase;
+
+                await _currencyRepository.ChangeFavoriteCurrencyByNameAsync(currencyName, entity, cancellationToken);
+            }
+        }
+
+        public async Task DeleteFavoriteCurrencyByNameAsync(string currencyName, CancellationToken cancellationToken)
+        {
+            await _currencyRepository.DeleteFavoriteCurrencyByNameAsync(currencyName, cancellationToken);
+        }
 
         private async Task<bool> IsCurrencyLimitExceededAsync()
         {
@@ -107,5 +151,6 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 
             return apiSettings.RequestLimit < apiSettings.RequestCount;
         }
+
     }
 }
