@@ -1,6 +1,7 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
@@ -116,7 +117,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         }
 
         [HttpGet]
-        [Route("ChangeDefaultCurrency")]
+        [Route("ChangeDefaultCurrency/{defaultCurrency}")]
         public async Task<IActionResult> ChangeDefaultCurrency(string defaultCurrency, CancellationToken cancellationToken)
         {
             await _currencyRateService.ChangeDefaultCurrencyAsync(defaultCurrency, cancellationToken);
@@ -125,7 +126,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         }
 
         [HttpGet]
-        [Route("ChangeCurrencyRound")]
+        [Route("ChangeCurrencyRound/{round}")]
         public async Task<IActionResult> ChangeCurrencyRound(int round, CancellationToken cancellationToken)
         {
             await _currencyRateService.ChangeCurrencyRoundAsync(round, cancellationToken);
@@ -134,7 +135,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         }
 
         [HttpGet]
-        [Route("GetFavoriteCurrency")]
+        [Route("GetFavoriteCurrency/{currencyName}")]
         public async Task<IActionResult> GetFavoriteCurrency(string currencyName, CancellationToken cancellationToken)
         {
             var apiResponse = await _currencyRateService.GetFavoriteCurrencyAsync(currencyName, cancellationToken);
@@ -152,7 +153,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         }
 
         [HttpPost]
-        [Route("AddNewFavoriteCurrency")]
+        [Route("AddNewFavoriteCurrency/{currencyName}/{currency}/{currencyBase}")]
         public async Task<IActionResult> AddNewFavoriteCurrency(string currencyName, string currency, string currencyBase, CancellationToken cancellationToken)
         {
             await _currencyRateService.AddNewFavoriteCurrencyAsync(currencyName, currency, currencyBase, cancellationToken);
@@ -161,7 +162,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         }
 
         [HttpPut]
-        [Route("ChangeFavoriteCurrencyByName")]
+        [Route("ChangeFavoriteCurrencyByName/{currencyName}/{changedCurrencyName}/{changedCurrency}/{changedCurrencyBase}")]
         public async Task<IActionResult> ChangeFavoriteCurrencyByName(string currencyName, string changedCurrencyName, string changedCurrency, string changedCurrencyBase, CancellationToken cancellationToken)
         {
             await _currencyRateService.ChangeFavoriteCurrencyByNameAsync(currencyName, changedCurrencyName, changedCurrency, changedCurrencyBase, cancellationToken);
@@ -170,12 +171,21 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteFavoriteCurrencyByName")]
+        [Route("DeleteFavoriteCurrencyByName/{currencyName}")]
         public async Task<IActionResult> DeleteFavoriteCurrencyByName(string currencyName, CancellationToken cancellationToken)
         {
             await _currencyRateService.DeleteFavoriteCurrencyByNameAsync(currencyName, cancellationToken);
 
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetCurrencyRateFavoriteByName/{currencyName}")]
+        public async Task<IActionResult> GetCurrencyRateFavoriteByName(string currencyName, ServerCallContext context) 
+        {
+            var apiResponse = await _currencyRateGrpcClientService.GetCurrencyFavoriteByName(currencyName, context);
+
+            return Ok(apiResponse);
         }
     }
 }

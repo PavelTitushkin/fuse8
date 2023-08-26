@@ -2,6 +2,8 @@
 using Grpc.Core;
 using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
+using InternalApi.Models.ModelsConfig;
+using Microsoft.Extensions.Options;
 
 namespace InternalApi.Services
 {
@@ -11,11 +13,14 @@ namespace InternalApi.Services
         private readonly ICurrencyRateService _currencyRateService;
         private readonly IMapper _mapper;
 
-        public CurrencyRateGrpcService(ICachedCurrencyAPI cachedCurrencyAPI, IMapper mapper, ICurrencyRateService currencyRateService)
+        public AppSettings AppSettings { get; set; }
+
+        public CurrencyRateGrpcService(IOptions<AppSettings> options, ICachedCurrencyAPI cachedCurrencyAPI, IMapper mapper, ICurrencyRateService currencyRateService)
         {
             _cachedCurrencyAPI = cachedCurrencyAPI;
             _mapper = mapper;
             _currencyRateService = currencyRateService;
+            AppSettings = options.Value;
         }
 
         public override async Task<CurrencyResponse> GetCurrency(CurrencyRequest currency, ServerCallContext context)
@@ -45,6 +50,36 @@ namespace InternalApi.Services
                 BaseCode = apiSettings.BaseCurrency,
                 Limit = apiSettings.RequestLimit > apiSettings.RequestCount
             };
+        }
+
+        public override async Task<CurrencyFavoriteResponse> GetCurrencyFavoriteByName(CurrencyFavoriteRequest currencyFavorite, ServerCallContext context)
+        {
+            if(currencyFavorite.BaseCurrency == AppSettings.Base)
+            {
+                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
+                var dto = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyType, context.CancellationToken);
+                
+                return new CurrencyFavoriteResponse
+                {
+                    Currency = dto.CurrencyType.ToString(),
+                    BaseCurrency = currencyFavorite.BaseCurrency,
+                    Value = (double)dto.Value
+                };
+            }
+            else
+            {
+                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
+                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyTypeBase);
+                var dtoCurrency = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyType, context.CancellationToken);
+                var dtoBaseCurrency = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyTypeBase, context.CancellationToken);
+
+                return new CurrencyFavoriteResponse
+                {
+                    Currency = dtoCurrency.CurrencyType.ToString(),
+                    BaseCurrency = currencyFavorite.BaseCurrency,
+                    Value = (double) (dtoBaseCurrency.Value / dtoBaseCurrency.Value)
+                };
+            }
         }
     }
 }

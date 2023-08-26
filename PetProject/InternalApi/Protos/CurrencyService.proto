@@ -13,6 +13,8 @@ service CurrrncyGrpsService {
   rpc GetCurrency (CurrencyRequest) returns (CurrencyResponse);
   rpc GetCurrencyOnDate(CurrencyOnDateRequest) returns (CurrencyResponse);
   rpc GetSettingsApi(ApiSettingsRequest) returns(ApiSettingsResponse);
+
+  rpc GetCurrencyFavoriteByName (CurrencyFavoriteRequest) returns(CurrencyFavoriteResponse);
 }
 
 // The request message containing the user's name.
@@ -27,6 +29,12 @@ message CurrencyOnDateRequest {
 
 message ApiSettingsRequest {}
 
+message CurrencyFavoriteRequest {
+	string currency = 1;
+	string baseCurrency = 2;
+}
+
+
 // The response message containing the greetings.
 message CurrencyResponse {
   string code = 1;
@@ -36,6 +44,12 @@ message CurrencyResponse {
 message ApiSettingsResponse {
   string baseCode = 1;
   bool limit = 2;
+}
+
+message CurrencyFavoriteResponse {
+	string currency = 1;
+	string baseCurrency = 2;
+	double value = 3;
 }
 
 //enum CurrencyTypeCode
