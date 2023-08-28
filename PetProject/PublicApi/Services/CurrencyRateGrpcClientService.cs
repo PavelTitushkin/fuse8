@@ -1,9 +1,7 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
 using Microsoft.Extensions.Options;
 using PublicClientApi;
 
@@ -25,7 +23,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         public async Task<CurrencyResponse> GetCurrency(string currencyCode)
         {
             var getCurrencyRequest = new CurrencyRequest { CurrencyCode = currencyCode };
-            
+
             return await _grpcServiceClient.GetCurrencyAsync(getCurrencyRequest);
         }
 
@@ -43,7 +41,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         public async Task<ApiSettings> GetApiSettings()
         {
             var apiSettingsRequest = new ApiSettingsRequest { };
-            
+
             var response = await _grpcServiceClient.GetSettingsApiAsync(apiSettingsRequest);
             var apiSettings = new ApiSettings
             {
@@ -56,16 +54,29 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
             return apiSettings;
         }
 
-        public async Task<CurrencyFavoriteResponse> GetCurrencyFavoriteByName(string currencyName, ServerCallContext context)
+        public async Task<CurrencyFavoriteResponse> GetCurrencyFavoriteByName(string currencyName, CancellationToken cancellationToken)
         {
-            var dto = await _currencyRateService.GetFavoriteCurrencyAsync(currencyName, context.CancellationToken);
+            var dto = await _currencyRateService.GetFavoriteCurrencyAsync(currencyName, cancellationToken);
             var getCurrencyFavoriteByNameRequest = new CurrencyFavoriteRequest
             {
                 Currency = dto.Currency,
                 BaseCurrency = dto.BaseCurrency,
             };
 
-            return await _grpcServiceClient.GetCurrencyFavoriteByNameAsync(getCurrencyFavoriteByNameRequest);
+            return await _grpcServiceClient.GetCurrencyFavoriteByNameAsync(getCurrencyFavoriteByNameRequest, cancellationToken: cancellationToken);
+        }
+
+        public async Task<CurrencyFavoriteOnDateResponse> GetCurrencyFavoriteByNameOnDate(string currencyName, DateOnly date, CancellationToken cancellationToken)
+        {
+            var dto = await _currencyRateService.GetFavoriteCurrencyAsync(currencyName, cancellationToken);
+            var getCurrencyFavoriteByNameOnDate = new CurrencyFavoriteOnDateRequest
+            {
+                Currency = dto.Currency,
+                BaseCurrency = dto.BaseCurrency,
+                Date = Timestamp.FromDateTime(date.ToDateTime(TimeOnly.MinValue).ToUniversalTime()),
+            };
+
+            return await _grpcServiceClient.GetCurrencyFavoriteByNameOnDateAsync(getCurrencyFavoriteByNameOnDate, cancellationToken: cancellationToken);
         }
     }
 }

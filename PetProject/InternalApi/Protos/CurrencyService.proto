@@ -15,6 +15,7 @@ service CurrrncyGrpsService {
   rpc GetSettingsApi(ApiSettingsRequest) returns(ApiSettingsResponse);
 
   rpc GetCurrencyFavoriteByName (CurrencyFavoriteRequest) returns(CurrencyFavoriteResponse);
+  rpc GetCurrencyFavoriteByNameOnDate (CurrencyFavoriteOnDateRequest) returns(CurrencyFavoriteOnDateResponse);
 }
 
 // The request message containing the user's name.
@@ -34,6 +35,11 @@ message CurrencyFavoriteRequest {
 	string baseCurrency = 2;
 }
 
+message CurrencyFavoriteOnDateRequest {
+	string currency = 1;
+	string baseCurrency = 2;
+	google.protobuf.Timestamp date = 3;
+}
 
 // The response message containing the greetings.
 message CurrencyResponse {
@@ -50,6 +56,13 @@ message CurrencyFavoriteResponse {
 	string currency = 1;
 	string baseCurrency = 2;
 	double value = 3;
+}
+
+message CurrencyFavoriteOnDateResponse {
+	string currency = 1;
+	string baseCurrency = 2;
+	double value = 3;
+	google.protobuf.Timestamp date = 4;
 }
 
 //enum CurrencyTypeCode

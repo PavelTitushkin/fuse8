@@ -181,9 +181,18 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
 
         [HttpGet]
         [Route("GetCurrencyRateFavoriteByName/{currencyName}")]
-        public async Task<IActionResult> GetCurrencyRateFavoriteByName(string currencyName, ServerCallContext context) 
+        public async Task<IActionResult> GetCurrencyRateFavoriteByName(string currencyName, CancellationToken cancellationToken) 
         {
-            var apiResponse = await _currencyRateGrpcClientService.GetCurrencyFavoriteByName(currencyName, context);
+            var apiResponse = await _currencyRateGrpcClientService.GetCurrencyFavoriteByName(currencyName, cancellationToken);
+
+            return Ok(apiResponse);
+        }
+
+        [HttpGet]
+        [Route("GetCurrencyRateFavoriteByNameOnDate/{currencyName}/{date}")]
+        public async Task<IActionResult> GetCurrencyRateFavoriteByNameOnDate(string currencyName, DateOnly date, CancellationToken cancellationToken) 
+        {
+            var apiResponse = await _currencyRateGrpcClientService.GetCurrencyFavoriteByNameOnDate(currencyName, date, cancellationToken);
 
             return Ok(apiResponse);
         }

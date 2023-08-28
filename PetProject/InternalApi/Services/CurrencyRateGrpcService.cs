@@ -69,7 +69,7 @@ namespace InternalApi.Services
             else
             {
                 Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
-                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyTypeBase);
+                Enum.TryParse(currencyFavorite.BaseCurrency.ToUpper(), out CurrencyType currencyTypeBase);
                 var dtoCurrency = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyType, context.CancellationToken);
                 var dtoBaseCurrency = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyTypeBase, context.CancellationToken);
 
@@ -77,7 +77,41 @@ namespace InternalApi.Services
                 {
                     Currency = dtoCurrency.CurrencyType.ToString(),
                     BaseCurrency = currencyFavorite.BaseCurrency,
-                    Value = (double) (dtoBaseCurrency.Value / dtoBaseCurrency.Value)
+                    Value = Math.Round((double)(dtoCurrency.Value / dtoBaseCurrency.Value), AppSettings.Round)
+                };
+            }
+        }
+
+        public override async Task<CurrencyFavoriteOnDateResponse> GetCurrencyFavoriteByNameOnDate(CurrencyFavoriteOnDateRequest currencyFavorite, ServerCallContext context)
+        {
+            if (currencyFavorite.BaseCurrency == AppSettings.Base)
+            {
+                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
+                var date = DateOnly.FromDateTime(currencyFavorite.Date.ToDateTime());
+                var dto = await _cachedCurrencyAPI.GetCurrencyOnDateFromDbAsync(currencyType, date, context.CancellationToken);
+
+                return new CurrencyFavoriteOnDateResponse
+                {
+                    Currency = dto.CurrencyType.ToString(),
+                    BaseCurrency = currencyFavorite.BaseCurrency,
+                    Value = (double)dto.Value,
+                    Date = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(date.ToDateTime(TimeOnly.MinValue).ToUniversalTime()),
+                };
+            }
+            else
+            {
+                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
+                Enum.TryParse(currencyFavorite.BaseCurrency.ToUpper(), out CurrencyType currencyTypeBase);
+                var date = DateOnly.FromDateTime(currencyFavorite.Date.ToDateTime());
+                var dtoCurrency = await _cachedCurrencyAPI.GetCurrencyOnDateFromDbAsync(currencyType, date, context.CancellationToken);
+                var dtoBaseCurrency = await _cachedCurrencyAPI.GetCurrencyOnDateFromDbAsync(currencyTypeBase, date,  context.CancellationToken);
+
+                return new CurrencyFavoriteOnDateResponse
+                {
+                    Currency = dtoCurrency.CurrencyType.ToString(),
+                    BaseCurrency = currencyFavorite.BaseCurrency,
+                    Value = Math.Round((double)(dtoCurrency.Value / dtoBaseCurrency.Value), AppSettings.Round),
+                    Date = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(date.ToDateTime(TimeOnly.MinValue).ToUniversalTime()),
                 };
             }
         }

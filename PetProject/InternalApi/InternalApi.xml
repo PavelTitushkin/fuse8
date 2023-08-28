@@ -275,6 +275,15 @@
         <member name="F:InternalApi.CurrencyFavoriteRequest.BaseCurrencyFieldNumber">
             <summary>Field number for the "baseCurrency" field.</summary>
         </member>
+        <member name="F:InternalApi.CurrencyFavoriteOnDateRequest.CurrencyFieldNumber">
+            <summary>Field number for the "currency" field.</summary>
+        </member>
+        <member name="F:InternalApi.CurrencyFavoriteOnDateRequest.BaseCurrencyFieldNumber">
+            <summary>Field number for the "baseCurrency" field.</summary>
+        </member>
+        <member name="F:InternalApi.CurrencyFavoriteOnDateRequest.DateFieldNumber">
+            <summary>Field number for the "date" field.</summary>
+        </member>
         <member name="T:InternalApi.CurrencyResponse">
             <summary>
             The response message containing the greetings.
@@ -300,6 +309,18 @@
         </member>
         <member name="F:InternalApi.CurrencyFavoriteResponse.ValueFieldNumber">
             <summary>Field number for the "value" field.</summary>
+        </member>
+        <member name="F:InternalApi.CurrencyFavoriteOnDateResponse.CurrencyFieldNumber">
+            <summary>Field number for the "currency" field.</summary>
+        </member>
+        <member name="F:InternalApi.CurrencyFavoriteOnDateResponse.BaseCurrencyFieldNumber">
+            <summary>Field number for the "baseCurrency" field.</summary>
+        </member>
+        <member name="F:InternalApi.CurrencyFavoriteOnDateResponse.ValueFieldNumber">
+            <summary>Field number for the "value" field.</summary>
+        </member>
+        <member name="F:InternalApi.CurrencyFavoriteOnDateResponse.DateFieldNumber">
+            <summary>Field number for the "date" field.</summary>
         </member>
         <member name="T:InternalApi.CurrrncyGrpsService">
             <summary>
