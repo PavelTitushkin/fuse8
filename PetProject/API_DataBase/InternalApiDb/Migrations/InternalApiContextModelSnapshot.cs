@@ -24,7 +24,7 @@ namespace DataStore.InternalApiDb.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DataStore.InternalApiDb.Entities.CacheStatus", b =>
+            modelBuilder.Entity("DataStore.InternalApiDb.Entities.CacheTask", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,30 +35,13 @@ namespace DataStore.InternalApiDb.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("cache_tack_status");
 
-                    b.HasKey("Id")
-                        .HasName("pk_cache_status");
-
-                    b.ToTable("cache_status", "cur");
-                });
-
-            modelBuilder.Entity("DataStore.InternalApiDb.Entities.CacheTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("CacheStatusId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("cache_status_id");
+                    b.Property<string>("NewBaseCurrency")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("new_base_currency");
 
                     b.HasKey("Id")
                         .HasName("pk_cache_tasks");
-
-                    b.HasIndex("CacheStatusId")
-                        .HasDatabaseName("ix_cache_tasks_cache_status_id");
 
                     b.ToTable("cache_tasks", "cur");
                 });
@@ -111,18 +94,6 @@ namespace DataStore.InternalApiDb.Migrations
                         .HasDatabaseName("ix_currency_entity_currencies_id");
 
                     b.ToTable("currency_entity", "cur");
-                });
-
-            modelBuilder.Entity("DataStore.InternalApiDb.Entities.CacheTask", b =>
-                {
-                    b.HasOne("DataStore.InternalApiDb.Entities.CacheStatus", "CacheStatus")
-                        .WithMany()
-                        .HasForeignKey("CacheStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_cache_tasks_cache_status_cache_status_id");
-
-                    b.Navigation("CacheStatus");
                 });
 
             modelBuilder.Entity("DataStore.InternalApiDb.Entities.CurrencyEntity", b =>
