@@ -1,4 +1,5 @@
-﻿using InternalApi.Contracts;
+﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues;
+using InternalApi.Contracts;
 using InternalApi.Models.ModelDTO;
 using InternalApi.Models.ModelResponse;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,13 @@ namespace InternalApi.Controllers
     {
         private readonly ICurrencyRateService _currencyRateService;
         private readonly ICachedCurrencyAPI _cachedCurrencyAPI;
-        public CurrencyController(ICurrencyRateService currencyRateService, ICachedCurrencyAPI cachedCurrencyAPI)
+        private readonly IBackgroundTaskQueue _taskQueue;
+
+        public CurrencyController(ICurrencyRateService currencyRateService, ICachedCurrencyAPI cachedCurrencyAPI, IBackgroundTaskQueue taskQueue)
         {
             _currencyRateService = currencyRateService;
             _cachedCurrencyAPI = cachedCurrencyAPI;
+            _taskQueue = taskQueue;
         }
 
         /// <summary>
@@ -109,6 +113,16 @@ namespace InternalApi.Controllers
             };
 
             return Ok(apiSettings);
+        }
+
+        [HttpGet]
+        [Route("recalculateCurrencyCacheToNewBaseCurrency/{newBaseCurrency}")]
+        public async Task<IActionResult> RecalculateCurrencyCacheToNewBaseCurrency(string newBaseCurrency, CancellationToken cancellationToken)
+        {
+            var taskDto = await _cachedCurrencyAPI.AddNewBaseCurrencyToCacheTaskAsync(newBaseCurrency, cancellationToken);
+            await _taskQueue.QueueAsync(new WorkItem(taskDto.Id, taskDto.CacheTackStatus));
+            
+            return Accepted(taskDto.Id);
         }
     }
 }

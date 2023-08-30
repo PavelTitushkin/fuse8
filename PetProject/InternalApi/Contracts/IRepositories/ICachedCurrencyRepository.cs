@@ -38,6 +38,13 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories
         /// <param name="cancellationToken">Токен отмены</param>
         /// <returns>Список валют</returns>
         Task<CurrenciesDTO> GetCurrenciesOnDateFromDbAsync(DateOnly date, CancellationToken cancellationToken);
+        Task<List<CurrenciesDTO>> GetAllCurrenciesFromDbAsync(CancellationToken cancellationToken);
 
+        Task<CacheTaskDTO> AddNewBaseCurrencyToCacheTaskAsync(string newBaseCurrency, CancellationToken cancellationToken);
+        Task<CacheTaskDTO> GetTaskFromCacheTaskAsync(Guid id, CancellationToken cancellationToken);
+        Task ChangeStatusTaskToCacheTaskAsync(CacheTaskDTO cacheTaskDTO, CancellationToken cancellationToken);
+        Task SaveNewCacheCurrenciesAsync(List<CurrenciesDTO> currencies, CancellationToken cancellationToken);
+
+        Task<List<CacheTaskDTO>> GetUnfinishedTasksAsync(CancellationToken cancellationToken);
     }
 }

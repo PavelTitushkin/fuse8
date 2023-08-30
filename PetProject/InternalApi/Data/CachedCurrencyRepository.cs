@@ -144,6 +144,38 @@ namespace InternalApi.Data
             return cachedCurrencies;
         }
 
+        public async Task<List<CurrenciesDTO>> GetAllCurrenciesFromDbAsync(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(cancellationToken);
+            }
+
+            var cachedCurrencies = await _internalApiContext.CurrenciesList
+                .AsNoTracking()
+                .Include(c => c.CurrenciesList)
+                .OrderBy(c => c.Date)
+                .Select(e => _mapper.Map<CurrenciesDTO>(e))
+                .ToListAsync(cancellationToken);
+
+            if (cachedCurrencies.Count == 0)
+            {
+                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(AppSettings.Base, cancellationToken);
+                var currenciesDto = new CurrenciesDTO
+                {
+                    Id = 0,
+                    Date = DateTime.UtcNow,
+                    CurrenciesList = currencies.ToList()
+                };
+
+                return new List<CurrenciesDTO>
+                {
+                    currenciesDto
+                };
+            }
+            return cachedCurrencies;
+        }
+
 
         //Запись Currency[] в кэш-файл
         private async Task WriteCurrenciesToCacheFileAsync(Currency[] currencies, CancellationToken cancellationToken)
@@ -223,5 +255,54 @@ namespace InternalApi.Data
             return null;
         }
 
+        public async Task<CacheTaskDTO> AddNewBaseCurrencyToCacheTaskAsync(string newBaseCurrency, CancellationToken cancellationToken)
+        {
+            var entity = new CacheTask
+            {
+                Id = Guid.NewGuid(),
+                CacheTackStatus = CacheTackStatus.Created,
+                NewBaseCurrency = newBaseCurrency,
+                Created = DateTime.UtcNow
+            };
+
+            await _internalApiContext.CacheTasks.AddAsync(entity, cancellationToken);
+            await _internalApiContext.SaveChangesAsync(cancellationToken);
+
+            var dto = _mapper.Map<CacheTaskDTO>(entity);
+
+            return dto;
+        }
+
+        public async Task<CacheTaskDTO> GetTaskFromCacheTaskAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var entity = await _internalApiContext.CacheTasks.Where(e => e.Id == id).FirstOrDefaultAsync(cancellationToken);
+
+            return _mapper.Map<CacheTaskDTO>(entity);
+        }
+
+        public async Task ChangeStatusTaskToCacheTaskAsync(CacheTaskDTO cacheTaskDTO, CancellationToken cancellationToken)
+        {
+            var entity = await _internalApiContext.CacheTasks.Where(e => e.Id == cacheTaskDTO.Id).FirstOrDefaultAsync(cancellationToken);
+            entity.CacheTackStatus = (CacheTackStatus)cacheTaskDTO.CacheTackStatus;
+            _internalApiContext.CacheTasks.Update(entity);
+            await _internalApiContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task SaveNewCacheCurrenciesAsync(List<CurrenciesDTO> currencies, CancellationToken cancellationToken)
+        {
+            var entity = _mapper.Map<List<Currencies>>(currencies);
+            await _internalApiContext.CurrenciesList.AddRangeAsync(entity, cancellationToken);
+            await _internalApiContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<List<CacheTaskDTO>> GetUnfinishedTasksAsync(CancellationToken cancellationToken)
+        {
+            var tasks = await _internalApiContext.CacheTasks
+                .Where(c => c.CacheTackStatus == CacheTackStatus.Created || c.CacheTackStatus == CacheTackStatus.InProcessing)
+                .Select(e => _mapper.Map<CacheTaskDTO>(e))
+                .ToListAsync(cancellationToken);
+
+            return tasks;
+        }
     }
 }

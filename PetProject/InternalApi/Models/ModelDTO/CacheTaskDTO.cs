@@ -1,14 +1,14 @@
-﻿namespace DataStore.InternalApiDb.Entities
+﻿namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO
 {
-    public class CacheTask
+    public class CacheTaskDTO
     {
         public Guid Id { get; set; }
-        public CacheTackStatus CacheTackStatus { get; set; }
+        public CacheTackStatusDTO CacheTackStatus { get; set; }
         public string NewBaseCurrency { get; set; }
         public DateTime Created { get; set; }
     }
 
-    public enum CacheTackStatus
+    public enum CacheTackStatusDTO
     {
         Created,
         InProcessing,

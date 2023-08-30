@@ -3,6 +3,7 @@ using System;
 using DataStore.InternalApiDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataStore.InternalApiDb.Migrations
 {
     [DbContext(typeof(InternalApiContext))]
-    partial class InternalApiContextModelSnapshot : ModelSnapshot
+    [Migration("20230830142525_AddFieldCreatedToCacheTask")]
+    partial class AddFieldCreatedToCacheTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

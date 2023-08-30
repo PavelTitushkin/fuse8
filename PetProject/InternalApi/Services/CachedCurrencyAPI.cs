@@ -1,4 +1,5 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
 using InternalApi.Contracts;
 using InternalApi.Exceptions;
 using InternalApi.Models.ModelDTO;
@@ -93,6 +94,13 @@ namespace InternalApi.Services
                     CurrencyType = currencyType,
                     Value = targetCurrency.Value
                 };
+        }
+
+        public async Task<CacheTaskDTO> AddNewBaseCurrencyToCacheTaskAsync(string newBaseCurrency, CancellationToken cancellationToken)
+        {
+            var dto = await _cachedCurrencyRepository.AddNewBaseCurrencyToCacheTaskAsync(newBaseCurrency, cancellationToken);
+
+            return dto;
         }
     }
 }

@@ -13,6 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Queues;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Services;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts;
 
 namespace InternalApi
 {
@@ -64,6 +68,10 @@ namespace InternalApi
             builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
             builder.Services.AddScoped<ICachedCurrencyRepository, CachedCurrencyRepository>();
             builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyAPI>();
+            builder.Services.AddScoped<IRecalculateCacheService, RecalculateCacheService>();
+
+            builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            builder.Services.AddHostedService<QueuedHostedService>();
 
             builder.Services.AddHttpClient<ICurrencyRepository, HttpCurrencyRepository>()
                 .AddAuditHandler(
@@ -73,6 +81,7 @@ namespace InternalApi
                     .IncludeResponseBody()
                     .IncludeResponseHeaders()
                     .IncludeContentHeaders());
+
 
             Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
             Configuration.Setup()

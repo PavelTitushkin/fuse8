@@ -1,4 +1,5 @@
-﻿using InternalApi.Models.ModelDTO;
+﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
+using InternalApi.Models.ModelDTO;
 
 namespace InternalApi.Contracts
 {
@@ -41,6 +42,6 @@ namespace InternalApi.Contracts
         /// <returns>Курс на дату</returns>
         Task<CurrencyDTO> GetCurrencyOnDateFromDbAsync(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken);
 
-
+        Task<CacheTaskDTO> AddNewBaseCurrencyToCacheTaskAsync(string newBaseCurrency, CancellationToken cancellationToken);
     }
 }
