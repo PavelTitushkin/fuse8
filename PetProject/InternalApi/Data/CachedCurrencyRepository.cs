@@ -86,25 +86,42 @@ namespace InternalApi.Data
                 .Select(currencies => _mapper.Map<CurrenciesDTO>(currencies))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (cachedCurrencies == null)
+            var tasks = await GetUnfinishedTasksAsync(cancellationToken);
+
+            if (cachedCurrencies == null && tasks.Count == 0)
             {
-                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(AppSettings.Base, cancellationToken);
-                var currenciesDto = new CurrenciesDTO
+                return await GetCasheCurrenciesFromAPIAsync(cancellationToken);
+            }
+
+            if (cachedCurrencies == null && tasks.Count > 0)
+            {
+                await Task.Delay(10000);
+                var lastTask = await GetUnfinishedTasksAsync(cancellationToken);
+                if (lastTask.Count > 0)
                 {
-                    Id = 0,
-                    Date = DateTime.UtcNow,
-                    CurrenciesList = currencies.ToList()
-                };
-
-                var currenciesToDb = _mapper.Map<Currencies>(currenciesDto);
-
-                await _internalApiContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
-                await _internalApiContext.SaveChangesAsync(cancellationToken);
-
-                return currenciesDto;
+                    throw new Exception("Ошибка. В очереди есть не законченные задачи.");
+                }
             }
 
             return cachedCurrencies;
+        }
+
+        private async Task<CurrenciesDTO> GetCasheCurrenciesFromAPIAsync(CancellationToken cancellationToken)
+        {
+            var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(AppSettings.Base, cancellationToken);
+            var currenciesDto = new CurrenciesDTO
+            {
+                Id = 0,
+                Date = DateTime.UtcNow,
+                CurrenciesList = currencies.ToList()
+            };
+
+            var currenciesToDb = _mapper.Map<Currencies>(currenciesDto);
+
+            await _internalApiContext.CurrenciesList.AddAsync(currenciesToDb, cancellationToken);
+            await _internalApiContext.SaveChangesAsync(cancellationToken);
+
+            return currenciesDto;
         }
 
         public async Task<CurrenciesDTO> GetCurrenciesOnDateFromDbAsync(DateOnly date, CancellationToken cancellationToken)
