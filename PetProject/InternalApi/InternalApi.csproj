@@ -10,7 +10,7 @@
       <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
       <NoWarm>$(NoWarm);1591</NoWarm>
       <UserSecretsId>a5a7ce31-ace4-43ed-836b-14c23cfb084e</UserSecretsId>
-      <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
