@@ -16,6 +16,9 @@ RUN dotnet publish InternalApi/InternalApi.csproj -c Release -o /app/publish --n
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
+
+RUN apt-get update && apt-get install -y curl
+ENTRYPOINT ["dotnet", "InternalApi.dll"]
+
 EXPOSE 80
 EXPOSE 443
-ENTRYPOINT ["dotnet", "InternalApi.dll"]
