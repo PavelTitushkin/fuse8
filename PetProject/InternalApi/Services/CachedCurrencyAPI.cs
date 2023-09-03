@@ -8,6 +8,9 @@ using Microsoft.Extensions.Options;
 
 namespace InternalApi.Services
 {
+    /// <summary>
+    /// Сервис для работы с кэш данными
+    /// </summary>
     public class CachedCurrencyAPI : ICachedCurrencyAPI
     {
         private readonly ICachedCurrencyRepository _cachedCurrencyRepository;

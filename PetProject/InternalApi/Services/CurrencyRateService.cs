@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 namespace InternalApi.Services
 {
     /// <summary>
-    /// Сервис для работы с currencyApi
+    /// Сервис для работы с курсами валют
     /// </summary>
     public class CurrencyRateService : ICurrencyRateService
     {
@@ -121,6 +121,11 @@ namespace InternalApi.Services
             };
         }
 
+        /// <summary>
+        /// Проверят на лимит запрсов
+        /// </summary>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Превышен ли лимит</returns>
         private async Task<bool> IsCurrencyLimitExceededAsync(CancellationToken cancellationToken)
         {
             var apiSettings = await GetCurrencySettingsAsync(cancellationToken);
@@ -128,6 +133,13 @@ namespace InternalApi.Services
             return apiSettings.RequestLimit < apiSettings.RequestCount;
         }
 
+        /// <summary>
+        /// Проверяет на исключение
+        /// </summary>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        /// <exception cref="OperationCanceledException">Операция отмены</exception>
+        /// <exception cref="ApiRequestLimitException">Исключение о превышении лимита запросов в внешнему Api</exception>
         private async Task IsHaveException(CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)

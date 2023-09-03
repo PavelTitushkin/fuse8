@@ -3,6 +3,9 @@ using System.Threading.Channels;
 
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Queues
 {
+    /// <summary>
+    /// Класс для работы с очередью
+    /// </summary>
     public class BackgroundTaskQueue : IBackgroundTaskQueue
     {
         private readonly Channel<WorkItem> _queue;

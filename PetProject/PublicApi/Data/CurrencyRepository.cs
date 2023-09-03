@@ -6,16 +6,25 @@ using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Linq;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Data
 {
+    /// <summary>
+    /// Класс для работы с данными
+    /// </summary>
     public class CurrencyRepository : ICurrencyRepository
     {
         private readonly PublicApiContext _publicApiContext;
         private readonly IMapper _mapper;
 
         public AppSettings AppSettings { get; set; }
+
+        /// <summary>
+        /// <inheritdoc cref="CurrencyRepository"/>
+        /// </summary>
+        /// <param name="context">Контекст БД</param>
+        /// <param name="options">Кофигурации приложения</param>
+        /// <param name="mapper">Маппер</param>
         public CurrencyRepository(PublicApiContext context, IOptions<AppSettings> options, IMapper mapper)
         {
             _publicApiContext = context;
@@ -26,7 +35,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Data
         public async Task ChangeDefaultCurrencyAsync(string defaultCurrency, CancellationToken cancellationToken)
         {
             var entity = await _publicApiContext.PublicApiSettings.Where(e => e.Id == 1).FirstOrDefaultAsync(cancellationToken);
-            if(entity != null)
+            if (entity != null)
             {
                 entity.DefaultCurrency = defaultCurrency;
                 _publicApiContext.Update(entity);
@@ -53,31 +62,6 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Data
             }
         }
 
-        private async Task AddDefaultCurrencyAsync(string defaultCurrency, CancellationToken cancellationToken)
-        {
-            var entity = new PublicApiSettings
-            {
-                Id = 1,
-                DefaultCurrency = defaultCurrency,
-                CurrencyRoundCount = AppSettings.Round
-            };
-
-            await _publicApiContext.AddAsync(entity, cancellationToken);
-            await _publicApiContext.SaveChangesAsync(cancellationToken);
-        }
-        private async Task AddCurrencyRoundAsync(int round, CancellationToken cancellationToken)
-        {
-            var entity = new PublicApiSettings
-            {
-                Id = 1,
-                DefaultCurrency = AppSettings.Default,
-                CurrencyRoundCount = round
-            };
-
-            await _publicApiContext.AddAsync(entity, cancellationToken);
-            await _publicApiContext.SaveChangesAsync(cancellationToken);
-        }
-
         public async Task<FavoriteCurrencyDTO?> GetFavoriteCurrencyByNameAsync(string currencyName, CancellationToken cancellationToken)
         {
             return await _publicApiContext.FavoritesCurrencies
@@ -97,7 +81,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Data
 
         public async Task AddNewFavoriteCurrencyAsync(FavoriteCurrencyDTO currenciesDTO, CancellationToken cancellationToken)
         {
-            if(!await IsUniqueValuesAsync(currenciesDTO, cancellationToken))
+            if (!await IsUniqueValuesAsync(currenciesDTO, cancellationToken))
             {
                 throw new ArgumentException("Значения не уникальны.");
             }
@@ -139,6 +123,50 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Data
             }
         }
 
+        /// <summary>
+        /// Добавляет <paramref name="defaultCurrency"/> в БД
+        /// </summary>
+        /// <param name="defaultCurrency">код валюты по умолчанию</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Результат добавления</returns>
+        private async Task AddDefaultCurrencyAsync(string defaultCurrency, CancellationToken cancellationToken)
+        {
+            var entity = new PublicApiSettings
+            {
+                Id = 1,
+                DefaultCurrency = defaultCurrency,
+                CurrencyRoundCount = AppSettings.Round
+            };
+
+            await _publicApiContext.AddAsync(entity, cancellationToken);
+            await _publicApiContext.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Добавляет <paramref name="round"/>
+        /// </summary>
+        /// <param name="round">Значение округления</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Результат добавления</returns>
+        private async Task AddCurrencyRoundAsync(int round, CancellationToken cancellationToken)
+        {
+            var entity = new PublicApiSettings
+            {
+                Id = 1,
+                DefaultCurrency = AppSettings.Default,
+                CurrencyRoundCount = round
+            };
+
+            await _publicApiContext.AddAsync(entity, cancellationToken);
+            await _publicApiContext.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Проверка на уникальность значений Избранной валюты 
+        /// </summary>
+        /// <param name="currenciesDTO"><inheritdoc cref="FavoriteCurrencyDTO"/></param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Результат сравнения на унивальность</returns>
         private async Task<bool> IsUniqueValuesAsync(FavoriteCurrencyDTO currenciesDTO, CancellationToken cancellationToken)
         {
             var isNotUniqueName = await _publicApiContext.FavoritesCurrencies.AnyAsync(e => e.Name == currenciesDTO.Name, cancellationToken);
@@ -146,6 +174,5 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Data
 
             return isNotUniqueName != true && isNotUniqueCurrencies != true;
         }
-
     }
 }

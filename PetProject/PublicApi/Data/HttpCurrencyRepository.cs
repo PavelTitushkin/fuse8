@@ -7,11 +7,19 @@ using System.Text.Json;
 
 namespace InternalApi.Data
 {
+    /// <summary>
+    /// Репозитория для работы с данными внешнего Api
+    /// </summary>
     public class HttpCurrencyRepository : IHttpCurrencyRepository
     {
         private readonly HttpClient _httpClient;
         public AppSettings AppSettings { get; }
 
+        /// <summary>
+        /// <inheritdoc cref="HttpCurrencyRepository"/>
+        /// </summary>
+        /// <param name="httpClient">HTTP-клиент</param>
+        /// <param name="options">Кофигурации приложения</param>
         public HttpCurrencyRepository(HttpClient httpClient, IOptions<AppSettings> options)
         {
             _httpClient = httpClient;
@@ -121,6 +129,11 @@ namespace InternalApi.Data
             return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
         }
 
+        /// <summary>
+        /// Добавляет <paramref name="apiKey"/> в заголовок запроса 
+        /// </summary>
+        /// <param name="httpClient">HTTP-клиент</param>
+        /// <param name="apiKey">Ключ доступа к внешнему Api</param>
         private void AddDefaultRequestHeaders(HttpClient httpClient, string apiKey)
         {
             if (httpClient.DefaultRequestHeaders.Contains("apikey") is false)

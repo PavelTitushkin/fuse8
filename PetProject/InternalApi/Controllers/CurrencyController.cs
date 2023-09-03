@@ -30,11 +30,11 @@ namespace InternalApi.Controllers
         }
 
         /// <summary>
-        /// Метод получения курса валюты по умолчанию
+        /// Получает курс валюты <paramref name="currencyType"/>
         /// </summary>
-        /// <param name="currencyType"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="currencyType">Валюта, для которой необходимо получить курс</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Курс валюты <paramref name="currencyType"/></returns>
         [HttpGet]
         [Route("currency/{currencyType}")]
         public async Task<IActionResult> GetCurrency(CurrencyType currencyType, CancellationToken cancellationToken)
@@ -44,6 +44,12 @@ namespace InternalApi.Controllers
             return Ok(apiResponse);
         }
 
+        /// <summary>
+        /// Получает курс валюты <paramref name="currencyType"/> из БД
+        /// </summary>
+        /// <param name="currencyType">Валюта, для которой необходимо получить курс</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Курс валюты <paramref name="currencyType"/> из БД</returns>
         [HttpGet]
         [Route("currencyFromDb/{currencyType}")]
         public async Task<IActionResult> GetCurrencyFromDb(CurrencyType currencyType, CancellationToken cancellationToken)
@@ -53,23 +59,13 @@ namespace InternalApi.Controllers
             return Ok(apiResponse);
         }
 
-
         /// <summary>
-        /// Метод получения текущего курс валюты, переданного в качестве параметра
+        /// Получает курс валюты <paramref name="currencyType"/> на <paramref name="date"/>
         /// </summary>
-        /// <param name="currencyCode">
-        /// Код валюты относительно которого будет выведен курс.
-        /// </param>
-        /// <returns>
-        /// Метод возвращает JSON вида
-        ///        {
-        ///  "code": "RUB", // код валюты
-        ///  "value": 90.50 // текущий курс относительно доллара
-        ///}
-        /// </returns>
-        /// <exception cref="ApiRequestLimitException">
-        /// Выбрасывается исключение если все доступные запросы исчерпаны.
-        /// </exception>
+        /// <param name="currencyType">Код валюты относительно которого будет выведен курс</param>
+        /// <param name="date">Дата, относительно которой выводится курс</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Курс валюты <paramref name="currencyType"/> на <paramref name="date"/></returns>
         [HttpGet]
         [Route("currency/{currencyType}/{date}")]
         public async Task<IActionResult> GetCurrencyOnDate(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
@@ -79,6 +75,13 @@ namespace InternalApi.Controllers
             return Ok(apiResponse);
         }
 
+        /// <summary>
+        /// Получает курс валюты <paramref name="currencyType"/> на <paramref name="date"/> из БД
+        /// </summary>
+        /// <param name="currencyType">Код валюты относительно которого будет выведен курс</param>
+        /// <param name="date">Дата, относительно которой выводится курс</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Курс валюты <paramref name="currencyType"/> на <paramref name="date"/> из БД</returns>
         [HttpGet]
         [Route("currencyFromDb/{currencyType}/{date}")]
         public async Task<IActionResult> GetCurrencyOnDateFromDb(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken)
@@ -89,19 +92,11 @@ namespace InternalApi.Controllers
         }
 
 
-        ///// <summary>
-        ///// Метод возвращает текущие настройки приложения.
-        ///// </summary>
-        ///// <returns>
-        ///// Метод возвращает JSON вида
-        ///// {
-        /////  "defaultCurrency": "RUB", // текущий курс валют по умолчанию из конфигурации
-        /////  "baseCurrency": "USD", // базовая валюта, относительно которой считается курс
-        /////  "requestLimit": 300, // общее количество доступных запросов, полученное от внешнего API (quotas->month->total)
-        /////  "requestCount": 0, //  количество использованных запросов, полученное от внешнего API (quotas->month->used)
-        /////  "currencyRoundCount": 2 // Количество знаков после запятой, до которого следует округлять значение курса валют
-        /////}
-        ///// </returns>
+        /// <summary>
+        /// Получает текущие настройки внешнего Api
+        /// </summary>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Настройки внешнего Api</returns>
         [HttpGet]
         [Route("settings")]
         public async Task<IActionResult> Settings(CancellationToken cancellationToken)
@@ -116,6 +111,12 @@ namespace InternalApi.Controllers
             return Ok(apiSettings);
         }
 
+        /// <summary>
+        /// Пересчитывает кэш курсов валбт относительно <paramref name="newBaseCurrency"/> новой базовой валюты
+        /// </summary>
+        /// <param name="newBaseCurrency">Новая базовая валюта</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Пересчет кэша курсов валют</returns>
         [HttpGet]
         [Route("recalculateCurrencyCacheToNewBaseCurrency/{newBaseCurrency}")]
         public async Task<IActionResult> RecalculateCurrencyCacheToNewBaseCurrency(string newBaseCurrency, CancellationToken cancellationToken)

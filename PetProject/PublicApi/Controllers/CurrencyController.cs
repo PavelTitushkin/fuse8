@@ -1,7 +1,7 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
-using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
@@ -9,12 +9,17 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
     /// <summary>
     /// Методы получения курсов валют
     /// </summary>
-    //[Route("api")]
     [ApiController]
     public class CurrencyController : ControllerBase
     {
         private readonly ICurrencyRateService _currencyRateService;
         private readonly CurrencyRateGrpcClientService _currencyRateGrpcClientService;
+
+        /// <summary>
+        /// <inheritdoc cref="CurrencyController"/>
+        /// </summary>
+        /// <param name="currencyRateService"><inheritdoc cref="CurrencyRateService"/></param>
+        /// <param name="currencyRateGrpsClientService"><inheritdoc cref="CurrencyRateGrpcClientService"/></param>
         public CurrencyController(ICurrencyRateService currencyRateService, CurrencyRateGrpcClientService currencyRateGrpsClientService)
         {
             _currencyRateService = currencyRateService;
@@ -36,7 +41,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         public async Task<IActionResult> Currency()
         {
             var apiResponse = await _currencyRateService.GetCurrencyAsync();
-            
+
             return Ok(apiResponse);
         }
 
@@ -53,9 +58,6 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         ///  "value": 90.50 // текущий курс относительно доллара
         ///}
         /// </returns>
-        /// <exception cref="ApiRequestLimitException">
-        /// Выбрасывается исключение если все доступные запросы исчерпаны.
-        /// </exception>
         [HttpGet]
         [Route("currency/{currencyCode}")]
         public async Task<IActionResult> Currency(string currencyCode)
@@ -81,10 +83,6 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         ///  "code": "RUB", // код валюты
         ///  "value": 90.50 // текущий курс относительно доллара
         ///}        
-        /// </returns>
-        /// <exception cref="ApiRequestLimitException">
-        /// Выбрасывается исключение если все доступные запросы исчерпаны.
-        /// </exception>
         [HttpGet]
         [Route("currency/{currencyCode}/{date}")]
         public async Task<IActionResult> Currency(string currencyCode, DateTime date)
@@ -116,6 +114,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok(apiResponse);
         }
 
+        /// <summary>
+        /// Изменяет <paramref name="defaultCurrency"/>
+        /// </summary>
+        /// <param name="defaultCurrency">Код валюты по умолчанию</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Изменение кода валюты по умрлчанию</returns>
         [HttpGet]
         [Route("ChangeDefaultCurrency/{defaultCurrency}")]
         public async Task<IActionResult> ChangeDefaultCurrency(string defaultCurrency, CancellationToken cancellationToken)
@@ -125,6 +129,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Изменяет <paramref name="round"/>
+        /// </summary>
+        /// <param name="round">Количество знаков после запятой</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Изменение количества знаков после запятой</returns>
         [HttpGet]
         [Route("ChangeCurrencyRound/{round}")]
         public async Task<IActionResult> ChangeCurrencyRound(int round, CancellationToken cancellationToken)
@@ -134,6 +144,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получает Избранную валюту по <paramref name="currencyName"/>
+        /// </summary>
+        /// <param name="currencyName">Код Избранной валюты</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns><inheritdoc cref="FavoriteCurrencyDTO"/></returns>
         [HttpGet]
         [Route("GetFavoriteCurrency/{currencyName}")]
         public async Task<IActionResult> GetFavoriteCurrency(string currencyName, CancellationToken cancellationToken)
@@ -143,6 +159,11 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok(apiResponse);
         }
 
+        /// <summary>
+        /// Получает список всех Избранных валют
+        /// </summary>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Список <inheritdoc cref="FavoriteCurrencyDTO"/></returns>
         [HttpGet]
         [Route("GetAllFavoritesCurrencies")]
         public async Task<IActionResult> GetAllFavoritesCurrencies(CancellationToken cancellationToken)
@@ -152,6 +173,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok(apiResponse);
         }
 
+        /// <summary>
+        /// Добавляет новую Избранную валюту
+        /// </summary>
+        /// <param name="currenciesDTO"><inheritdoc cref="FavoriteCurrencyDTO"/></param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Результат добавления</returns>
         [HttpPost]
         [Route("AddNewFavoriteCurrency/{currencyName}/{currency}/{currencyBase}")]
         public async Task<IActionResult> AddNewFavoriteCurrency(string currencyName, string currency, string currencyBase, CancellationToken cancellationToken)
@@ -161,6 +188,13 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Изменяет Избранную валюту <paramref name="currencyName"/> на <paramref name="currenciesDTO"/>
+        /// </summary>
+        /// <param name="currencyName">Название избранной валюты</param>
+        /// <param name="currenciesDTO"><inheritdoc cref="FavoriteCurrencyDTO"/></param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Результат изменения</returns>
         [HttpPut]
         [Route("ChangeFavoriteCurrencyByName/{currencyName}/{changedCurrencyName}/{changedCurrency}/{changedCurrencyBase}")]
         public async Task<IActionResult> ChangeFavoriteCurrencyByName(string currencyName, string changedCurrencyName, string changedCurrency, string changedCurrencyBase, CancellationToken cancellationToken)
@@ -170,6 +204,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Удаляет Избранную валюту по <paramref name="currencyName"/>
+        /// </summary>
+        /// <param name="currencyName">Название избранной валюты</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Результат удаления</returns>
         [HttpDelete]
         [Route("DeleteFavoriteCurrencyByName/{currencyName}")]
         public async Task<IActionResult> DeleteFavoriteCurrencyByName(string currencyName, CancellationToken cancellationToken)
@@ -179,18 +219,31 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Получает курс Избранную валюту по <paramref name="currencyName"/>
+        /// </summary>
+        /// <param name="currencyName">Код Избранной валюты</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Курс Избранной валюты</returns>
         [HttpGet]
         [Route("GetCurrencyRateFavoriteByName/{currencyName}")]
-        public async Task<IActionResult> GetCurrencyRateFavoriteByName(string currencyName, CancellationToken cancellationToken) 
+        public async Task<IActionResult> GetCurrencyRateFavoriteByName(string currencyName, CancellationToken cancellationToken)
         {
             var apiResponse = await _currencyRateGrpcClientService.GetCurrencyFavoriteByName(currencyName, cancellationToken);
 
             return Ok(apiResponse);
         }
 
+        /// <summary>
+        /// Получает курс Избранную валюту по <paramref name="currencyName"/> на <paramref name="date"/>
+        /// </summary>
+        /// <param name="currencyName">Код Избранной валюты</param>
+        /// <param name="date">Дата, относительно которой выводится курс валюты</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Курс Избранной валюты на определённую <paramref name="date"/></returns>
         [HttpGet]
         [Route("GetCurrencyRateFavoriteByNameOnDate/{currencyName}/{date}")]
-        public async Task<IActionResult> GetCurrencyRateFavoriteByNameOnDate(string currencyName, DateOnly date, CancellationToken cancellationToken) 
+        public async Task<IActionResult> GetCurrencyRateFavoriteByNameOnDate(string currencyName, DateOnly date, CancellationToken cancellationToken)
         {
             var apiResponse = await _currencyRateGrpcClientService.GetCurrencyFavoriteByNameOnDate(currencyName, date, cancellationToken);
 

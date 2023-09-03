@@ -119,34 +119,53 @@
             <param name="taskQueue">Очередь</param>
         </member>
         <member name="M:InternalApi.Controllers.CurrencyController.GetCurrency(InternalApi.Models.ModelDTO.CurrencyType,System.Threading.CancellationToken)">
-             <summary>
-             Метод получения курса валюты по умолчанию.
-             </summary>
-             <returns>
-             Метод возвращает JSON вида
-                    {
-              "code": "RUB", // код валюты
-              "value": 90.50 // текущий курс относительно доллара
-            }
-             </returns>
+            <summary>
+            Получает курс валюты <paramref name="currencyType"/>
+            </summary>
+            <param name="currencyType">Валюта, для которой необходимо получить курс</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Курс валюты <paramref name="currencyType"/></returns>
+        </member>
+        <member name="M:InternalApi.Controllers.CurrencyController.GetCurrencyFromDb(InternalApi.Models.ModelDTO.CurrencyType,System.Threading.CancellationToken)">
+            <summary>
+            Получает курс валюты <paramref name="currencyType"/> из БД
+            </summary>
+            <param name="currencyType">Валюта, для которой необходимо получить курс</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Курс валюты <paramref name="currencyType"/> из БД</returns>
         </member>
         <member name="M:InternalApi.Controllers.CurrencyController.GetCurrencyOnDate(InternalApi.Models.ModelDTO.CurrencyType,System.DateOnly,System.Threading.CancellationToken)">
-             <summary>
-             Метод получения текущего курс валюты, переданного в качестве параметра
-             </summary>
-             <param name="currencyCode">
-             Код валюты относительно которого будет выведен курс.
-             </param>
-             <returns>
-             Метод возвращает JSON вида
-                    {
-              "code": "RUB", // код валюты
-              "value": 90.50 // текущий курс относительно доллара
-            }
-             </returns>
-             <exception cref="!:ApiRequestLimitException">
-             Выбрасывается исключение если все доступные запросы исчерпаны.
-             </exception>
+            <summary>
+            Получает курс валюты <paramref name="currencyType"/> на <paramref name="date"/>
+            </summary>
+            <param name="currencyType">Код валюты относительно которого будет выведен курс</param>
+            <param name="date">Дата, относительно которой выводится курс</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Курс валюты <paramref name="currencyType"/> на <paramref name="date"/></returns>
+        </member>
+        <member name="M:InternalApi.Controllers.CurrencyController.GetCurrencyOnDateFromDb(InternalApi.Models.ModelDTO.CurrencyType,System.DateOnly,System.Threading.CancellationToken)">
+            <summary>
+            Получает курс валюты <paramref name="currencyType"/> на <paramref name="date"/> из БД
+            </summary>
+            <param name="currencyType">Код валюты относительно которого будет выведен курс</param>
+            <param name="date">Дата, относительно которой выводится курс</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Курс валюты <paramref name="currencyType"/> на <paramref name="date"/> из БД</returns>
+        </member>
+        <member name="M:InternalApi.Controllers.CurrencyController.Settings(System.Threading.CancellationToken)">
+            <summary>
+            Получает текущие настройки внешнего Api
+            </summary>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Настройки внешнего Api</returns>
+        </member>
+        <member name="M:InternalApi.Controllers.CurrencyController.RecalculateCurrencyCacheToNewBaseCurrency(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Пересчитывает кэш курсов валбт относительно <paramref name="newBaseCurrency"/> новой базовой валюты
+            </summary>
+            <param name="newBaseCurrency">Новая базовая валюта</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Пересчет кэша курсов валют</returns>
         </member>
         <member name="T:InternalApi.Models.ModelDTO.CurrencyDTO">
             <summary>

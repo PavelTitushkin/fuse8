@@ -5,11 +5,21 @@ using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
 
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
 {
+    /// <summary>
+    /// Класс для работы с фоновоми задачами
+    /// </summary>
     public class QueuedHostedService : BackgroundService
     {
         private IServiceProvider _services;
         private readonly ILogger<QueuedHostedService> _logger;
         private readonly IBackgroundTaskQueue _taskQueue;
+
+        /// <summary>
+        /// Класс для работы с фоновоми задачами
+        /// </summary>
+        /// <param name="services">Провайдер сервисов</param>
+        /// <param name="logger">Логгер</param>
+        /// <param name="taskQueue">Очередь задачь</param>
         public QueuedHostedService(IServiceProvider services, ILogger<QueuedHostedService> logger, IBackgroundTaskQueue taskQueue)
         {
             _services = services;
@@ -39,6 +49,11 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
             }
         }
 
+        /// <summary>
+        /// Получает из БД не оконченные задачи
+        /// </summary>
+        /// <param name="stoppingToken">Токен отмены</param>
+        /// <returns>Выполняет не законченные задачи</returns>
         private async Task DoUnfinishedTasks(CancellationToken stoppingToken)
         {
             using var scope = _services.CreateScope();

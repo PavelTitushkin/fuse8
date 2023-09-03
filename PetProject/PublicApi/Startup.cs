@@ -15,7 +15,6 @@ using Microsoft.OpenApi.Models;
 using PublicClientApi;
 using Serilog;
 using System.Text.Json.Serialization;
-using AutoMapper;
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 
@@ -93,7 +92,7 @@ public class Startup
                     }
                     return auditEvent.ToJson();
                 }));
-        
+
         //Добавление фильтра исключения
         services.AddControllers(options =>
         {
@@ -145,6 +144,5 @@ public class Startup
 
         app.UseRouting()
             .UseEndpoints(endpoints => endpoints.MapControllers());
-
     }
 }

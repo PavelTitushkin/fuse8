@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 {
     /// <summary>
-    /// Сервис для работы с currencyApi
+    /// Сервис для работы с PublicApi
     /// </summary>
     public class CurrencyRateService : ICurrencyRateService
     {
@@ -17,6 +17,12 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
         private readonly ICurrencyRepository _currencyRepository;
         public AppSettings AppSettings { get; }
 
+        /// <summary>
+        /// Сервис для работы с PublicApi
+        /// </summary>
+        /// <param name="options">Кофигурации приложения</param>
+        /// <param name="httpCurrencyRepository"><inheritdoc cref="IHttpCurrencyRepository"/></param>
+        /// <param name="currencyRepository"><inheritdoc cref="ICurrencyRepository"/></param>
         public CurrencyRateService(IOptions<AppSettings> options, IHttpCurrencyRepository httpCurrencyRepository, ICurrencyRepository currencyRepository)
         {
             AppSettings = options.Value;
@@ -93,7 +99,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 
         public async Task ChangeDefaultCurrencyAsync(string defaultCurrency, CancellationToken cancellationToken)
         {
-            await _currencyRepository.ChangeDefaultCurrencyAsync(defaultCurrency.ToUpper(), cancellationToken);
+            await _currencyRepository .ChangeDefaultCurrencyAsync(defaultCurrency.ToUpper(), cancellationToken);
         }
 
         public async Task ChangeCurrencyRoundAsync(int round, CancellationToken cancellationToken)
@@ -145,6 +151,10 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
             await _currencyRepository.DeleteFavoriteCurrencyByNameAsync(currencyName, cancellationToken);
         }
 
+        /// <summary>
+        /// Проверят на лимит запрсов
+        /// </summary>
+        /// <returns>Превышен ли лимит</returns>
         private async Task<bool> IsCurrencyLimitExceededAsync()
         {
             var apiSettings = await GetCurrencySettingsAsync();

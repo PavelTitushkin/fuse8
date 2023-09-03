@@ -161,7 +161,7 @@ namespace InternalApi
 
             //Добавление логирования
             app.UseMiddleware<LoggingMiddleware>();
-
+            
             app.Run();
         }
     }

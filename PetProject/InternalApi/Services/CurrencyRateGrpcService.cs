@@ -7,6 +7,9 @@ using Microsoft.Extensions.Options;
 
 namespace InternalApi.Services
 {
+    /// <summary>
+    /// Сервис для работы с gRPC
+    /// </summary>
     public class CurrencyRateGrpcService : CurrrncyGrpsService.CurrrncyGrpsServiceBase
     {
         private readonly ICachedCurrencyAPI _cachedCurrencyAPI;
@@ -23,6 +26,12 @@ namespace InternalApi.Services
             AppSettings = options.Value;
         }
 
+        /// <summary>
+        /// Получает курс валюты
+        /// </summary>
+        /// <param name="currency">Запрос хранящий код валюты</param>
+        /// <param name="context">Токен отмены</param>
+        /// <returns>Курс валюты</returns>
         public override async Task<CurrencyResponse> GetCurrency(CurrencyRequest currency, ServerCallContext context)
         {
             Enum.TryParse(currency.CurrencyCode.ToUpper(), out CurrencyType currencyType);
@@ -31,6 +40,12 @@ namespace InternalApi.Services
             return _mapper.Map<CurrencyResponse>(currencies);
         }
 
+        /// <summary>
+        /// Получает курс валюты на дату
+        /// </summary>
+        /// <param name="currencyOnDate">Запрос хранящий код валюты и дату</param>
+        /// <param name="context">Токен отмены</param>
+        /// <returns>Курс валюты на определённую дату</returns>
         public override async Task<CurrencyResponse> GetCurrencyOnDate(CurrencyOnDateRequest currencyOnDate, ServerCallContext context)
         {
             Enum.TryParse(currencyOnDate.CurrencyCode.ToUpper(), out CurrencyType currencyType);
@@ -41,6 +56,12 @@ namespace InternalApi.Services
             return currencyResponse;
         }
 
+        /// <summary>
+        /// Получает настройки внешнего Api
+        /// </summary>
+        /// <param name="settings">Настройки</param>
+        /// <param name="context">Токен отмены</param>
+        /// <returns>Значение настроек</returns>
         public override async Task<ApiSettingsResponse> GetSettingsApi(ApiSettingsRequest settings, ServerCallContext context)
         {
             var apiSettings = await _currencyRateService.GetCurrencySettingsAsync(context.CancellationToken);
@@ -52,6 +73,12 @@ namespace InternalApi.Services
             };
         }
 
+        /// <summary>
+        /// Получает курс Избраннуй валюты
+        /// </summary>
+        /// <param name="currencyFavorite">Значение избранной валюты</param>
+        /// <param name="context">Токен отмены</param>
+        /// <returns>Курс валюты</returns>
         public override async Task<CurrencyFavoriteResponse> GetCurrencyFavoriteByName(CurrencyFavoriteRequest currencyFavorite, ServerCallContext context)
         {
             if(currencyFavorite.BaseCurrency == AppSettings.Base)
@@ -82,6 +109,12 @@ namespace InternalApi.Services
             }
         }
 
+        /// <summary>
+        /// Получает курс Избраннуй валюты на определённую дату
+        /// </summary>
+        /// <param name="currencyFavorite">Дата и значение избранной валюты</param>
+        /// <param name="context">Токен отмены</param>
+        /// <returns>Курс валюты на определённую дату</returns>
         public override async Task<CurrencyFavoriteOnDateResponse> GetCurrencyFavoriteByNameOnDate(CurrencyFavoriteOnDateRequest currencyFavorite, ServerCallContext context)
         {
             if (currencyFavorite.BaseCurrency == AppSettings.Base)

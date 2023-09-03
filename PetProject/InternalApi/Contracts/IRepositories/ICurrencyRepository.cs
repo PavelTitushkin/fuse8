@@ -3,7 +3,7 @@
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories
 {
     /// <summary>
-    /// Интерфейс для работы с репозиториями
+    /// Интерфейс для работы с репозиторием
     /// </summary>
     public interface ICurrencyRepository
     {

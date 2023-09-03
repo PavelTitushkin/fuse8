@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace InternalApi.Filter
 {
+    /// <summary>
+    /// Класс фильтра исключения
+    /// </summary>
     public class ApiExceptionFilter : Attribute, IExceptionFilter
     {
         private readonly ILogger<ApiExceptionFilter> _logger;

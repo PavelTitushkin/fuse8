@@ -7,12 +7,22 @@ using Microsoft.Extensions.Options;
 
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
 {
+    /// <summary>
+    /// Сервис для пересчёта кэша
+    /// </summary>
     public class RecalculateCacheService : IRecalculateCacheService
     {
         private readonly ICachedCurrencyRepository _cachedCurrencyRepository;
         private readonly ILogger<RecalculateCacheService> _logger;
 
         public AppSettings AppSettings { get; set; }
+
+        /// <summary>
+        /// Сервис для пересчёта кэша
+        /// </summary>
+        /// <param name="options">Кофигурации приложения</param>
+        /// <param name="cachedCurrencyRepository">Репозитрий для работы с кэш данными</param>
+        /// <param name="logger">Логгер</param>
         public RecalculateCacheService(IOptions<AppSettings> options, ICachedCurrencyRepository cachedCurrencyRepository, ILogger<RecalculateCacheService> logger)
         {
             _cachedCurrencyRepository = cachedCurrencyRepository;
@@ -32,6 +42,12 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
             }
         }
 
+        /// <summary>
+        /// Пересчитывает кэш
+        /// </summary>
+        /// <param name="workItem">Идентификатор задачи</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Пересчет и сохранение кэша в БД</returns>
         private async Task RecalculateAsync(WorkItem workItem, CancellationToken cancellationToken)
         {
             try
@@ -67,6 +83,12 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
             }
         }
 
+        /// <summary>
+        /// Получает задачу и меняет её статус 
+        /// </summary>
+        /// <param name="workItem">Идентификатор задачи</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Изменение статуса задачи</returns>
         private async Task InProcessingAsync(WorkItem workItem, CancellationToken cancellationToken)
         {
             var task = await _cachedCurrencyRepository.GetTaskFromCacheTaskAsync(workItem.Id, cancellationToken);
