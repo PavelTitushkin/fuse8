@@ -38,18 +38,18 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Services
             {
                 var task = await _cachedCurrencyRepository.GetTaskFromCacheTaskAsync(workItem.Id, cancellationToken);
                 var newBaseCurrency = task.NewBaseCurrency;
-                var cacheList = await _cachedCurrencyRepository.GetAllCurrenciesFromDbAsync(cancellationToken);
+                var cacheList = await _cachedCurrencyRepository.GetAllCurrenciesFromDbAsync(newBaseCurrency, cancellationToken);
                 foreach (var cache in cacheList)
                 {
-                    var newBaseCurrencyValue = cache.CurrenciesList.Where(c => c.Code == newBaseCurrency).FirstOrDefault().Value;
-                    cache.Id = 0;
+                    var newBaseCurrencyValue = cache.CurrenciesList
+                        .Where(c => c.Code == newBaseCurrency)
+                        .FirstOrDefault().Value;
                     foreach (var item in cache.CurrenciesList)
                     {
                         item.Value = Math.Round(item.Value / newBaseCurrencyValue, AppSettings.Round);
                     }
                     cache.CurrenciesList.OrderBy(c => c.Code);
                 }
-
                 await _cachedCurrencyRepository.SaveNewCacheCurrenciesAsync(cacheList, cancellationToken);
                 AppSettings.Base = newBaseCurrency;
                 task.CacheTackStatus = CacheTackStatusDTO.CompletedSuccessfully;

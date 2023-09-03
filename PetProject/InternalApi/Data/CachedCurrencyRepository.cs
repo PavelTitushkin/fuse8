@@ -95,7 +95,7 @@ namespace InternalApi.Data
 
             if (cachedCurrencies == null && tasks.Count > 0)
             {
-                await Task.Delay(10000);
+                await Task.Delay(AppSettings.WaitTimeTaskExecution);
                 var lastTask = await GetUnfinishedTasksAsync(cancellationToken);
                 if (lastTask.Count > 0)
                 {
@@ -161,7 +161,7 @@ namespace InternalApi.Data
             return cachedCurrencies;
         }
 
-        public async Task<List<CurrenciesDTO>> GetAllCurrenciesFromDbAsync(CancellationToken cancellationToken)
+        public async Task<List<CurrenciesDTO>> GetAllCurrenciesFromDbAsync(string newBaseCurrency, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -177,7 +177,7 @@ namespace InternalApi.Data
 
             if (cachedCurrencies.Count == 0)
             {
-                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(AppSettings.Base, cancellationToken);
+                var currencies = await _currencyAPI.GetAllCurrentCurrenciesAsync(newBaseCurrency, cancellationToken);
                 var currenciesDto = new CurrenciesDTO
                 {
                     Id = 0,
@@ -307,8 +307,8 @@ namespace InternalApi.Data
 
         public async Task SaveNewCacheCurrenciesAsync(List<CurrenciesDTO> currencies, CancellationToken cancellationToken)
         {
-            var entity = _mapper.Map<List<Currencies>>(currencies);
-            await _internalApiContext.CurrenciesList.AddRangeAsync(entity, cancellationToken);
+            var entities = _mapper.Map<List<Currencies>>(currencies);
+            _internalApiContext.CurrenciesList.UpdateRange(entities);
             await _internalApiContext.SaveChangesAsync(cancellationToken);
         }
 

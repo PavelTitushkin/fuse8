@@ -19,30 +19,25 @@ namespace InternalApi.Data
             _httpClient.BaseAddress = new Uri(AppSettings.BasePath);
         }
 
-        public async Task<CurrencyRateResponse> GetCurrencyRateAsync()
+        public async Task<CurrencyRateResponse> GetCurrencyRateAsync(CancellationToken cancellationToken)
         {
-            var apiKey = AppSettings.APIKey;
-            var defaultCurrencyCode = AppSettings.Default;
-            var baseCurrencyCode = AppSettings.Base;
-            var path = new Uri(_httpClient.BaseAddress + $"/latest?currencies={defaultCurrencyCode}&base_currency={baseCurrencyCode}");
-            AddDefaultRequestHeaders(_httpClient, apiKey);
-            HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
+            var path = new Uri(_httpClient.BaseAddress + $"/latest?currencies={AppSettings.Default}&base_currency={AppSettings.Base}");
+            AddDefaultRequestHeaders(_httpClient, AppSettings.APIKey);
+            HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
             apiResponse.EnsureSuccessStatusCode();
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+            var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
             return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
         }
-        public async Task<CurrencyRateResponse> GetCurrencyRateAsync(string currencyCode)
+        public async Task<CurrencyRateResponse> GetCurrencyRateAsync(string currencyCode, CancellationToken cancellationToken)
         {
             try
             {
-                var apiKey = AppSettings.APIKey;
-                var baseCurrencyCode = AppSettings.Base;
-                var path = new Uri(_httpClient.BaseAddress + "/latest?currencies=" + currencyCode + "&base_currency=" + baseCurrencyCode);
-                AddDefaultRequestHeaders(_httpClient, apiKey);
-                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
+                var path = new Uri(_httpClient.BaseAddress + "/latest?currencies=" + currencyCode + "&base_currency=" + AppSettings.Base);
+                AddDefaultRequestHeaders(_httpClient, AppSettings.APIKey);
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
                 apiResponse.EnsureSuccessStatusCode();
-                var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
                 return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
             }
@@ -54,18 +49,16 @@ namespace InternalApi.Data
                     throw ex;
             }
         }
-        public async Task<CurrencyRateResponse> GetCurrencyOnDateRateAsync(string currencyCode, DateTime date)
+        public async Task<CurrencyRateResponse> GetCurrencyOnDateRateAsync(string currencyCode, DateTime date, CancellationToken cancellationToken)
         {
             try
             {
                 var dateString = date.ToString("yyyy-MM-dd");
-                var apiKey = AppSettings.APIKey;
-                var baseCurrencyCode = AppSettings.Base;
-                var path = new Uri(_httpClient.BaseAddress + $"/historical?currencies={currencyCode}&date={dateString}&base_currency={baseCurrencyCode}");
-                AddDefaultRequestHeaders(_httpClient, apiKey);
-                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
+                var path = new Uri(_httpClient.BaseAddress + $"/historical?currencies={currencyCode}&date={dateString}&base_currency={AppSettings.Base}");
+                AddDefaultRequestHeaders(_httpClient, AppSettings.APIKey);
+                HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
                 apiResponse.EnsureSuccessStatusCode();
-                var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
                 return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
             }
@@ -77,14 +70,13 @@ namespace InternalApi.Data
                     throw ex;
             }
         }
-        public async Task<SettingsResponse> GetCurrencySettingsAsync()
+        public async Task<SettingsResponse> GetCurrencySettingsAsync(CancellationToken cancellationToken)
         {
-            var apiKey = AppSettings.APIKey;
             var path = new Uri(_httpClient.BaseAddress + "/status");
-            AddDefaultRequestHeaders(_httpClient, apiKey);
-            HttpResponseMessage apiResponse = await _httpClient.GetAsync(path);
+            AddDefaultRequestHeaders(_httpClient, AppSettings.APIKey);
+            HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
             apiResponse.EnsureSuccessStatusCode();
-            var apiContent = await apiResponse.Content.ReadAsStringAsync();
+            var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
             return JsonSerializer.Deserialize<SettingsResponse>(apiContent);
         }
@@ -94,14 +86,13 @@ namespace InternalApi.Data
         {
             try
             {
-                var apiKey = AppSettings.APIKey;
                 var path = new Uri(_httpClient.BaseAddress + $"/latest?base_currency={baseCurrency}");
-                AddDefaultRequestHeaders(_httpClient, apiKey);
+                AddDefaultRequestHeaders(_httpClient, AppSettings.APIKey);
 
                 HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
                 apiResponse.EnsureSuccessStatusCode();
 
-                var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
                 return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
 
@@ -123,14 +114,13 @@ namespace InternalApi.Data
         {
             try
             {
-                var apiKey = AppSettings.APIKey;
                 var dateString = date.ToString("yyyy-MM-dd");
                 var path = new Uri(_httpClient.BaseAddress + $"/historical?date={dateString}&base_currency={baseCurrency}");
-                AddDefaultRequestHeaders(_httpClient, apiKey);
+                AddDefaultRequestHeaders(_httpClient, AppSettings.APIKey);
 
                 HttpResponseMessage apiResponse = await _httpClient.GetAsync(path, cancellationToken);
                 apiResponse.EnsureSuccessStatusCode();
-                var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                var apiContent = await apiResponse.Content.ReadAsStringAsync(cancellationToken);
 
                 return JsonSerializer.Deserialize<CurrencyRateResponse>(apiContent);
             }

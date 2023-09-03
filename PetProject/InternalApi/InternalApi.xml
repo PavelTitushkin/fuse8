@@ -43,6 +43,14 @@
             <param name="cancellationToken">Токен отмены</param>
             <returns>Курс на дату</returns>
         </member>
+        <member name="M:InternalApi.Contracts.ICachedCurrencyAPI.AddNewBaseCurrencyToCacheTaskAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Добавляет новую базовую валюту
+            </summary>
+            <param name="newBaseCurrency">Новая базовая валюта</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Объект состояния задачи</returns>
+        </member>
         <member name="T:InternalApi.Contracts.ICurrencyAPI">
             <summary>
             Интерфейс расширяющий ICurrencyRateService 
@@ -70,20 +78,20 @@
             Интерфейс для работы с CurrencyRateService
             </summary>
         </member>
-        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync">
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync(System.Threading.CancellationToken)">
             <summary>
             Получает курс валюты по умолчанию относительно базовой
             </summary>
             <returns>Курс валюты.</returns>
         </member>
-        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync(System.String)">
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             Получает курс <paramref name="currencyCode"/> относительно базовой. 
             </summary>
             <param name="currencyCode">Код валюты</param>
             <returns>Курс валюты</returns>
         </member>
-        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync(System.String,System.DateTime)">
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencyAsync(System.String,System.DateTime,System.Threading.CancellationToken)">
             <summary>
             Получает курс <paramref name="currencyCode"/> относительно базовой на определённую <paramref name="date"/> 
             </summary>
@@ -91,7 +99,7 @@
             <param name="date">Дата, на которую нужно получить курс валют</param>
             <returns>Курс валюты на определённую дату</returns>
         </member>
-        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencySettingsAsync">
+        <member name="M:InternalApi.Contracts.ICurrencyRateService.GetCurrencySettingsAsync(System.Threading.CancellationToken)">
             <summary>
             Получает настройки API
             </summary>
@@ -101,6 +109,14 @@
             <summary>
             Методы получения курсов валют
             </summary>
+        </member>
+        <member name="M:InternalApi.Controllers.CurrencyController.#ctor(InternalApi.Contracts.ICurrencyRateService,InternalApi.Contracts.ICachedCurrencyAPI,Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.IBackgroundTaskQueue)">
+            <summary>
+            Кноструктор
+            </summary>
+            <param name="currencyRateService">Сервис для работы с курсами валют</param>
+            <param name="cachedCurrencyAPI">Сервис для работы данными кеша</param>
+            <param name="taskQueue">Очередь</param>
         </member>
         <member name="M:InternalApi.Controllers.CurrencyController.GetCurrency(InternalApi.Models.ModelDTO.CurrencyType,System.Threading.CancellationToken)">
              <summary>
@@ -351,6 +367,60 @@
             <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
             <param name="serviceImpl">An object implementing the server-side handling logic.</param>
         </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.IBackgroundTaskQueue">
+            <summary>
+            Интерфейс очереди фоновой задачи  
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.IBackgroundTaskQueue.QueueAsync(Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.WorkItem)">
+            <summary>
+            Добавить задачу в очередь
+            </summary>
+            <param name="command">Задача</param>
+            <returns>Операция записи</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.IBackgroundTaskQueue.DequeueAsync(System.Threading.CancellationToken)">
+            <summary>
+            Получить задачу из очереди
+            </summary>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Операция чтения</returns>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.WorkItem">
+            <summary>
+            Класс представляющий задачу
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.WorkItem.#ctor(System.Guid,Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO.CacheTackStatusDTO)">
+            <summary>
+            Конструктор класс представляющего задачу
+            </summary>
+            <param name="id">идентификатор задачи</param>
+            <param name="status">Статус задачи</param>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.WorkItem.Id">
+            <summary>
+            Идентификатор задачи
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.WorkItem.Status">
+            <summary>
+            Статус задачи
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRecalculateCacheService">
+            <summary>
+            Интерфейс пересчёта кэша
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRecalculateCacheService.RecalculateCacheAsync(Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues.WorkItem,System.Threading.CancellationToken)">
+            <summary>
+            Пересчитывает кэш
+            </summary>
+            <param name="workItem">Задача</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Пересчет кэша</returns>
+        </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICachedCurrencyRepository">
             <summary>
             Интерфейс для работы CachedCurrencyRepository
@@ -386,25 +456,72 @@
             <param name="cancellationToken">Токен отмены</param>
             <returns>Список валют</returns>
         </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICachedCurrencyRepository.GetAllCurrenciesFromDbAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Получает все записи курсов валют
+            </summary>
+            <param name="newBaseCurrency">Новая базовая валюта</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Список всех записей курсов валют</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICachedCurrencyRepository.AddNewBaseCurrencyToCacheTaskAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Добавляет задачу для пересчета кэша относительно новой базой валюты 
+            </summary>
+            <param name="newBaseCurrency">Базовая валюта</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Объект состояния задачи</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICachedCurrencyRepository.GetTaskFromCacheTaskAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Получает задачу по уникальному индентификатору <paramref name="id"/>
+            </summary>
+            <param name="id">Уникальный индентификатор</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Объект состояния задачи</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICachedCurrencyRepository.ChangeStatusTaskToCacheTaskAsync(Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO.CacheTaskDTO,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет статус(состояние) задачи
+            </summary>
+            <param name="cacheTaskDTO">Объект состояния задачи</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Изменение статуса(состояния задачи)</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICachedCurrencyRepository.SaveNewCacheCurrenciesAsync(System.Collections.Generic.List{Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO.CurrenciesDTO},System.Threading.CancellationToken)">
+            <summary>
+            Сохраняет пересчитанный кэш в БД
+            </summary>
+            <param name="currencies">Список курсов валют</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Сохранение результата пересчёта</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICachedCurrencyRepository.GetUnfinishedTasksAsync(System.Threading.CancellationToken)">
+            <summary>
+            Получает не завершенные задачи
+            </summary>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Список не завершенных задач</returns>
+        </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository">
             <summary>
             Интерфейс для работы с репозиториями
             </summary>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencyRateAsync">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencyRateAsync(System.Threading.CancellationToken)">
             <summary>
             Получает курсы валют по умолчанию относительно базовой
             </summary>
             <returns>Ответ внешнего Api</returns>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencyRateAsync(System.String)">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencyRateAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             Получает курсы валют <paramref name="currencyCode"/> относительно базовой. 
             </summary>
             <param name="currencyCode">Код валюты</param>
             <returns>Ответ внешнего Api</returns>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencyOnDateRateAsync(System.String,System.DateTime)">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencyOnDateRateAsync(System.String,System.DateTime,System.Threading.CancellationToken)">
             <summary>
             Получает курс валют <paramref name="currencyCode"/> относительно базовой на определённую <paramref name="date"/> 
             </summary>
@@ -412,7 +529,7 @@
             <param name="date">Дата, на которую нужно получить курс валют</param>
             <returns>Ответ внешнего Api</returns>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencySettingsAsync">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories.ICurrencyRepository.GetCurrencySettingsAsync(System.Threading.CancellationToken)">
             <summary>
             Получает настройки внешнего Api
             </summary>
@@ -434,6 +551,53 @@
             <param name="date">Дата, на которую нужно получить курс валют</param>
             <param name="cancellationToken">Токен отмены</param>
             <returns>Ответ внешнего Api</returns>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckController">
+            <summary>
+            Методы для проверки работоспособности InternalApi
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckController.Check(System.Nullable{System.Boolean})">
+            <summary>
+            Проверить что API работает
+            </summary>
+            <param name="checkExternalApi">Необходимо проверить работоспособность внешнего API. Если FALSE или NULL - проверяется работоспособность только текущего API</param>
+            <response code="200">
+            Возвращает если удалось получить доступ к API
+            </response>
+            <response code="400">
+            Возвращает если удалось не удалось получить доступ к API
+            </response>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckResult">
+            <summary>
+            Результат проверки работоспособности API
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckResult.CheckedOn">
+            <summary>
+            Дата проверки
+            </summary>
+        </member>
+        <member name="P:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckResult.Status">
+            <summary>
+            Статус работоспособности API
+            </summary>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckResult.CheckStatus">
+            <summary>
+            Статус API
+            </summary>
+        </member>
+        <member name="F:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckResult.CheckStatus.Ok">
+            <summary>
+            API работает
+            </summary>
+        </member>
+        <member name="F:Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckResult.CheckStatus.Failed">
+            <summary>
+            Ошибка в работе API
+            </summary>
         </member>
     </members>
 </doc>

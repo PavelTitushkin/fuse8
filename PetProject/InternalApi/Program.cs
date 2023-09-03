@@ -130,6 +130,9 @@ namespace InternalApi
                 //Добавление коментарии
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"), true);
             });
+
+            builder.Services.AddHealthChecks();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -139,6 +142,8 @@ namespace InternalApi
                 app.UseSwaggerUI();
             }
 
+            app.MapHealthChecks("/health");
+
             //Настройка gRPC
             app.UseWhen(
                 predicate: context => context.Connection.LocalPort == builder.Configuration.GetValue<int>("gRPCPort"),
@@ -147,7 +152,6 @@ namespace InternalApi
                     grpcBuilder.UseRouting();
                     grpcBuilder.UseEndpoints(endpoints => endpoints.MapGrpcService<CurrencyRateGrpcService>());
                 });
-
 
             app.UseRouting()
                 .UseEndpoints(endpoints =>

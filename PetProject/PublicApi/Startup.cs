@@ -93,7 +93,7 @@ public class Startup
                     }
                     return auditEvent.ToJson();
                 }));
-
+        
         //Добавление фильтра исключения
         services.AddControllers(options =>
         {
@@ -126,6 +126,8 @@ public class Startup
             //Добавление коментарии
             c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"), true);
         });
+
+        services.AddHealthChecks();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -136,10 +138,13 @@ public class Startup
             app.UseSwaggerUI();
         }
 
+        app.UseHealthChecks("/health");
+
         //Добавление логирования
         app.UseMiddleware<LoggingMiddleware>();
 
         app.UseRouting()
             .UseEndpoints(endpoints => endpoints.MapControllers());
+
     }
 }

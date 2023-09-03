@@ -43,7 +43,7 @@ namespace InternalApi.Services
 
         public override async Task<ApiSettingsResponse> GetSettingsApi(ApiSettingsRequest settings, ServerCallContext context)
         {
-            var apiSettings = await _currencyRateService.GetCurrencySettingsAsync();
+            var apiSettings = await _currencyRateService.GetCurrencySettingsAsync(context.CancellationToken);
 
             return new ApiSettingsResponse
             {

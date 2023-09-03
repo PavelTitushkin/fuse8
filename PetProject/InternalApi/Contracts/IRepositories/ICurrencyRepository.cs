@@ -11,14 +11,14 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories
         /// Получает курсы валют по умолчанию относительно базовой
         /// </summary>
         /// <returns>Ответ внешнего Api</returns>
-        Task<CurrencyRateResponse> GetCurrencyRateAsync();
+        Task<CurrencyRateResponse> GetCurrencyRateAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Получает курсы валют <paramref name="currencyCode"/> относительно базовой. 
         /// </summary>
         /// <param name="currencyCode">Код валюты</param>
         /// <returns>Ответ внешнего Api</returns>
-        Task<CurrencyRateResponse> GetCurrencyRateAsync(string currencyCode);
+        Task<CurrencyRateResponse> GetCurrencyRateAsync(string currencyCode, CancellationToken cancellationToken);
 
         /// <summary>
         /// Получает курс валют <paramref name="currencyCode"/> относительно базовой на определённую <paramref name="date"/> 
@@ -26,13 +26,13 @@ namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories
         /// <param name="currencyCode">Код валюты</param>
         /// <param name="date">Дата, на которую нужно получить курс валют</param>
         /// <returns>Ответ внешнего Api</returns>
-        Task<CurrencyRateResponse> GetCurrencyOnDateRateAsync(string currencyCode, DateTime date);
+        Task<CurrencyRateResponse> GetCurrencyOnDateRateAsync(string currencyCode, DateTime date, CancellationToken cancellationToken);
 
         /// <summary>
         /// Получает настройки внешнего Api
         /// </summary>
         /// <returns>Ответ внешнего Api</returns>
-        Task<SettingsResponse> GetCurrencySettingsAsync();
+        Task<SettingsResponse> GetCurrencySettingsAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Получает текущий курс для всех валют

@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using static Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckResult;
+using static Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers.HealthCheckResult;
 
-namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers;
+namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Controllers;
 
 /// <summary>
-/// Методы для проверки работоспособности PublicApi
+/// Методы для проверки работоспособности InternalApi
 /// </summary>
 [Route("healthcheck")]
 public class HealthCheckController : ControllerBase
@@ -28,29 +28,29 @@ public class HealthCheckController : ControllerBase
 /// </summary>
 public record HealthCheckResult
 {
-	/// <summary>
-	/// Дата проверки
-	/// </summary>
-	public DateTimeOffset CheckedOn { get; init; }
+    /// <summary>
+    /// Дата проверки
+    /// </summary>
+    public DateTimeOffset CheckedOn { get; init; }
 
-	/// <summary>
-	/// Статус работоспособности API
-	/// </summary>
-	public CheckStatus Status { get; init; }
+    /// <summary>
+    /// Статус работоспособности API
+    /// </summary>
+    public CheckStatus Status { get; init; }
 
-	/// <summary>
-	/// Статус API
-	/// </summary>
-	public enum CheckStatus
-	{
-		/// <summary>
-		/// API работает
-		/// </summary>
-		Ok = 1,
+    /// <summary>
+    /// Статус API
+    /// </summary>
+    public enum CheckStatus
+    {
+        /// <summary>
+        /// API работает
+        /// </summary>
+        Ok = 1,
 
-		/// <summary>
-		/// Ошибка в работе API
-		/// </summary>
-		Failed = 2,
-	}
+        /// <summary>
+        /// Ошибка в работе API
+        /// </summary>
+        Failed = 2,
+    }
 }

@@ -42,6 +42,12 @@ namespace InternalApi.Contracts
         /// <returns>Курс на дату</returns>
         Task<CurrencyDTO> GetCurrencyOnDateFromDbAsync(CurrencyType currencyType, DateOnly date, CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Добавляет новую базовую валюту
+        /// </summary>
+        /// <param name="newBaseCurrency">Новая базовая валюта</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Объект состояния задачи</returns>
         Task<CacheTaskDTO> AddNewBaseCurrencyToCacheTaskAsync(string newBaseCurrency, CancellationToken cancellationToken);
     }
 }

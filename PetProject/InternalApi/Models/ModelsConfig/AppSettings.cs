@@ -9,5 +9,6 @@
         public string BasePath { get; set; }
         public string PathFile { get; set; }
         public int CacheLifetime { get; set; }
+        public int WaitTimeTaskExecution { get; set; }
     }
 }

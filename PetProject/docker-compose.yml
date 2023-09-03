@@ -1,0 +1,92 @@
+version: '3.4'
+
+services:
+  postgres:
+    container_name: ${POSTGRES_DB_CONTAINER_NAME} 
+    image: postgres:15.3
+    restart: unless-stopped
+    environment:
+        DATABASE_HOST: ${POSTGRES_DATABASE_HOST}
+        POSTGRES_USER: ${POSTGRES_USER_NAME}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB_NAME}
+    ports:
+        - "5432:5432"
+
+  pgAdmin:
+    container_name: ${PGADMIN_CONTAINER_NAME}
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+
+  internal_api:
+    container_name: ${INTERNAL_API_CONTAINER_NAME}
+    image: api/internal_api_image:dev
+    restart: unless-stopped
+    ports:
+      - "5240:5240"
+      - "7285:7285" 
+
+    environment:
+      - ASPNETCORE_URLS=http://+:5240;http://+:7285;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - gRPCPort=7285  
+      - ApiPort=5240
+      - Currency__Default=RUB
+      - Currency__Base=USD
+      - Currency__Round=2
+      - Currency__BasePath=https://api.currencyapi.com/v3
+      - Currency__PathFile=D:\\Fuse8\\fuse8\\PetProject\\InternalApi\\CacheFiles
+      - Currency__CacheLifetime=2
+      - Currency__WaitTimeTaskExecution=10000
+
+    healthcheck:
+      test: curl --fail http://localhost:5240/health || exit 1
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+      start_interval: 10s
+      interval: 15s
+
+    build:
+      context: ..
+      dockerfile: PetProject/InternalApi/Dockerfile
+  
+    depends_on:
+      postgres:
+        condition: service_started
+
+  public_api:
+    container_name: ${PUBLIC_API_CONTAINER_NAME}
+    image: api/public_api_image:dev
+    restart: unless-stopped
+    ports:
+      - "5700:5700"
+    environment:
+      - ASPNETCORE_URLS=http://+:5700;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Currency__Default=RUB
+      - Currency__Base=USD
+      - Currency__Round=2
+      - Currency__BasePath=https://api.currencyapi.com/v3
+
+    healthcheck:
+      test: curl --fail http://localhost:5700/health || exit 1
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+      start_interval: 10s
+      interval: 15s
+
+    build:
+      context: ..
+      dockerfile: PetProject/PublicApi/Dockerfile
+
+    depends_on:
+      internal_api:
+        condition: service_healthy
+      postgres:
+        condition: service_started

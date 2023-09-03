@@ -1,6 +1,6 @@
 ﻿using DataStore.InternalApiDb.Entities;
 using AutoMapper;
-using InternalApi.Models.ModelResponse;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
 
 namespace InternalApi.MappingProfiles
 {
@@ -8,9 +8,9 @@ namespace InternalApi.MappingProfiles
     {
         public CurrencyEntityProfile()
         {
-            CreateMap<CurrencyEntity, Currency>();
+            CreateMap<CurrencyEntity, CurrencyEntityDTO>();
 
-            CreateMap<Currency, CurrencyEntity>();
+            CreateMap<CurrencyEntityDTO, CurrencyEntity>();
         }
     }
 }

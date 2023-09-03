@@ -9,7 +9,6 @@ namespace InternalApi.Controllers
     /// <summary>
     /// Методы получения курсов валют
     /// </summary>
-    //[Route("api")]
     [ApiController]
     public class CurrencyController : ControllerBase
     {
@@ -17,6 +16,12 @@ namespace InternalApi.Controllers
         private readonly ICachedCurrencyAPI _cachedCurrencyAPI;
         private readonly IBackgroundTaskQueue _taskQueue;
 
+        /// <summary>
+        /// Кноструктор
+        /// </summary>
+        /// <param name="currencyRateService">Сервис для работы с курсами валют</param>
+        /// <param name="cachedCurrencyAPI">Сервис для работы данными кеша</param>
+        /// <param name="taskQueue">Очередь</param>
         public CurrencyController(ICurrencyRateService currencyRateService, ICachedCurrencyAPI cachedCurrencyAPI, IBackgroundTaskQueue taskQueue)
         {
             _currencyRateService = currencyRateService;
@@ -25,15 +30,11 @@ namespace InternalApi.Controllers
         }
 
         /// <summary>
-        /// Метод получения курса валюты по умолчанию.
+        /// Метод получения курса валюты по умолчанию
         /// </summary>
-        /// <returns>
-        /// Метод возвращает JSON вида
-        ///        {
-        ///  "code": "RUB", // код валюты
-        ///  "value": 90.50 // текущий курс относительно доллара
-        ///}
-        /// </returns>
+        /// <param name="currencyType"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("currency/{currencyType}")]
         public async Task<IActionResult> GetCurrency(CurrencyType currencyType, CancellationToken cancellationToken)
@@ -103,9 +104,9 @@ namespace InternalApi.Controllers
         ///// </returns>
         [HttpGet]
         [Route("settings")]
-        public async Task<IActionResult> Settings()
+        public async Task<IActionResult> Settings(CancellationToken cancellationToken)
         {
-            var apiResponse = await _currencyRateService.GetCurrencySettingsAsync();
+            var apiResponse = await _currencyRateService.GetCurrencySettingsAsync(cancellationToken);
             var apiSettings = new InternalApiSettings
             {
                 Code = apiResponse.BaseCurrency,
