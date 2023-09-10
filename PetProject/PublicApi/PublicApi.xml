@@ -326,21 +326,6 @@
             <param name="cancellationToken">Токен отмены</param>
             <returns>Результат сравнения на унивальность</returns>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.ApiRequestLimitException">
-            <summary>
-            Исключение о превышении лимита запросов в внешнему Api
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.CurrencyNotFoundException">
-            <summary>
-            Исключени о ненайденной валюте
-            </summary>
-        </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Filter.ApiExceptionFilter">
-            <summary>
-            Класс фильтра исключения
-            </summary>
-        </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO">
             <summary>
             Класс Избранной валюты
@@ -409,11 +394,6 @@
         <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings.APIKey">
             <summary>
             Ключ к внешнему Api
-            </summary>
-        </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings.BasePath">
-            <summary>
-            Базовый путь к внешнему Api
             </summary>
         </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService">

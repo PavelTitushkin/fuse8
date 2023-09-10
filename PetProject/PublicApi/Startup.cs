@@ -4,7 +4,6 @@ using DataStore.PublicApiDb;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Data;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
@@ -84,12 +83,7 @@ public class Startup
                     return auditEvent.ToJson();
                 }));
 
-        //Добавление фильтра исключения
-        services.AddControllers(options =>
-        {
-            options.Filters.Add(typeof(ApiExceptionFilter));
-        })
-
+        services.AddControllers()
             // Добавляем глобальные настройки для преобразования Json
             .AddJsonOptions(
                 options =>

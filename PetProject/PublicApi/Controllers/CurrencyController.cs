@@ -1,5 +1,4 @@
 ﻿using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
 using Microsoft.AspNetCore.Mvc;
