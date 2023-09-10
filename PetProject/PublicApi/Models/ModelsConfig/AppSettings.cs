@@ -24,10 +24,5 @@
         /// Ключ к внешнему Api
         /// </summary>
         public string APIKey { get; set; }
-
-        /// <summary>
-        /// Базовый путь к внешнему Api
-        /// </summary>
-        public string BasePath { get; set; }
     }
 }

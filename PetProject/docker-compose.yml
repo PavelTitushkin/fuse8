@@ -11,7 +11,7 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_DB: ${POSTGRES_DB_NAME}
     ports:
-        - "5432:5432"
+        - "5432:${POSTGRES_PORT}"
 
   pgAdmin:
     container_name: ${PGADMIN_CONTAINER_NAME}
@@ -20,28 +20,21 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
-      - "5050:80"
+      - "5050:${PGADMIN_PORT}"
 
   internal_api:
     container_name: ${INTERNAL_API_CONTAINER_NAME}
     image: api/internal_api_image:dev
     restart: unless-stopped
     ports:
-      - "5240:5240"
-      - "7285:7285" 
+      - "5240:${INTERNAL_API_CONTAINER_PORT}"
+      - "7285:${INTERNAL_API_GRPC_CONTAINER_PORT}" 
 
     environment:
-      - ASPNETCORE_URLS=http://+:5240;http://+:7285;
-      - ASPNETCORE_ENVIRONMENT=Development
-      - gRPCPort=7285  
-      - ApiPort=5240
-      - Currency__Default=RUB
-      - Currency__Base=USD
-      - Currency__Round=2
-      - Currency__BasePath=https://api.currencyapi.com/v3
-      - Currency__PathFile=D:\\Fuse8\\fuse8\\PetProject\\InternalApi\\CacheFiles
-      - Currency__CacheLifetime=2
-      - Currency__WaitTimeTaskExecution=10000
+      - ASPNETCORE_URLS=http://+:${INTERNAL_API_CONTAINER_PORT};http://+:${INTERNAL_API_GRPC_CONTAINER_PORT};
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - gRPCPort=${INTERNAL_API_GRPC_CONTAINER_PORT}  
+      - ApiPort=${INTERNAL_API_CONTAINER_PORT}
 
     healthcheck:
       test: curl --fail http://localhost:5240/health || exit 1
@@ -64,17 +57,13 @@ services:
     image: api/public_api_image:dev
     restart: unless-stopped
     ports:
-      - "5700:5700"
+      - "5700:${PUBLIC_API_CONTAINER_PORT}"
     environment:
-      - ASPNETCORE_URLS=http://+:5700;
-      - ASPNETCORE_ENVIRONMENT=Development
-      - Currency__Default=RUB
-      - Currency__Base=USD
-      - Currency__Round=2
-      - Currency__BasePath=https://api.currencyapi.com/v3
+      - ASPNETCORE_URLS=http://+:${PUBLIC_API_CONTAINER_PORT};
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
 
     healthcheck:
-      test: curl --fail http://localhost:5700/health || exit 1
+      test: curl --fail http://localhost:${PUBLIC_API_CONTAINER_PORT}/health || exit 1
       retries: 5
       start_period: 10s
       timeout: 10s
