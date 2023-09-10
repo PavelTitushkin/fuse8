@@ -143,7 +143,8 @@ namespace InternalApi.Services
         private async Task IsHaveException(CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
-                throw new OperationCanceledException(cancellationToken);
+               cancellationToken.ThrowIfCancellationRequested();
+
             if (await IsCurrencyLimitExceededAsync(cancellationToken))
                 throw new ApiRequestLimitException("Превышено количество запросов.");
         }

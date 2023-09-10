@@ -34,7 +34,7 @@ namespace InternalApi.Services
         /// <returns>Курс валюты</returns>
         public override async Task<CurrencyResponse> GetCurrency(CurrencyRequest currency, ServerCallContext context)
         {
-            Enum.TryParse(currency.CurrencyCode.ToUpper(), out CurrencyType currencyType);
+            Enum.TryParse(currency.CurrencyCode, ignoreCase: true, out CurrencyType currencyType);
             var currencies = await _cachedCurrencyAPI.GetCurrentCurrencyAsync(currencyType, context.CancellationToken);
 
             return _mapper.Map<CurrencyResponse>(currencies);
@@ -48,7 +48,7 @@ namespace InternalApi.Services
         /// <returns>Курс валюты на определённую дату</returns>
         public override async Task<CurrencyResponse> GetCurrencyOnDate(CurrencyOnDateRequest currencyOnDate, ServerCallContext context)
         {
-            Enum.TryParse(currencyOnDate.CurrencyCode.ToUpper(), out CurrencyType currencyType);
+            Enum.TryParse(currencyOnDate.CurrencyCode, ignoreCase: true, out CurrencyType currencyType);
             var date = DateOnly.FromDateTime(currencyOnDate.Date.ToDateTime());
             var currencies = await _cachedCurrencyAPI.GetCurrencyOnDateAsync(currencyType, date, context.CancellationToken);
             var currencyResponse = _mapper.Map<CurrencyResponse>(currencies);
@@ -83,7 +83,7 @@ namespace InternalApi.Services
         {
             if(currencyFavorite.BaseCurrency == AppSettings.Base)
             {
-                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
+                Enum.TryParse(currencyFavorite.Currency, ignoreCase: true, out CurrencyType currencyType);
                 var dto = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyType, context.CancellationToken);
                 
                 return new CurrencyFavoriteResponse
@@ -95,8 +95,8 @@ namespace InternalApi.Services
             }
             else
             {
-                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
-                Enum.TryParse(currencyFavorite.BaseCurrency.ToUpper(), out CurrencyType currencyTypeBase);
+                Enum.TryParse(currencyFavorite.Currency, ignoreCase: true, out CurrencyType currencyType);
+                Enum.TryParse(currencyFavorite.BaseCurrency, ignoreCase: true, out CurrencyType currencyTypeBase);
                 var dtoCurrency = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyType, context.CancellationToken);
                 var dtoBaseCurrency = await _cachedCurrencyAPI.GetCurrentCurrencyFromDbAsync(currencyTypeBase, context.CancellationToken);
 
@@ -119,7 +119,7 @@ namespace InternalApi.Services
         {
             if (currencyFavorite.BaseCurrency == AppSettings.Base)
             {
-                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
+                Enum.TryParse(currencyFavorite.Currency, ignoreCase: true, out CurrencyType currencyType);
                 var date = DateOnly.FromDateTime(currencyFavorite.Date.ToDateTime());
                 var dto = await _cachedCurrencyAPI.GetCurrencyOnDateFromDbAsync(currencyType, date, context.CancellationToken);
 
@@ -133,8 +133,8 @@ namespace InternalApi.Services
             }
             else
             {
-                Enum.TryParse(currencyFavorite.Currency.ToUpper(), out CurrencyType currencyType);
-                Enum.TryParse(currencyFavorite.BaseCurrency.ToUpper(), out CurrencyType currencyTypeBase);
+                Enum.TryParse(currencyFavorite.Currency, ignoreCase: true, out CurrencyType currencyType);
+                Enum.TryParse(currencyFavorite.BaseCurrency, ignoreCase: true, out CurrencyType currencyTypeBase);
                 var date = DateOnly.FromDateTime(currencyFavorite.Date.ToDateTime());
                 var dtoCurrency = await _cachedCurrencyAPI.GetCurrencyOnDateFromDbAsync(currencyType, date, context.CancellationToken);
                 var dtoBaseCurrency = await _cachedCurrencyAPI.GetCurrencyOnDateFromDbAsync(currencyTypeBase, date,  context.CancellationToken);

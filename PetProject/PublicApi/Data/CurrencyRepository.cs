@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DataStore.PublicApiDb;
 using DataStore.PublicApiDb.Entities;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
@@ -62,20 +63,18 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Data
             }
         }
 
-        public async Task<FavoriteCurrencyDTO?> GetFavoriteCurrencyByNameAsync(string currencyName, CancellationToken cancellationToken)
+        public  Task<FavoriteCurrencyDTO?> GetFavoriteCurrencyByNameAsync(string currencyName, CancellationToken cancellationToken)
         {
-            return await _publicApiContext.FavoritesCurrencies
-                .AsNoTracking()
+            return _publicApiContext.FavoritesCurrencies
                 .Where(e => e.Name == currencyName)
-                .Select(entity => _mapper.Map<FavoriteCurrencyDTO>(entity))
+                .ProjectTo<FavoriteCurrencyDTO>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<List<FavoriteCurrencyDTO>> GetAllFavoritesCurrenciesAsync(CancellationToken cancellationToken)
+        public Task<List<FavoriteCurrencyDTO>> GetAllFavoritesCurrenciesAsync(CancellationToken cancellationToken)
         {
-            return await _publicApiContext.FavoritesCurrencies
-                .AsNoTracking()
-                .Select(entity => _mapper.Map<FavoriteCurrencyDTO>(entity))
+            return _publicApiContext.FavoritesCurrencies
+                .ProjectTo<FavoriteCurrencyDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
 

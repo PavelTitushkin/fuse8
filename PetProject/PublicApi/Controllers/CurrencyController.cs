@@ -27,25 +27,6 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         }
 
         /// <summary>
-        /// Метод получения курса валюты по умолчанию.
-        /// </summary>
-        /// <returns>
-        /// Метод возвращает JSON вида
-        ///        {
-        ///  "code": "RUB", // код валюты
-        ///  "value": 90.50 // текущий курс относительно доллара
-        ///}
-        /// </returns>
-        [HttpGet]
-        [Route("currency")]
-        public async Task<IActionResult> Currency()
-        {
-            var apiResponse = await _currencyRateService.GetCurrencyAsync();
-
-            return Ok(apiResponse);
-        }
-
-        /// <summary>
         /// Метод получения текущего курс валюты, переданного в качестве параметра
         /// </summary>
         /// <param name="currencyCode">
@@ -121,7 +102,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers
         /// <param name="cancellationToken">Токен отмены</param>
         /// <returns>Изменение кода валюты по умрлчанию</returns>
         [HttpGet]
-        [Route("ChangeDefaultCurrency/{defaultCurrency}")]
+        [Route("changeDefaultCurrency/{defaultCurrency}")]
         public async Task<IActionResult> ChangeDefaultCurrency(string defaultCurrency, CancellationToken cancellationToken)
         {
             await _currencyRateService.ChangeDefaultCurrencyAsync(defaultCurrency, cancellationToken);

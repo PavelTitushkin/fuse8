@@ -4,22 +4,139 @@
         <name>PublicApi</name>
     </assembly>
     <members>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService">
+            <summary>
+            Интерфейс для работы с CurrencyRateService
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService.ChangeDefaultCurrencyAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет <paramref name="defaultCurrency"/>
+            </summary>
+            <param name="defaultCurrency">Код валюты по умолчанию</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Изменение кода валюты по умрлчанию</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService.ChangeCurrencyRoundAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет <paramref name="round"/>
+            </summary>
+            <param name="round">Количество знаков после запятой</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Изменение количества знаков после запятой</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService.GetFavoriteCurrencyAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Получает Избранную валюту по <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Код Избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService.GetAllFavoritesCurrenciesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Получает список всех Избранных валют
+            </summary>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Список <inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService.AddNewFavoriteCurrencyAsync(System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Добавляет новую Избранную валюту
+            </summary>
+            <param name="currenciesDTO"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат добавления</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService.ChangeFavoriteCurrencyByNameAsync(System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет Избранную валюту <paramref name="currencyName"/> на <paramref name="currenciesDTO"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="currenciesDTO"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат изменения</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService.DeleteFavoriteCurrencyByNameAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Удаляет Избранную валюту по <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат удаления</returns>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository">
+            <summary>
+            Интерфейс для работы с репозиториями
+            </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository.ChangeDefaultCurrencyAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет <paramref name="defaultCurrency"/>
+            </summary>
+            <param name="defaultCurrency">Код валюты по умолчанию</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Изменение кода валюты по умрлчанию</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository.ChangeCurrencyRoundAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет <paramref name="round"/>
+            </summary>
+            <param name="round">Количество знаков после запятой</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Изменение количества знаков после запятой</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository.GetFavoriteCurrencyByNameAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Получает Избранную валюту по <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Код Избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository.GetAllFavoritesCurrenciesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Получает список всех Избранных валют
+            </summary>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Список <inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository.AddNewFavoriteCurrencyAsync(Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO,System.Threading.CancellationToken)">
+            <summary>
+            Добавляет новую Избранную валюту
+            </summary>
+            <param name="currenciesDTO"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат добавления</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository.ChangeFavoriteCurrencyByNameAsync(System.String,Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет Избранную валюту <paramref name="currencyName"/> на <paramref name="currenciesDTO"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="currenciesDTO"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат изменения</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository.DeleteFavoriteCurrencyByNameAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Удаляет Избранную валюту по <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат удаления</returns>
+        </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController">
             <summary>
             Методы получения курсов валют
             </summary>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency">
-             <summary>
-             Метод получения курса валюты по умолчанию.
-             </summary>
-             <returns>
-             Метод возвращает JSON вида
-                    {
-              "code": "RUB", // код валюты
-              "value": 90.50 // текущий курс относительно доллара
-            }
-             </returns>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.#ctor(Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService,Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService)">
+            <summary>
+            <inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController"/>
+            </summary>
+            <param name="currencyRateService"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateService"/></param>
+            <param name="currencyRateGrpsClientService"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService"/></param>
         </member>
         <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency(System.String)">
              <summary>
@@ -35,32 +152,8 @@
               "value": 90.50 // текущий курс относительно доллара
             }
              </returns>
-             <exception cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.ApiRequestLimitException">
-             Выбрасывается исключение если все доступные запросы исчерпаны.
-             </exception>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency(System.String,System.DateTime)">
-             <summary>
-             Метод получения курса валюты, переданного в качестве параметра, на определенную дата.
-             </summary>
-             <param name="currencyCode">
-             Код валюты относительно которого будет выведен курс.
-             </param>
-             <param name="date">
-             Курс валюты на определённую дату.
-             </param>
-             <returns>       
-             Метод возвращает JSON вида
-            {
-              "date": "2020-12-25", // дата актуальности курса
-              "code": "RUB", // код валюты
-              "value": 90.50 // текущий курс относительно доллара
-            }        
-             </returns>
-             <exception cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.ApiRequestLimitException">
-             Выбрасывается исключение если все доступные запросы исчерпаны.
-             </exception>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Currency(System.String,System.DateTime)" -->
         <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.Settings">
              <summary>
              Метод возвращает текущие настройки приложения.
@@ -75,6 +168,79 @@
               "currencyRoundCount": 2 // Количество знаков после запятой, до которого следует округлять значение курса валют
             }
              </returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.ChangeDefaultCurrency(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет <paramref name="defaultCurrency"/>
+            </summary>
+            <param name="defaultCurrency">Код валюты по умолчанию</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Изменение кода валюты по умрлчанию</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.ChangeCurrencyRound(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет <paramref name="round"/>
+            </summary>
+            <param name="round">Количество знаков после запятой</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Изменение количества знаков после запятой</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.GetFavoriteCurrency(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Получает Избранную валюту по <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Код Избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.GetAllFavoritesCurrencies(System.Threading.CancellationToken)">
+            <summary>
+            Получает список всех Избранных валют
+            </summary>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Список <inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.AddNewFavoriteCurrency(System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Добавляет новую Избранную валюту
+            </summary>
+            <param name="currenciesDTO"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат добавления</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.ChangeFavoriteCurrencyByName(System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Изменяет Избранную валюту <paramref name="currencyName"/> на <paramref name="currenciesDTO"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="currenciesDTO"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат изменения</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.DeleteFavoriteCurrencyByName(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Удаляет Избранную валюту по <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат удаления</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.GetCurrencyRateFavoriteByName(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Получает курс Избранную валюту по <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Код Избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Курс Избранной валюты</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.CurrencyController.GetCurrencyRateFavoriteByNameOnDate(System.String,System.DateOnly,System.Threading.CancellationToken)">
+            <summary>
+            Получает курс Избранную валюту по <paramref name="currencyName"/> на <paramref name="date"/>
+            </summary>
+            <param name="currencyName">Код Избранной валюты</param>
+            <param name="date">Дата, относительно которой выводится курс валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Курс Избранной валюты на определённую <paramref name="date"/></returns>
         </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Controllers.HealthCheckController">
             <summary>
@@ -123,115 +289,196 @@
             Ошибка в работе API
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository">
             <summary>
-            Класс курса валют 
+            Класс для работы с данными
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency.Code">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository.#ctor(DataStore.PublicApiDb.PublicApiContext,Microsoft.Extensions.Options.IOptions{Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings},AutoMapper.IMapper)">
             <summary>
-            Код валюты
+            <inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository"/>
+            </summary>
+            <param name="context">Контекст БД</param>
+            <param name="options">Кофигурации приложения</param>
+            <param name="mapper">Маппер</param>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository.AddDefaultCurrencyAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Добавляет <paramref name="defaultCurrency"/> в БД
+            </summary>
+            <param name="defaultCurrency">код валюты по умолчанию</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат добавления</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository.AddCurrencyRoundAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Добавляет <paramref name="round"/>
+            </summary>
+            <param name="round">Значение округления</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат добавления</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository.IsUniqueValuesAsync(Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO,System.Threading.CancellationToken)">
+            <summary>
+            Проверка на уникальность значений Избранной валюты 
+            </summary>
+            <param name="currenciesDTO"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO"/></param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Результат сравнения на унивальность</returns>
+        </member>
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.ApiRequestLimitException">
+            <summary>
+            Исключение о превышении лимита запросов в внешнему Api
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Currency.Value">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Exceptions.CurrencyNotFoundException">
             <summary>
-            Значение валюты
+            Исключени о ненайденной валюте
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyRateResponse">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Filter.ApiExceptionFilter">
             <summary>
-            Класс для работы с ответом currencyApi
+            Класс фильтра исключения
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO">
             <summary>
-            Класс для работы с ответом currencyApi
+            Класс Избранной валюты
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Meta.LastUpdatedAt">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO.Name">
             <summary>
-            Дата курса валют
+            Название избанной валюты
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO.Currency">
             <summary>
-            Класс для работы с ответом currencyApi
+            Код Избранной валюты
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue.Code">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO.FavoriteCurrencyDTO.BaseCurrency">
             <summary>
-            Код валюты
+            Код базовой валюты
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CodeValue.Value">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.ApiSettings">
             <summary>
-            значение валюты
+            Настройки Api
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencySettings">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.ApiSettings.DefaultCurrency">
             <summary>
-            Класс для работы с ответом currencyApi, содержащий текущие настройки приложения
+            Код валюты по умолчанию
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.ApiSettings.BaseCurrency">
             <summary>
-            Класс курса валют 
+            Код базовой валюты 
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Date">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.ApiSettings.NewRequestsAvailable">
             <summary>
-            Дата курса валют
+            Превышен ли лимит запросов 
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Code">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.ApiSettings.CurrencyRoundCount">
             <summary>
-            Код валюты
+            Значение количества знаков после запятой
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.CurrencyWithDate.Value">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings">
             <summary>
-            Значение валюты
+            Класс кофигурации приложения
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings.Default">
             <summary>
-            Класс для работы с ответом currencyApi 
+            Код валюты по умолчанию
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.SettingsResponse.AccountId">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings.Base">
             <summary>
-            Аккаунт id
+            Код базовой валюты 
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Quotas">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings.Round">
             <summary>
-            Лимит запросов
+            Значение количества знаков после запятой
             </summary>
         </member>
-        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings.APIKey">
             <summary>
-            Лимит запрос в месяц
+            Ключ к внешнему Api
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Total">
+        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings.BasePath">
             <summary>
-            Общее количество запросов
+            Базовый путь к внешнему Api
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Used">
+        <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService">
             <summary>
-            Использованное количество запросов
+            Сервис для работы gRPC-клиентом
             </summary>
         </member>
-        <member name="P:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.Month.Remaining">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService.#ctor(Microsoft.Extensions.Options.IOptions{Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings},PublicClientApi.CurrrncyGrpsService.CurrrncyGrpsServiceClient,Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions.ICurrencyRateService)">
             <summary>
-            Оставшейся количество запросов
+            <inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService"/>
             </summary>
+            <param name="options">Конфигурации приложения</param>
+            <param name="grpsServiceClient">gRPC-клиент</param>
+            <param name="currencyRateService"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateService"/></param>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService.GetCurrency(System.String)">
+            <summary>
+            Получает курс валюты относительно <paramref name="currencyCode"/>
+            </summary>
+            <param name="currencyCode">Код валюты</param>
+            <returns>Курс валюты относительно <paramref name="currencyCode"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService.GetCurrencyOnDate(System.String,System.DateTime)">
+            <summary>
+            Получает курс валюты относительно <paramref name="currencyCode"/> на <paramref name="date"/>
+            </summary>
+            <param name="currencyCode">Код валюты</param>
+            <param name="date">Дата, относительно которой выводится курс валют</param>
+            <returns>Курс валюты относительно <paramref name="currencyCode"/> на <paramref name="date"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService.GetApiSettings">
+            <summary>
+            Получает настройки Api
+            </summary>
+            <returns><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelResponse.ApiSettings"/></returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService.GetCurrencyFavoriteByName(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Получает Избранную валюту <paramref name="currencyName"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Избранную валюту</returns>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateGrpcClientService.GetCurrencyFavoriteByNameOnDate(System.String,System.DateOnly,System.Threading.CancellationToken)">
+            <summary>
+            Получает Избранную валюту <paramref name="currencyName"/> на <paramref name="date"/>
+            </summary>
+            <param name="currencyName">Название избранной валюты</param>
+            <param name="date">Дата, относительно которой выводится курс валют</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <returns>Курс избранной валюты <paramref name="currencyName"/> на <paramref name="date"/></returns>
         </member>
         <member name="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateService">
             <summary>
-            Сервис для работы с currencyApi
+            Сервис для работы с PublicApi
             </summary>
+        </member>
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Services.CurrencyRateService.#ctor(Microsoft.Extensions.Options.IOptions{Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings},Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository)">
+            <summary>
+            Сервис для работы с PublicApi
+            </summary>
+            <param name="options">Кофигурации приложения</param>
+            <param name="httpCurrencyRepository"><inheritdoc cref="!:IHttpCurrencyRepository"/></param>
+            <param name="currencyRepository"><inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories.ICurrencyRepository"/></param>
         </member>
         <member name="T:PublicClientApi.CurrencyServiceReflection">
             <summary>Holder for reflection information generated from Protos/CurrencyService.proto</summary>

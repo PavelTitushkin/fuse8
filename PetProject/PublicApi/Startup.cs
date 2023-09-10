@@ -8,7 +8,6 @@ using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
-using InternalApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
@@ -39,14 +38,6 @@ public class Startup
         services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         services.AddScoped<CurrencyRateGrpcClientService>();
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
-        services.AddHttpClient<IHttpCurrencyRepository, HttpCurrencyRepository>()
-            .AddAuditHandler(
-            audit => audit
-                .IncludeRequestBody()
-                .IncludeRequestHeaders()
-                .IncludeResponseBody()
-                .IncludeResponseHeaders()
-                .IncludeContentHeaders());
 
         //Add Auto-mapper
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
