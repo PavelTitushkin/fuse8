@@ -47,10 +47,6 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\DataPublicApi\DataPublicApi.csproj" />
-	</ItemGroup>
-
     <ItemGroup>
       <None Update="Protos\CurrencyService.proto">
         <GrpcServices>Server</GrpcServices>
