@@ -1,7 +1,7 @@
-﻿using DataStore.PublicApiDb.Entities;
+﻿using DataPublicApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataStore.PublicApiDb
+namespace DataPublicApi
 {
     public class PublicApiContext : DbContext
     {

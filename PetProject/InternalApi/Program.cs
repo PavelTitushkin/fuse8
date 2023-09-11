@@ -1,4 +1,3 @@
-using DataStore.InternalApiDb;
 using Audit.Core;
 using Audit.Http;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
@@ -17,6 +16,7 @@ using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Queues;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Services;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts;
+using DataInternalApi;
 
 namespace InternalApi
 {

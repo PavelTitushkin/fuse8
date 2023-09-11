@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DataStore.PublicApiDb.Migrations
+namespace DataPublicApi.Migrations
 {
     /// <inheritdoc />
     public partial class AddConstraintToPublicApiSettings : Migration

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using DataStore.PublicApiDb;
-using DataStore.PublicApiDb.Entities;
+using DataPublicApi;
+using DataPublicApi.Entities;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.DTO;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;

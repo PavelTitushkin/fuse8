@@ -48,7 +48,7 @@
     </ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\API_DataBase\DataStore.csproj" />
+	  <ProjectReference Include="..\..\DataPublicApi\DataPublicApi.csproj" />
 	</ItemGroup>
 
     <ItemGroup>

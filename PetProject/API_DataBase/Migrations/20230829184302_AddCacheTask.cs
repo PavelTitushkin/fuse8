@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace DataStore.InternalApiDb.Migrations
+namespace DataInternalApi.Migrations
 {
     /// <inheritdoc />
     public partial class AddCacheTask : Migration

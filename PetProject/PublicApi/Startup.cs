@@ -1,6 +1,6 @@
 ﻿using Audit.Core;
 using Audit.Http;
-using DataStore.PublicApiDb;
+using DataPublicApi;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Data;

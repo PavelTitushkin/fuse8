@@ -177,7 +177,7 @@
             Конфигурации приложения
             </summary>
         </member>
-        <member name="M:InternalApi.Data.CachedCurrencyRepository.#ctor(Microsoft.Extensions.Options.IOptions{InternalApi.Models.ModelsConfig.AppSettings},InternalApi.Contracts.ICurrencyAPI,DataStore.InternalApiDb.InternalApiContext,AutoMapper.IMapper)">
+        <member name="M:InternalApi.Data.CachedCurrencyRepository.#ctor(Microsoft.Extensions.Options.IOptions{InternalApi.Models.ModelsConfig.AppSettings},InternalApi.Contracts.ICurrencyAPI,DataInternalApi.InternalApiContext,AutoMapper.IMapper)">
             <summary>
             <inheritdoc cref="T:InternalApi.Data.CachedCurrencyRepository"/>
             </summary>

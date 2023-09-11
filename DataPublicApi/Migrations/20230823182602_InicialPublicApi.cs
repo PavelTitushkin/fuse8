@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace DataStore.PublicApiDb.Migrations
+namespace DataPublicApi.Migrations
 {
     /// <inheritdoc />
     public partial class InicialPublicApi : Migration

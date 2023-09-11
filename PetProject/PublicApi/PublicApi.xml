@@ -294,7 +294,7 @@
             Класс для работы с данными
             </summary>
         </member>
-        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository.#ctor(DataStore.PublicApiDb.PublicApiContext,Microsoft.Extensions.Options.IOptions{Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings},AutoMapper.IMapper)">
+        <member name="M:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository.#ctor(DataPublicApi.PublicApiContext,Microsoft.Extensions.Options.IOptions{Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig.AppSettings},AutoMapper.IMapper)">
             <summary>
             <inheritdoc cref="T:Fuse8_ByteMinds.SummerSchool.PublicApi.Data.CurrencyRepository"/>
             </summary>

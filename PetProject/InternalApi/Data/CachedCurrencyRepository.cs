@@ -1,6 +1,4 @@
-﻿using DataStore.InternalApiDb;
-using DataStore.InternalApiDb.Entities;
-using AutoMapper;
+﻿using AutoMapper;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
 using InternalApi.Contracts;
@@ -10,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Text.Json;
+using DataInternalApi.Entities;
+using DataInternalApi;
 
 namespace InternalApi.Data
 {

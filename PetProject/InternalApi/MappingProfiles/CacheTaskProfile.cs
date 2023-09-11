@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataStore.InternalApiDb.Entities;
+using DataInternalApi.Entities;
 using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelDTO;
 
 namespace Fuse8_ByteMinds.SummerSchool.InternalApi.MappingProfiles

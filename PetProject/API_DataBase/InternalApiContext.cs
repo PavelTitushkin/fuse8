@@ -1,7 +1,7 @@
-﻿using DataStore.InternalApiDb.Entities;
+﻿using DataInternalApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataStore.InternalApiDb
+namespace DataInternalApi
 {
     public class InternalApiContext : DbContext
     {

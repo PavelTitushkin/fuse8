@@ -1,4 +1,4 @@
-﻿namespace DataStore.PublicApiDb.Entities
+﻿namespace DataPublicApi.Entities
 {
     public class PublicApiSettings
     {

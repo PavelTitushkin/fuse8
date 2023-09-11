@@ -1,8 +1,8 @@
-﻿using DataStore.PublicApiDb.Entities;
+﻿using DataPublicApi.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DataStore.PublicApiDb.EntitiesConfig
+namespace DataPublicApi.EntitiesConfig
 {
     public class FavoriteCurrencyConfiguration : IEntityTypeConfiguration<FavoriteCurrency>
     {

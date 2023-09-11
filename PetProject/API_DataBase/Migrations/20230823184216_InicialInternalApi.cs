@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DataStore.InternalApiDb.Migrations
+namespace DataInternalApi.Migrations
 {
     /// <inheritdoc />
     public partial class InicialInternalApi : Migration
