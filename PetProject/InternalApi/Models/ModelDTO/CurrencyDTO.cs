@@ -1,23 +1,45 @@
-﻿using System.Text.Json.Serialization;
-
-namespace InternalApi.Models.ModelDTO
+﻿namespace InternalApi.Models.ModelDTO
 {
     /// <summary>
     /// Курс валюты
     /// </summary>
-    /// <param name="CurrencyType">Валюта</param>
-    /// <param name="Value">Значение курса</param>
     public class CurrencyDTO
     {
-        [JsonPropertyName("CurrencyType")]
+        /// <summary>
+        /// <inheritdoc cref="CurrencyType"/>
+        /// </summary>
         public CurrencyType CurrencyType { get; set; }
 
-        [JsonPropertyName("Value")]
+        /// <summary>
+        /// Значение валюты
+        /// </summary>
         public decimal Value { get; set; }
     }
 
+    /// <summary>
+    /// Код валюты
+    /// </summary>
     public enum CurrencyType
     {
-        Usd, Rub, Kzt
+        /// <summary>
+        /// USD-Американский доллар
+        /// </summary>
+        USD,
+        /// <summary>
+        /// EUR - Евро
+        /// </summary>
+        EUR,
+        /// <summary>
+        /// RUB - Российский рубль
+        /// </summary>
+        RUB,
+        /// <summary>
+        /// KZT - Казахстанский тенге
+        /// </summary>
+        KZT,
+        /// <summary>
+        /// BYN - Белорусский рубль
+        /// </summary>
+        BYN
     }
 }

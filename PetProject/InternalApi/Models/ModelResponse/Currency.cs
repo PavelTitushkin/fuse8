@@ -1,4 +1,4 @@
-﻿namespace Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse
+﻿namespace InternalApi.Models.ModelResponse
 {
     /// <summary>
     /// Класс курса валют 
@@ -8,7 +8,8 @@
         /// <summary>
         /// Код валюты
         /// </summary>
-        public string? Code { get; set; }
+        public string Code { get; set; }
+
         /// <summary>
         /// Значение валюты
         /// </summary>

@@ -1,16 +1,18 @@
 ﻿using Audit.Core;
 using Audit.Http;
+using DataPublicApi;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Filter;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Contracts.IRepositories;
+using Fuse8_ByteMinds.SummerSchool.PublicApi.Data;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Middleware;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Models.ModelsConfig;
 using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
-using InternalApi.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
-using PublicApi.Contracts;
+using PublicClientApi;
 using Serilog;
 using System.Text.Json.Serialization;
-
 
 namespace Fuse8_ByteMinds.SummerSchool.PublicApi;
 
@@ -32,9 +34,30 @@ public class Startup
         });
 
         //Добавление сервисов
+        services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+        services.AddScoped<CurrencyRateGrpcClientService>();
         services.AddScoped<ICurrencyRateService, CurrencyRateService>();
-        services.AddHttpClient<IHttpCurrencyRepository, HttpCurrencyRepository>()
-        //services.AddHttpClient<ICurrencyRateService, CurrencyRateService>()
+
+        //Add Auto-mapper
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+        //Подключение DbContext
+        services.AddDbContext<PublicApiContext>(
+            optionsBuilder =>
+            {
+                optionsBuilder.UseNpgsql(_configuration.GetConnectionString("CurrencyRateDb"),
+                    sqlOptionsBuilder =>
+                    {
+                        sqlOptionsBuilder.EnableRetryOnFailure();
+                        sqlOptionsBuilder.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "user");
+                    })
+                .UseSnakeCaseNamingConvention();
+            });
+
+        services.AddGrpcClient<CurrrncyGrpsService.CurrrncyGrpsServiceClient>(o =>
+        {
+            o.Address = new Uri(_configuration.GetValue<string>("gRPCServive"));
+        })
             .AddAuditHandler(
             audit => audit
                 .IncludeRequestBody()
@@ -60,12 +83,7 @@ public class Startup
                     return auditEvent.ToJson();
                 }));
 
-        //Добавление фильтра исключения
-        services.AddControllers(options =>
-        {
-            options.Filters.Add(typeof(ApiExceptionFilter));
-        })
-
+        services.AddControllers()
             // Добавляем глобальные настройки для преобразования Json
             .AddJsonOptions(
                 options =>
@@ -92,6 +110,8 @@ public class Startup
             //Добавление коментарии
             c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"), true);
         });
+
+        services.AddHealthChecks();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -101,6 +121,8 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseHealthChecks("/health");
 
         //Добавление логирования
         app.UseMiddleware<LoggingMiddleware>();

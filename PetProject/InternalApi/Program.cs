@@ -1,15 +1,22 @@
 using Audit.Core;
 using Audit.Http;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Filter;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Middleware;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
-using Fuse8_ByteMinds.SummerSchool.PublicApi.Services;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
 using InternalApi.Contracts;
 using InternalApi.Data;
+using InternalApi.Filter;
+using InternalApi.Middleware;
+using InternalApi.Models.ModelsConfig;
+using InternalApi.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Text.Json.Serialization;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IQueues;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Queues;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Services;
+using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts;
+using DataInternalApi;
 
 namespace InternalApi
 {
@@ -18,21 +25,55 @@ namespace InternalApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.WebHost.UseKestrel(
+                (builderContext, options) =>
+                {
+                    var grpcPort = builder.Configuration.GetValue<int>("gRPCPort");
+                    options.ConfigureEndpointDefaults(
+                        p =>
+                        {
+                            p.Protocols = p.IPEndPoint!.Port == grpcPort ? HttpProtocols.Http2 : HttpProtocols.Http1;
+                        });
+                });
 
-            // Add services to the container.
+            //Подключение DbContext
+            builder.Services.AddDbContext<InternalApiContext>(
+                optionsBuilder =>
+                {
+                    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("CurrencyRateDb"),
+                        sqlOptionsBuilder =>
+                        {
+                            sqlOptionsBuilder.EnableRetryOnFailure();
+                            sqlOptionsBuilder.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "cur");
+                        })
+                    .UseSnakeCaseNamingConvention();
+                });
+
+            //Добавление gRPC-сервиса
+            builder.Services.AddGrpc();
+
             builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("Currency"));
             builder.Services.Configure<AppSettings>(opt =>
             {
                 opt.APIKey = builder.Configuration.GetSection("Settings:APIKey").Value;
             });
 
-
             builder.Services.AddControllers();
 
-            builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
-            //builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyRepository>();
+            //Add Auto-mapper
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddHttpClient<IHttpCurrencyRepository, HttpCurrencyRepository>()
+            //Добавление сервисов
+            builder.Services.AddScoped<ICurrencyAPI, CurrencyRateService>();
+            builder.Services.AddScoped<ICurrencyRateService, CurrencyRateService>();
+            builder.Services.AddScoped<ICachedCurrencyRepository, CachedCurrencyRepository>();
+            builder.Services.AddScoped<ICachedCurrencyAPI, CachedCurrencyAPI>();
+            builder.Services.AddScoped<IRecalculateCacheService, RecalculateCacheService>();
+
+            builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            builder.Services.AddHostedService<QueuedHostedService>();
+
+            builder.Services.AddHttpClient<ICurrencyRepository, HttpCurrencyRepository>()
                 .AddAuditHandler(
                 audit => audit
                     .IncludeRequestBody()
@@ -40,6 +81,7 @@ namespace InternalApi
                     .IncludeResponseBody()
                     .IncludeResponseHeaders()
                     .IncludeContentHeaders());
+
 
             Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
             Configuration.Setup()
@@ -62,17 +104,17 @@ namespace InternalApi
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ApiExceptionFilter));
-            })
-            // Добавляем глобальные настройки для преобразования Json
-            .AddJsonOptions(
-                options =>
-                {
-                    // Добавляем конвертер для енама
-                    // По умолчанию енам преобразуется в цифровое значение
-                    // Этим конвертером задаем перевод в строковое занчение
-                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                });
-            ;
+            });
+            //// Добавляем глобальные настройки для преобразования Json
+            //.AddJsonOptions(
+            //    options =>
+            //    {
+            //        // Добавляем конвертер для енама
+            //        // По умолчанию енам преобразуется в цифровое значение
+            //        // Этим конвертером задаем перевод в строковое занчение
+            //        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            //    });
+            //;
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -88,6 +130,9 @@ namespace InternalApi
                 //Добавление коментарии
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml"), true);
             });
+
+            builder.Services.AddHealthChecks();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -97,13 +142,26 @@ namespace InternalApi
                 app.UseSwaggerUI();
             }
 
-            //Добавление логирования
-            app.UseMiddleware<LoggingMiddleware>();
+            app.MapHealthChecks("/health");
+
+            //Настройка gRPC
+            app.UseWhen(
+                predicate: context => context.Connection.LocalPort == builder.Configuration.GetValue<int>("gRPCPort"),
+                configuration: grpcBuilder =>
+                {
+                    grpcBuilder.UseRouting();
+                    grpcBuilder.UseEndpoints(endpoints => endpoints.MapGrpcService<CurrencyRateGrpcService>());
+                });
 
             app.UseRouting()
-                .UseEndpoints(endpoints => endpoints.MapControllers());
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
 
-            app.MapControllers();
+            //Добавление логирования
+            app.UseMiddleware<LoggingMiddleware>();
+            
             app.Run();
         }
     }

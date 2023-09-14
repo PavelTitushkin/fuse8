@@ -1,109 +1,86 @@
-﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Abstractions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Exceptions;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
-using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelsConfig;
-using Microsoft.Extensions.Options;
+﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Contracts.IRepositories;
 using InternalApi.Contracts;
+using InternalApi.Exceptions;
 using InternalApi.Models.ModelResponse;
+using InternalApi.Models.ModelsConfig;
+using Microsoft.Extensions.Options;
 
-namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
+namespace InternalApi.Services
 {
     /// <summary>
-    /// Сервис для работы с currencyApi
+    /// Сервис для работы с курсами валют
     /// </summary>
     public class CurrencyRateService : ICurrencyRateService
     {
-        private readonly IHttpCurrencyRepository _currencyRepository;
+        private readonly ICurrencyRepository _currencyRepository;
         public AppSettings AppSettings { get; }
 
-        public CurrencyRateService(IOptions<AppSettings> options, IHttpCurrencyRepository currencyRepository)
+        public CurrencyRateService(IOptions<AppSettings> options, ICurrencyRepository currencyRepository)
         {
             AppSettings = options.Value;
             _currencyRepository = currencyRepository;
         }
 
-        public async Task<Currency> GetCurrencyAsync()
+        public async Task<Currency> GetCurrencyAsync(CancellationToken cancellationToken)
         {
-            if (await IsCurrencyLimitExceededAsync())
-                throw new ApiRequestLimitException("Превышено количество запросов.");
+            await IsHaveException(cancellationToken);
+            var dataApiContent = await _currencyRepository.GetCurrencyRateAsync(cancellationToken);
+            var data = dataApiContent.Data[AppSettings.Default];
 
-            var round = AppSettings.Round;
-            var defaultCurrencyCode = AppSettings.Default;
-            var dataApiContent = await _currencyRepository.GetCurrencyRateAsync();
-            var currency = new Currency();
-            var data = dataApiContent.Data[defaultCurrencyCode];
-            currency.Code = data.Code;
-            currency.Value = Math.Round(data.Value, round);
-
-            return currency;
-        }
-
-        public async Task<Currency> GetCurrencyAsync(string currencyCode)
-        {
-            if (await IsCurrencyLimitExceededAsync())
-                throw new ApiRequestLimitException("Превышено количество запросов.");
-            else
+            return new Currency
             {
-                var dataApiContent = await _currencyRepository.GetCurrencyRateAsync(currencyCode);
-                var currency = new Currency();
-                var round = AppSettings.Round;
-                var data = dataApiContent.Data[currencyCode];
-                currency.Code = data.Code;
-                currency.Value = Math.Round(data.Value, round);
-
-                return currency;
-            }
+                Code = data.Code,
+                Value = Math.Round(data.Value, AppSettings.Round)
+            };
         }
 
-        public async Task<CurrencyWithDate> GetCurrencyAsync(string currencyCode, DateTime date)
+        public async Task<Currency> GetCurrencyAsync(string currencyCode, CancellationToken cancellationToken)
         {
-            if (await IsCurrencyLimitExceededAsync())
-                throw new ApiRequestLimitException("Превышено количество запросов.");
+            await IsHaveException(cancellationToken);
 
-            var dataApiContent = await _currencyRepository.GetCurrencyOnDateRateAsync(currencyCode, date);
-            var currencyWithDate = new CurrencyWithDate();
+            var dataApiContent = await _currencyRepository.GetCurrencyRateAsync(currencyCode, cancellationToken);
             var data = dataApiContent.Data[currencyCode];
-            var round = AppSettings.Round;
-            currencyWithDate.Date = dataApiContent.Meta.LastUpdatedAt.ToString("yyyy-MM-dd");
-            currencyWithDate.Code = data.Code;
-            currencyWithDate.Value = Math.Round(data.Value, round);
 
-            return currencyWithDate;
+            return new Currency()
+            {
+                Code = data.Code,
+                Value = Math.Round(data.Value, AppSettings.Round),
+            };
         }
 
-        public async Task<CurrencySettings> GetCurrencySettingsAsync()
+        public async Task<CurrencyWithDate> GetCurrencyAsync(string currencyCode, DateTime date, CancellationToken cancellationToken)
         {
-            var dataApiContent = await _currencyRepository.GetCurrencySettingsAsync();
+            await IsHaveException(cancellationToken);
 
-            var currencySettings = new CurrencySettings();
-            var defaultCurrencyCode = AppSettings.Default;
-            var baseCurrencyCode = AppSettings.Base;
-            var round = AppSettings.Round;
+            var dataApiContent = await _currencyRepository.GetCurrencyOnDateRateAsync(currencyCode, date, cancellationToken);
+            var data = dataApiContent.Data[currencyCode];
 
-            currencySettings.DefaultCurrency = defaultCurrencyCode;
-            currencySettings.BaseCurrency = baseCurrencyCode;
-            currencySettings.RequestLimit = dataApiContent.Quotas.Month.Total;
-            currencySettings.RequestCount = dataApiContent.Quotas.Month.Used;
-            currencySettings.CurrencyRoundCount = round;
-
-            return currencySettings;
+            return new CurrencyWithDate()
+            {
+                Date = dataApiContent.Meta.LastUpdatedAt.ToString("yyyy-MM-dd"),
+                Code = data.Code,
+                Value = Math.Round(data.Value, AppSettings.Round),
+            };
         }
 
-        private async Task<bool> IsCurrencyLimitExceededAsync()
+        public async Task<CurrencySettings> GetCurrencySettingsAsync(CancellationToken cancellationToken)
         {
-            var apiSettings = await GetCurrencySettingsAsync();
+            var dataApiContent = await _currencyRepository.GetCurrencySettingsAsync(cancellationToken);
 
-            return apiSettings.RequestLimit < apiSettings.RequestCount;
+            return new CurrencySettings
+            {
+                DefaultCurrency = AppSettings.Default,
+                BaseCurrency = AppSettings.Base,
+                RequestLimit = dataApiContent.Quotas.Month.Total,
+                RequestCount = dataApiContent.Quotas.Month.Used,
+                CurrencyRoundCount = AppSettings.Round
+            };
         }
 
         public async Task<Currency[]> GetAllCurrentCurrenciesAsync(string baseCurrency, CancellationToken cancellationToken)
         {
-            if (cancellationToken.IsCancellationRequested)
-                throw new OperationCanceledException(cancellationToken);
-            if (await IsCurrencyLimitExceededAsync())
-                throw new ApiRequestLimitException("Превышено количество запросов.");
+            await IsHaveException(cancellationToken);
 
-            var round = AppSettings.Round;
             var currenciesRate = await _currencyRepository.GetCurrenciesRateAsync(baseCurrency, cancellationToken);
             var currencies = new Currency[currenciesRate.Data.Count];
             int index = 0;
@@ -112,7 +89,7 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
                 currencies[index] = new Currency()
                 {
                     Code = item.Value.Code,
-                    Value = Math.Round(item.Value.Value, round)
+                    Value = Math.Round(item.Value.Value, AppSettings.Round)
                 };
                 index++;
             }
@@ -122,21 +99,17 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
 
         public async Task<CurrenciesOnDate> GetAllCurrenciesOnDateAsync(string baseCurrency, DateOnly date, CancellationToken cancellationToken)
         {
-            if (cancellationToken.IsCancellationRequested)
-                throw new OperationCanceledException(cancellationToken);
-            if (await IsCurrencyLimitExceededAsync())
-                throw new ApiRequestLimitException("Превышено количество запросов.");
+            await IsHaveException(cancellationToken);
 
             var currenciesRate = await _currencyRepository.GetCurrenciesOnDateRateAsync(baseCurrency, date, cancellationToken);
             var currencies = new Currency[currenciesRate.Data.Count];
             int index = 0;
-            var round = AppSettings.Round;
             foreach (var item in currenciesRate.Data)
             {
                 currencies[index] = new Currency()
                 {
                     Code = item.Value.Code,
-                    Value = Math.Round(item.Value.Value, round)
+                    Value = Math.Round(item.Value.Value, AppSettings.Round)
                 };
                 index++;
             }
@@ -146,6 +119,34 @@ namespace Fuse8_ByteMinds.SummerSchool.PublicApi.Services
                 Currencies = currencies,
                 LastUpdatedAt = currenciesRate.Meta.LastUpdatedAt
             };
+        }
+
+        /// <summary>
+        /// Проверят на лимит запрсов
+        /// </summary>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Превышен ли лимит</returns>
+        private async Task<bool> IsCurrencyLimitExceededAsync(CancellationToken cancellationToken)
+        {
+            var apiSettings = await GetCurrencySettingsAsync(cancellationToken);
+
+            return apiSettings.RequestLimit < apiSettings.RequestCount;
+        }
+
+        /// <summary>
+        /// Проверяет на исключение
+        /// </summary>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns></returns>
+        /// <exception cref="OperationCanceledException">Операция отмены</exception>
+        /// <exception cref="ApiRequestLimitException">Исключение о превышении лимита запросов в внешнему Api</exception>
+        private async Task IsHaveException(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+               cancellationToken.ThrowIfCancellationRequested();
+
+            if (await IsCurrencyLimitExceededAsync(cancellationToken))
+                throw new ApiRequestLimitException("Превышено количество запросов.");
         }
     }
 }

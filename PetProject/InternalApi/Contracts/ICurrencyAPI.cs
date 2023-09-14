@@ -1,8 +1,10 @@
-﻿using Fuse8_ByteMinds.SummerSchool.InternalApi.Models.ModelResponse;
-using InternalApi.Models.ModelResponse;
+﻿using InternalApi.Models.ModelResponse;
 
-namespace InternalApi.Abstractions
+namespace InternalApi.Contracts
 {
+    /// <summary>
+    /// Интерфейс расширяющий ICurrencyRateService 
+    /// </summary>
     public interface ICurrencyAPI
     {
         /// <summary>

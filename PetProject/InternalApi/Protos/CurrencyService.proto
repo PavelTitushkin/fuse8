@@ -1,0 +1,73 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "InternalApi";
+
+package greet;
+
+
+// The greeting service definition.
+service CurrrncyGrpsService {
+  // Sends a greeting
+  rpc GetCurrency (CurrencyRequest) returns (CurrencyResponse);
+  rpc GetCurrencyOnDate(CurrencyOnDateRequest) returns (CurrencyResponse);
+  rpc GetSettingsApi(ApiSettingsRequest) returns(ApiSettingsResponse);
+
+  rpc GetCurrencyFavoriteByName (CurrencyFavoriteRequest) returns(CurrencyFavoriteResponse);
+  rpc GetCurrencyFavoriteByNameOnDate (CurrencyFavoriteOnDateRequest) returns(CurrencyFavoriteOnDateResponse);
+}
+
+// The request message containing the user's name.
+message CurrencyRequest {
+  string currencyCode = 1;
+}
+
+message CurrencyOnDateRequest {
+  string currencyCode = 1;
+  google.protobuf.Timestamp date = 2;
+}
+
+message ApiSettingsRequest {}
+
+message CurrencyFavoriteRequest {
+	string currency = 1;
+	string baseCurrency = 2;
+}
+
+message CurrencyFavoriteOnDateRequest {
+	string currency = 1;
+	string baseCurrency = 2;
+	google.protobuf.Timestamp date = 3;
+}
+
+// The response message containing the greetings.
+message CurrencyResponse {
+  string code = 1;
+  double value =2;
+}
+
+message ApiSettingsResponse {
+  string baseCode = 1;
+  bool limit = 2;
+}
+
+message CurrencyFavoriteResponse {
+	string currency = 1;
+	string baseCurrency = 2;
+	double value = 3;
+}
+
+message CurrencyFavoriteOnDateResponse {
+	string currency = 1;
+	string baseCurrency = 2;
+	double value = 3;
+	google.protobuf.Timestamp date = 4;
+}
+
+//enum CurrencyTypeCode
+//{
+//	CURRENCY_TYPE_USD = 0;
+//	CURRENCY_TYPE_RUB = 1;
+//	CURRENCY_TYPE_KZT = 2;
+//}
